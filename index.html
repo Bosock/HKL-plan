@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HKL-Tagesplan – Digitales Katheterlabor-Management (Prototyp)</title>
+<style>
+  /* ============================================================
+     HKL-Tagesplan – Prototyp / Working Dummy  (v2)
+     Eigenständige Datei, keine externen Abhängigkeiten.
+     Datenhaltung nur in diesem Browser (Demo). Geteilter
+     Mehr-PC-Betrieb erfordert einen Server mit Datenbank (IT).
+     ============================================================ */
+  :root{
+    --surface:#eef2f5; --panel:#ffffff; --ink:#0f1f29; --muted:#5b7180;
+    --line:#dbe4ea; --brand:#0e5a6b; --brand-d:#0a3f4b; --brand-l:#0891a8;
+    --danger:#b91c1c; --done-bg:#e7f6ec; --done-line:#bfe6cb; --done-ink:#15803d;
+    --shadow:0 1px 2px rgba(15,31,41,.06),0 4px 12px rgba(15,31,41,.06);
+    --radius:10px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--surface);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  button{font-family:inherit;cursor:pointer}
+  /* ---- Kopfleiste ---- */
+  header.topbar{background:linear-gradient(180deg,var(--brand),var(--brand-d));color:#fff;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(10,63,75,.25)}
+  .topbar-inner{max-width:1600px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .brand{display:flex;align-items:baseline;gap:10px}
+  .brand h1{font-size:18px;font-weight:700;margin:0;letter-spacing:.2px}
+  .brand .sub{font-size:12px;color:#bfe3ea;font-weight:500}
+  nav.tabs{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+  nav.tabs button{background:rgba(255,255,255,.08);color:#eaf6f8;border:1px solid rgba(255,255,255,.14);padding:7px 14px;border-radius:8px;font-size:14px;font-weight:600;transition:background .12s}
+  nav.tabs button:hover{background:rgba(255,255,255,.18)}
+  nav.tabs button.active{background:#fff;color:var(--brand-d);border-color:#fff}
+  .tool-btn{background:rgba(255,255,255,.10);color:#eaf6f8;border:1px solid rgba(255,255,255,.16);padding:6px 11px;border-radius:8px;font-size:13px;font-weight:600}
+  .tool-btn:hover{background:rgba(255,255,255,.2)}
+  /* ---- Layout ---- */
+  main{max-width:1600px;margin:0 auto;padding:18px}
+  .view{display:none;animation:fade .18s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.view{animation:none}}
+  h2.section{font-size:20px;margin:0 0 4px}
+  .lead{color:var(--muted);margin:0 0 18px;font-size:14px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  /* ---- Hauptmenü ---- */
+  .hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:22px}
+  .hub-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);text-align:left;display:flex;flex-direction:column;gap:8px;transition:transform .12s,box-shadow .12s;width:100%}
+  .hub-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(15,31,41,.12)}
+  .hub-card .ic{font-size:26px;line-height:1}
+  .hub-card .t{font-size:17px;font-weight:700}
+  .hub-card .d{font-size:13px;color:var(--muted)}
+  .summary-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+  .summary-head h3{margin:0;font-size:15px}
+  /* ---- Belegung (Occupancy) ---- */
+  .occ-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .occ-grid.vertical{grid-template-columns:1fr}
+  .occ-room{border:1px solid var(--line);border-radius:9px;background:#f7fafb;overflow:hidden}
+  .occ-room .orh{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;background:#fff;border-bottom:2px solid var(--brand)}
+  .occ-room .orh .rn{font-weight:700;font-size:14px;color:var(--brand-d)}
+  .occ-room .orh .cnt{background:var(--brand);color:#fff;border-radius:20px;font-size:12px;font-weight:700;padding:2px 9px;min-width:22px;text-align:center}
+  .occ-list{list-style:none;margin:0;padding:7px 9px;display:flex;flex-direction:column;gap:6px}
+  .occ-list li{font-size:12.5px;line-height:1.3;display:flex;gap:7px;align-items:flex-start}
+  .occ-list li .od{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
+  .occ-list li .ot b{color:var(--ink);font-weight:700}
+  .occ-list li .ot .pr{color:var(--muted)}
+  .occ-empty{color:var(--muted);font-size:12.5px;padding:9px 11px;font-style:italic}
+  /* ---- Datum-Navigation ---- */
+  .datebar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  .datebar .navbtn{background:var(--panel);border:1px solid var(--line);border-radius:8px;width:38px;height:38px;font-size:18px;color:var(--brand);box-shadow:var(--shadow)}
+  .datebar .navbtn:hover{background:#f0f7f9}
+  .datebar .dlabel{font-size:17px;font-weight:700;min-width:230px}
+  .datebar .dlabel .wd{color:var(--brand);margin-right:8px}
+  .datebar input[type=date]{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit}
+  .datebar .today{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-weight:600;font-size:13px}
+  /* ---- Board: HORIZONTALE BAHNEN ---- */
+  .lanes{display:flex;flex-direction:column;gap:12px}
+  .lane{display:flex;background:#e3ecf0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;min-height:96px}
+  .lane-head{flex:0 0 132px;background:var(--panel);border-right:2px solid var(--brand);padding:12px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+  .lane-head .rname{font-weight:700;font-size:16px;color:var(--brand-d)}
+  .lane-head .badge{background:var(--brand);color:#fff;border-radius:20px;font-size:12px;font-weight:700;padding:2px 0;text-align:center;width:40px}
+  .lane-strip{flex:1;display:flex;gap:10px;padding:10px;overflow-x:auto;align-items:stretch}
+  .lane-strip.dragover{background:#d3e6ec;outline:2px dashed var(--brand-l);outline-offset:-4px}
+  .lane-empty{color:var(--muted);font-size:13px;display:flex;align-items:center;padding:0 8px;font-style:italic}
+  /* ---- Karte (mit kräftigem Status-Banner) ---- */
+  .card{flex:0 0 244px;max-width:244px;border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);overflow:hidden;cursor:grab;display:flex;flex-direction:column;background:#fff}
+  .card.dragging{opacity:.4;cursor:grabbing}
+  .card .banner{padding:6px 11px;font-size:12px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:6px;letter-spacing:.2px}
+  .card .banner .done-tag{background:rgba(255,255,255,.25);border-radius:12px;padding:1px 8px;font-size:11px}
+  .card .inner{padding:9px 12px 10px;flex:1}
+  .card .row1{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .card .pname{font-weight:700;font-size:15px;line-height:1.25}
+  .card .acts{display:flex;gap:3px;flex-shrink:0}
+  .card .iconbtn{background:#f1f5f7;border:1px solid var(--line);border-radius:6px;width:27px;height:27px;font-size:13px;color:var(--muted);line-height:1}
+  .card .iconbtn:hover{background:#e6eef1;color:var(--ink)}
+  .card .iconbtn.del:hover{background:#fde7e7;color:var(--danger);border-color:#f3c4c4}
+  .card .meta{font-size:12.5px;color:var(--muted);margin-top:6px;display:flex;flex-direction:column;gap:3px}
+  .card .meta b{color:var(--ink);font-weight:600}
+  .card .footer{border-top:1px solid var(--line);padding:8px 11px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fafcfd}
+  .card select.status{font-family:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:7px;padding:4px 6px;background:#fff;max-width:150px;flex:1;min-width:0}
+  .card .donebox{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
+  .card .donebox input{width:15px;height:15px;accent-color:var(--done-ink)}
+  .card.done{outline:2px solid var(--done-line)}
+  .card.done .footer{background:var(--done-bg)}
+  /* ---- Formular ---- */
+  .form-wrap{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,1fr);gap:18px}
+  @media(max-width:900px){.form-wrap{grid-template-columns:1fr}}
+  .panel h3{margin:0 0 14px;font-size:16px}
+  .fgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field.full{grid-column:1/-1}
+  .field label{font-size:12.5px;font-weight:600;color:var(--muted)}
+  .field label .req{color:var(--danger)}
+  .field input,.field select,.field textarea{font-family:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;width:100%}
+  .field textarea{resize:vertical;min-height:60px}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--brand-l);outline-offset:0;border-color:var(--brand-l)}
+  .form-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+  .btn-primary{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-weight:700;font-size:14px}
+  .btn-primary:hover{background:var(--brand-d)}
+  .btn-ghost{background:#fff;color:var(--brand-d);border:1px solid var(--line);border-radius:8px;padding:11px 18px;font-weight:600;font-size:14px}
+  .btn-ghost:hover{background:#f0f7f9}
+  .editbanner{background:#fff7e6;border:1px solid #f3dca0;color:#8a6400;border-radius:8px;padding:9px 13px;font-size:13px;margin-bottom:14px;font-weight:600}
+  /* ---- Kalender ---- */
+  .cal-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .cal-head .mlabel{font-size:18px;font-weight:700;min-width:190px;text-align:center}
+  .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+  .cal-dow{font-size:12px;font-weight:700;color:var(--muted);text-align:center;padding:4px 0;text-transform:uppercase;letter-spacing:.5px}
+  .cal-cell{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:8px;min-height:86px;padding:7px 8px;text-align:left;display:flex;flex-direction:column;gap:4px;transition:transform .1s;box-shadow:var(--shadow);cursor:pointer}
+  .cal-cell:hover{transform:translateY(-2px);border-color:var(--brand-l)}
+  .cal-cell:focus-visible{outline:2px solid var(--brand-l);outline-offset:2px}
+  .cal-cell.other{opacity:.45}
+  .cal-cell.today{border:2px solid var(--brand);box-shadow:0 0 0 2px rgba(14,90,107,.12)}
+  .cal-cell .dn{font-weight:700;font-size:14px}
+  .cal-cell .cc{font-size:11.5px;color:var(--muted)}
+  .cal-cell .dots{display:flex;gap:3px;margin-top:auto;flex-wrap:wrap}
+  .cal-cell .pdot{width:7px;height:7px;border-radius:50%;background:var(--brand-l)}
+  .cal-total{background:var(--brand);color:#fff;border-radius:20px;font-size:11px;font-weight:700;padding:1px 8px;align-self:flex-start}
+  .cal-plus{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:7px;border:1px solid var(--line);background:#f0f7f9;color:var(--brand);font-size:16px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+  .cal-plus:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+  /* ---- Toast / Hinweise ---- */
+  #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:10px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .demo-note{background:#fff;border:1px solid var(--line);border-left:4px solid var(--brand-l);border-radius:8px;padding:11px 15px;font-size:12.5px;color:var(--muted);margin-top:22px;box-shadow:var(--shadow)}
+  .demo-note b{color:var(--ink)}
+  .footer-tools{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .footer-tools button{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;color:var(--brand-d)}
+  .footer-tools button:hover{background:#f0f7f9}
+  .footer-tools button.danger{color:var(--danger)}
+  .footer-tools button.danger:hover{background:#fde7e7}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><h1>HKL-Tagesplan</h1><span class="sub">Digitales Katheterlabor-Management · Prototyp</span></div>
+    <nav class="tabs" id="tabs">
+      <button data-view="hub" class="active">Hauptmenü</button>
+      <button data-view="plan">Patient&nbsp;planen</button>
+      <button data-view="board">Aktueller&nbsp;Plan</button>
+      <button data-view="calendar">Kalender</button>
+    </nav>
+    <button class="tool-btn" id="toggleLabel" title="Beschriftung der Räume umschalten">HKL ⇄ Tisch</button>
+  </div>
+</header>
+
+<main>
+  <!-- ============ HAUPTMENÜ ============ -->
+  <section class="view active" id="view-hub">
+    <h2 class="section">Hauptmenü</h2>
+    <p class="lead">Zentraler Einstieg. Wählen Sie eine Aufgabe – alle Ansichten greifen ineinander.</p>
+    <div class="hub-grid">
+      <button class="hub-card" data-goto="plan"><span class="ic">➕</span><span class="t">Patient / Eingriff planen</span><span class="d">Neuen Fall erfassen: Name, Indikation, Untersuchung, Zugang, Raum und Tag.</span></button>
+      <button class="hub-card" data-goto="board"><span class="ic">🗂️</span><span class="t">Aktueller Katheterplan</span><span class="d">Tagesansicht: vier Räume als Bahnen, Status je Patient, Drag-and-Drop.</span></button>
+      <button class="hub-card" data-goto="calendar"><span class="ic">📅</span><span class="t">Kalender / Monatsübersicht</span><span class="d">Tage auswählen, Belegung sehen, direkt einen Fall einplanen.</span></button>
+    </div>
+    <div class="panel">
+      <div class="summary-head"><h3 id="hubSummaryTitle">Belegung heute</h3></div>
+      <div class="occ-grid" id="hubOcc"></div>
+    </div>
+  </section>
+
+  <!-- ============ PATIENT PLANEN ============ -->
+  <section class="view" id="view-plan">
+    <h2 class="section">Patient / Eingriff planen</h2>
+    <p class="lead">Fall erfassen und einem Raum sowie Tag zuordnen. Die Reihenfolge legen Sie später im Tagesplan per Drag-and-Drop fest.</p>
+    <div id="editBanner" class="editbanner" style="display:none"></div>
+    <div class="form-wrap">
+      <div class="panel">
+        <h3>Falldaten</h3>
+        <div class="fgrid">
+          <div class="field"><label>Nachname <span class="req">*</span></label><input id="f-nachname" placeholder="z. B. Mustermann" autocomplete="off"></div>
+          <div class="field"><label>Vorname</label><input id="f-vorname" placeholder="z. B. Max" autocomplete="off"></div>
+          <div class="field"><label>Anrede</label><select id="f-anrede"><option value="">—</option><option>Herr</option><option>Frau</option><option>Divers</option></select></div>
+          <div class="field"><label>Station</label><input id="f-station" placeholder="z. B. K3 / Intensiv" autocomplete="off"></div>
+          <div class="field full"><label>Untersucher</label><input id="f-untersucher" placeholder="z. B. Dr. Becker · Dr. Wagner (mehrere möglich)" autocomplete="off"></div>
+          <div class="field full"><label>Indikation</label><input id="f-indikation" placeholder="z. B. NSTEMI, instabile Angina pectoris, V. a. KHK" autocomplete="off"></div>
+          <div class="field full"><label>Untersuchung</label><textarea id="f-untersuchung" placeholder="z. B. Koronarangiographie mit ggf. PCI, EPU + Ablation, TAVI …"></textarea></div>
+          <div class="field full"><label>Zugang</label><textarea id="f-zugang" placeholder="z. B. Femoral links, radial rechts, beidseitig femoral …"></textarea></div>
+          <div class="field"><label>Raum <span class="req">*</span></label><select id="f-room"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+          <div class="field"><label>Tag <span class="req">*</span></label><input type="date" id="f-date"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" id="saveCase">Patient hinzufügen</button>
+          <button class="btn-ghost" id="cancelEdit" style="display:none">Bearbeitung abbrechen</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="summary-head"><h3 id="planSideTitle">Belegung am gewählten Tag</h3></div>
+        <div class="occ-grid vertical" id="planOcc"></div>
+        <div class="form-actions"><button class="btn-ghost" id="planToBoard">Zum Tagesplan →</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ AKTUELLER PLAN (BAHNEN) ============ -->
+  <section class="view" id="view-board">
+    <h2 class="section">Aktueller Katheterplan</h2>
+    <p class="lead">Räume als waagerechte Bahnen. Karten innerhalb einer Bahn sortieren oder in eine andere Bahn an die gewünschte Stelle ziehen.</p>
+    <div class="datebar">
+      <button class="navbtn" id="prevDay" title="Vorheriger Tag">‹</button>
+      <div class="dlabel" id="boardDateLabel"></div>
+      <button class="navbtn" id="nextDay" title="Nächster Tag">›</button>
+      <input type="date" id="boardDate">
+      <button class="today" id="boardToday">Heute</button>
+    </div>
+    <div class="lanes" id="lanes"></div>
+  </section>
+
+  <!-- ============ KALENDER ============ -->
+  <section class="view" id="view-calendar">
+    <h2 class="section">Kalender / Monatsübersicht</h2>
+    <p class="lead">Tag anklicken öffnet den Tagesplan. Mit <b>+</b> direkt einen Fall für diesen Tag einplanen. Zahl = geplante Patienten.</p>
+    <div class="cal-head">
+      <button class="navbtn" id="prevMonth">‹</button>
+      <div class="mlabel" id="calMonthLabel"></div>
+      <button class="navbtn" id="nextMonth">›</button>
+    </div>
+    <div class="calendar" id="calendar"></div>
+  </section>
+
+  <div class="demo-note">
+    <b>Demo-Modus.</b> Attrappe zur Veranschaulichung. Die Daten liegen ausschließlich in diesem Browser
+    (kein geteilter Stand zwischen mehreren PCs). Echter Mehrbenutzer-Betrieb erfordert einen Server mit Datenbank –
+    der Teil, den die IT umsetzt. Export/Import sichert Testdaten als Datei.
+    <div class="footer-tools">
+      <button id="exportBtn">Plan exportieren (Datei)</button>
+      <button id="importBtn">Plan importieren (Datei)</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+      <button id="demoBtn">Demo-Daten laden</button>
+      <button id="clearBtn" class="danger">Alle Daten löschen</button>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ===== 1) STATUS (Reihenfolge = Ablauf im HKL) ===== */
+const STATUSES=[
+  {key:"geplant",        label:"Geplant",                      color:"#64748b"},
+  {key:"station_an",     label:"Auf Station angekommen",       color:"#0891a8"},
+  {key:"aufgenommen",    label:"Fertig aufgenommen",           color:"#0e7490"},
+  {key:"abgerufen",      label:"Patient abgerufen",            color:"#7c3aed"},
+  {key:"vorbereitet",    label:"Patient vorbereitet",          color:"#b45309"},
+  {key:"im_bett",        label:"Angekommen / im Bett wartend", color:"#ca8a04"},
+  {key:"wird_aufgelegt", label:"Wird aufgelegt",               color:"#ea580c"},
+  {key:"auf_tisch",      label:"Auf dem Tisch",                color:"#2563eb"},
+  {key:"begonnen",       label:"Untersuchung begonnen",        color:"#1d4ed8"},
+  {key:"beendet",        label:"Untersuchung beendet",         color:"#15803d"},
+  {key:"ruecktransport", label:"Wartet auf Rücktransport",     color:"#16a34a"},
+  {key:"ueberwachung",   label:"Überwachungspflichtig",        color:"#dc2626"},
+  {key:"freigabe",       label:"Freigabe durch Untersucher",   color:"#166534"},
+];
+const STATUS_MAP=Object.fromEntries(STATUSES.map(s=>[s.key,s]));
+const ROOMS=[1,2,3,4];
+
+/* ===== 2) DATENHALTUNG (localStorage mit Fallback) ===== */
+const Store={
+  ok:(()=>{try{localStorage.setItem("__t","1");localStorage.removeItem("__t");return true;}catch(e){return false;}})(),
+  load(){if(!this.ok)return null;try{return JSON.parse(localStorage.getItem("hkl_plan")||"null");}catch(e){return null;}},
+  save(d){if(!this.ok)return;try{localStorage.setItem("hkl_plan",JSON.stringify(d));}catch(e){}}
+};
+let state={cases:[],settings:{roomLabel:"HKL"}};
+let ui={view:"hub",currentDate:isoToday(),calMonth:firstOfMonth(isoToday()),editingId:null};
+
+/* ===== 3) DATUM ===== */
+function isoToday(){return iso(new Date());}
+function iso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function parseIso(s){const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d);}
+function addDays(s,n){const d=parseIso(s);d.setDate(d.getDate()+n);return iso(d);}
+function firstOfMonth(s){const d=parseIso(s);return iso(new Date(d.getFullYear(),d.getMonth(),1));}
+const MONTHS=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+const WD=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+function displayDate(s){const d=parseIso(s);return d.getDate()+". "+MONTHS[d.getMonth()]+" "+d.getFullYear();}
+function weekday(s){return WD[parseIso(s).getDay()];}
+
+/* ===== 4) FALL-HILFEN ===== */
+function uid(){return "c"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function casesForRoom(date,room){return state.cases.filter(c=>c.date===date&&c.room===room).sort((a,b)=>a.position-b.position);}
+function countForDate(date){return state.cases.filter(c=>c.date===date).length;}
+function renumber(date,room){casesForRoom(date,room).forEach((c,i)=>c.position=i);}
+function roomName(n){return state.settings.roomLabel+" "+n;}
+function fullName(c){return (c.nachname||"")+(c.vorname?", "+c.vorname:"");}
+function persist(){Store.save(state);}
+function tint(hex,amt){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);const m=c=>Math.round(c+(255-c)*amt);return "rgb("+m(r)+","+m(g)+","+m(b)+")";}
+
+/* ===== 5) NAVIGATION ===== */
+function setView(v){
+  ui.view=v;
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
+  document.getElementById("view-"+v).classList.add("active");
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("active",b.dataset.view===v));
+  if(v==="hub")renderHub();
+  if(v==="plan"){ if(!ui.editingId) document.getElementById("f-date").value=ui.currentDate; renderPlanSide(); }
+  if(v==="board")renderBoard();
+  if(v==="calendar")renderCalendar();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ===== 6) BELEGUNG (Hub + Planung): Patienten + Eingriffe ===== */
+function renderOccupancy(container,date){
+  container.innerHTML="";
+  ROOMS.forEach(r=>{
+    const list=casesForRoom(date,r);
+    const box=document.createElement("div"); box.className="occ-room";
+    let html='<div class="orh"><span class="rn">'+roomName(r)+'</span><span class="cnt">'+list.length+'</span></div>';
+    if(list.length===0){ html+='<div class="occ-empty">frei</div>'; }
+    else{
+      html+='<ul class="occ-list">';
+      list.forEach(c=>{
+        const st=STATUS_MAP[c.status]||STATUSES[0];
+        html+='<li><span class="od" style="background:'+st.color+'"></span>'+
+              '<span class="ot"><b>'+escapeHtml(fullName(c))+'</b>'+
+              (c.untersuchung?' <span class="pr">– '+escapeHtml(c.untersuchung)+'</span>':'')+'</span></li>';
+      });
+      html+='</ul>';
+    }
+    box.innerHTML=html; container.appendChild(box);
+  });
+}
+function renderHub(){
+  document.getElementById("hubSummaryTitle").textContent="Belegung am "+weekday(ui.currentDate)+", "+displayDate(ui.currentDate);
+  renderOccupancy(document.getElementById("hubOcc"),ui.currentDate);
+}
+
+/* ===== 7) PATIENT PLANEN ===== */
+function resetForm(){
+  ui.editingId=null;
+  document.getElementById("editBanner").style.display="none";
+  document.getElementById("cancelEdit").style.display="none";
+  document.getElementById("saveCase").textContent="Patient hinzufügen";
+  ["f-nachname","f-vorname","f-station","f-untersucher","f-indikation","f-untersuchung","f-zugang"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("f-anrede").value="";
+  document.getElementById("f-room").value="1";
+  document.getElementById("f-date").value=ui.currentDate;
+}
+function loadIntoForm(c){
+  ui.editingId=c.id;
+  const b=document.getElementById("editBanner");
+  b.style.display="block"; b.textContent="Bearbeitung: "+(c.anrede?c.anrede+" ":"")+fullName(c);
+  document.getElementById("cancelEdit").style.display="inline-block";
+  document.getElementById("saveCase").textContent="Änderungen speichern";
+  document.getElementById("f-anrede").value=c.anrede||"";
+  document.getElementById("f-nachname").value=c.nachname||"";
+  document.getElementById("f-vorname").value=c.vorname||"";
+  document.getElementById("f-station").value=c.station||"";
+  document.getElementById("f-untersucher").value=c.untersucher||"";
+  document.getElementById("f-indikation").value=c.indikation||"";
+  document.getElementById("f-untersuchung").value=c.untersuchung||"";
+  document.getElementById("f-zugang").value=c.zugang||"";
+  document.getElementById("f-room").value=String(c.room);
+  document.getElementById("f-date").value=c.date;
+}
+function saveCase(){
+  const nachname=document.getElementById("f-nachname").value.trim();
+  if(!nachname){ toast("Bitte einen Nachnamen eingeben."); document.getElementById("f-nachname").focus(); return; }
+  const data={
+    anrede:document.getElementById("f-anrede").value,
+    nachname:nachname,
+    vorname:document.getElementById("f-vorname").value.trim(),
+    station:document.getElementById("f-station").value.trim(),
+    untersucher:document.getElementById("f-untersucher").value.trim(),
+    indikation:document.getElementById("f-indikation").value.trim(),
+    untersuchung:document.getElementById("f-untersuchung").value.trim(),
+    zugang:document.getElementById("f-zugang").value.trim(),
+    room:Number(document.getElementById("f-room").value),
+    date:document.getElementById("f-date").value
+  };
+  if(ui.editingId){
+    const c=state.cases.find(x=>x.id===ui.editingId);
+    const od=c.date,or=c.room;
+    Object.assign(c,data);
+    if(od!==c.date||or!==c.room){ c.position=casesForRoom(c.date,c.room).length-1; renumber(od,or); }
+    toast("Änderungen gespeichert.");
+  } else {
+    data.id=uid(); data.status="geplant"; data.done=false;
+    data.position=casesForRoom(data.date,data.room).length;
+    state.cases.push(data);
+    toast("Patient hinzugefügt – "+roomName(data.room)+".");
+  }
+  persist();
+  ui.currentDate=data.date;
+  const keepDate=data.date;
+  resetForm();
+  document.getElementById("f-date").value=keepDate;  /* auf demselben Tag weiterplanen */
+  renderPlanSide();
+}
+function renderPlanSide(){
+  const refDate=document.getElementById("f-date").value||ui.currentDate;
+  document.getElementById("planSideTitle").textContent="Belegung am "+displayDate(refDate);
+  renderOccupancy(document.getElementById("planOcc"),refDate);
+}
+
+/* ===== 8) TAGESPLAN / BAHNEN (Drag-and-Drop horizontal) ===== */
+function renderBoard(){
+  document.getElementById("boardDate").value=ui.currentDate;
+  document.getElementById("boardDateLabel").innerHTML='<span class="wd">'+weekday(ui.currentDate)+'</span>'+displayDate(ui.currentDate);
+  const lanes=document.getElementById("lanes"); lanes.innerHTML="";
+  ROOMS.forEach(r=>{
+    const list=casesForRoom(ui.currentDate,r);
+    const lane=document.createElement("div"); lane.className="lane";
+    lane.innerHTML='<div class="lane-head"><span class="rname">'+roomName(r)+'</span><span class="badge">'+list.length+'</span></div>';
+    const strip=document.createElement("div"); strip.className="lane-strip"; strip.dataset.room=String(r);
+    if(list.length===0){ const e=document.createElement("div"); e.className="lane-empty"; e.textContent="frei – Karte hierher ziehen oder Fall planen"; strip.appendChild(e); }
+    else list.forEach(c=>strip.appendChild(makeCard(c)));
+    attachDnD(strip);
+    lane.appendChild(strip); lanes.appendChild(lane);
+  });
+}
+function makeCard(c){
+  const st=STATUS_MAP[c.status]||STATUSES[0];
+  const card=document.createElement("div");
+  card.className="card"+(c.done?" done":""); card.draggable=true; card.dataset.id=c.id;
+  card.style.background=tint(st.color,0.9);            /* leichte Tönung je Status */
+  const nameLine=(c.anrede?c.anrede+" ":"")+escapeHtml(fullName(c));
+  let meta="";
+  if(c.station)     meta+='<span>Station: <b>'+escapeHtml(c.station)+'</b></span>';
+  if(c.indikation)  meta+='<span>Indikation: <b>'+escapeHtml(c.indikation)+'</b></span>';
+  if(c.untersuchung)meta+='<span>Untersuchung: <b>'+escapeHtml(c.untersuchung)+'</b></span>';
+  if(c.zugang)      meta+='<span>Zugang: <b>'+escapeHtml(c.zugang)+'</b></span>';
+  if(c.untersucher) meta+='<span>Untersucher: <b>'+escapeHtml(c.untersucher)+'</b></span>';
+  card.innerHTML=
+    '<div class="banner" style="background:'+st.color+'"><span>'+escapeHtml(st.label)+'</span>'+(c.done?'<span class="done-tag">✓ Fertig</span>':'')+'</div>'+
+    '<div class="inner">'+
+      '<div class="row1"><div class="pname">'+nameLine+'</div>'+
+        '<div class="acts"><button class="iconbtn edit" title="Bearbeiten">✎</button><button class="iconbtn del" title="Entfernen">✕</button></div>'+
+      '</div><div class="meta">'+meta+'</div>'+
+    '</div>'+
+    '<div class="footer"><select class="status" title="Status ändern"></select>'+
+      '<label class="donebox"><input type="checkbox" '+(c.done?"checked":"")+'> Fertig</label></div>';
+  const sel=card.querySelector("select.status");
+  STATUSES.forEach(s=>{const o=document.createElement("option");o.value=s.key;o.textContent=s.label;sel.appendChild(o);});
+  sel.value=c.status;
+  sel.addEventListener("change",e=>{c.status=e.target.value;persist();renderBoard();});
+  sel.addEventListener("mousedown",e=>e.stopPropagation());
+  card.querySelector(".donebox input").addEventListener("change",e=>{c.done=e.target.checked;persist();renderBoard();});
+  card.querySelector(".donebox").addEventListener("mousedown",e=>e.stopPropagation());
+  card.querySelector(".edit").addEventListener("click",e=>{e.stopPropagation();loadIntoForm(c);setView("plan");});
+  card.querySelector(".del").addEventListener("click",e=>{e.stopPropagation();if(confirm("Diesen Patienten aus dem Plan entfernen?")){const d=c.date,r=c.room;state.cases=state.cases.filter(x=>x.id!==c.id);renumber(d,r);persist();renderBoard();toast("Patient entfernt.");}});
+  card.addEventListener("dragstart",e=>{card.classList.add("dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",c.id);});
+  card.addEventListener("dragend",()=>{card.classList.remove("dragging");document.querySelectorAll(".lane-strip").forEach(s=>s.classList.remove("dragover"));renderBoard();});
+  return card;
+}
+function attachDnD(strip){
+  strip.addEventListener("dragover",e=>{
+    e.preventDefault(); strip.classList.add("dragover");
+    const dragging=document.querySelector(".card.dragging"); if(!dragging)return;
+    const empty=strip.querySelector(".lane-empty"); if(empty)empty.remove();
+    const after=getDragAfterElementX(strip,e.clientX);
+    if(after==null)strip.appendChild(dragging); else strip.insertBefore(dragging,after);
+  });
+  strip.addEventListener("dragleave",e=>{if(!strip.contains(e.relatedTarget))strip.classList.remove("dragover");});
+  strip.addEventListener("drop",e=>{
+    e.preventDefault(); strip.classList.remove("dragover");
+    const id=e.dataTransfer.getData("text/plain"); const c=state.cases.find(x=>x.id===id); if(!c)return;
+    const od=c.date,or=c.room, nr=Number(strip.dataset.room);
+    const order=[...strip.querySelectorAll(".card")].map(el=>el.dataset.id);
+    order.forEach((cid,i)=>{const cc=state.cases.find(x=>x.id===cid);if(cc){cc.room=nr;cc.date=ui.currentDate;cc.position=i;}});
+    if(or!==nr||od!==ui.currentDate)renumber(od,or);
+    persist(); renderBoard();
+  });
+}
+function getDragAfterElementX(container,x){
+  const els=[...container.querySelectorAll(".card:not(.dragging)")];
+  let closest={offset:-Infinity,element:null};
+  els.forEach(child=>{const box=child.getBoundingClientRect();const offset=x-box.left-box.width/2;if(offset<0&&offset>closest.offset)closest={offset,element:child};});
+  return closest.element;
+}
+
+/* ===== 9) KALENDER (mit Plus → Planung) ===== */
+function renderCalendar(){
+  const first=parseIso(ui.calMonth);
+  document.getElementById("calMonthLabel").textContent=MONTHS[first.getMonth()]+" "+first.getFullYear();
+  const cal=document.getElementById("calendar"); cal.innerHTML="";
+  ["Mo","Di","Mi","Do","Fr","Sa","So"].forEach(d=>{const h=document.createElement("div");h.className="cal-dow";h.textContent=d;cal.appendChild(h);});
+  const startOffset=(first.getDay()+6)%7;
+  const gridStart=new Date(first); gridStart.setDate(first.getDate()-startOffset);
+  const todayIso=isoToday();
+  for(let i=0;i<42;i++){
+    const d=new Date(gridStart); d.setDate(gridStart.getDate()+i);
+    const dIso=iso(d), inMonth=d.getMonth()===first.getMonth(), total=countForDate(dIso);
+    const cell=document.createElement("div");
+    cell.className="cal-cell"+(inMonth?"":" other")+(dIso===todayIso?" today":"");
+    cell.tabIndex=0;
+    let dots=""; for(let k=0;k<Math.min(total,8);k++)dots+='<span class="pdot"></span>';
+    cell.innerHTML='<button class="cal-plus" title="Für diesen Tag einplanen">+</button>'+
+      '<div class="dn">'+d.getDate()+'</div>'+
+      (total>0?'<span class="cal-total">'+total+' Pat.</span>':'<div class="cc">frei</div>')+
+      '<div class="dots">'+dots+'</div>';
+    cell.addEventListener("click",()=>{ui.currentDate=dIso;setView("board");});
+    cell.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();ui.currentDate=dIso;setView("board");}});
+    cell.querySelector(".cal-plus").addEventListener("click",e=>{e.stopPropagation();ui.currentDate=dIso;resetForm();document.getElementById("f-date").value=dIso;setView("plan");toast("Planung für "+displayDate(dIso));});
+    cal.appendChild(cell);
+  }
+}
+
+/* ===== 10) WERKZEUGE ===== */
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob); const a=document.createElement("a");
+  a.href=url; a.download="HKL-Tagesplan_"+isoToday()+".json"; a.click(); URL.revokeObjectURL(url); toast("Plan exportiert.");
+}
+function importData(file){
+  const reader=new FileReader();
+  reader.onload=()=>{try{const obj=JSON.parse(reader.result);if(!obj||!Array.isArray(obj.cases))throw 0;state=obj;if(!state.settings)state.settings={roomLabel:"HKL"};migrate();persist();refreshAll();toast("Plan importiert.");}catch(e){toast("Datei konnte nicht gelesen werden.");}};
+  reader.readAsText(file);
+}
+function migrate(){ /* Altdaten mit Einzel-Feld "name" auf nachname/vorname heben */
+  state.cases.forEach(c=>{ if(c.name&&!c.nachname){ const p=c.name.split(",");c.nachname=(p[0]||"").trim();c.vorname=(p[1]||"").trim(); delete c.name; } if(!c.status)c.status="geplant"; if(c.done===undefined)c.done=false; });
+}
+function loadDemo(){
+  const t=isoToday(),t1=addDays(t,1),t2=addDays(t,2);
+  state.cases=[
+    mk(t,1,0,"Herr","Albrecht","Johann","K3","NSTEMI","Koronarangiographie + ggf. PCI","Radial rechts","Dr. Becker · Dr. Klein","begonnen",false),
+    mk(t,1,1,"Frau","Sommer","Karin","K4","Stabile AP","Koronarangiographie","Femoral rechts","Dr. Becker","vorbereitet",false),
+    mk(t,1,2,"Herr","Vogt","Heinz","Intensiv","Kardiogener Schock","Akut-PCI","Femoral links","Dr. Becker","geplant",false),
+    mk(t,2,0,"Frau","Lehmann","Petra","K3","Bradykardie","Schrittmacher-Implantation","Subklavia links","Dr. Wagner","auf_tisch",false),
+    mk(t,2,1,"Herr","Roth","Klaus","K5","VHF, Z. n. Ablation","EPU + Re-Ablation","Femoral beidseitig","Dr. Wagner · Dr. Süß","geplant",false),
+    mk(t,3,0,"Herr","Krämer","Otto","K4","Hochgradige AS","TAVI","Femoral rechts","Dr. Gradaus · Dr. Lang","aufgenommen",false),
+    mk(t,3,1,"Frau","Busch","Marie","K3","V. a. KHK","Koronarangiographie","Radial links","Dr. Gradaus","beendet",true),
+    mk(t,4,0,"Frau","Engel","Lisa","K5","ICD-Aggregatwechsel","ICD-Wechsel","Pectoral links","Dr. Wagner","ueberwachung",false),
+    mk(t1,1,0,"Herr","Pohl","Werner","K3","Stabile AP","Koronarangiographie","Radial rechts","Dr. Becker","geplant",false),
+    mk(t1,1,1,"Frau","Schulz","Anna","K4","NSTEMI","PCI","Femoral rechts","Dr. Becker","geplant",false),
+    mk(t1,2,0,"Herr","Berg","Rolf","K5","VHF","Kryoablation","Femoral beidseitig","Dr. Wagner","geplant",false),
+    mk(t2,3,0,"Frau","Huber","Eva","K3","Hochgradige AS","TAVI","Femoral rechts","Dr. Gradaus","geplant",false),
+  ];
+  persist(); refreshAll(); toast("Demo-Daten geladen.");
+}
+function mk(date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher,status,done){
+  return {id:uid(),date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher,status,done};
+}
+function clearAll(){ if(confirm("Wirklich ALLE Patienten/Pläne löschen? (nur lokal in diesem Browser)")){state.cases=[];persist();refreshAll();toast("Alle Daten gelöscht.");} }
+
+/* ===== 11) HILFEN + INIT ===== */
+function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+let toastTimer=null;
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2200);}
+function refreshAll(){if(ui.view==="hub")renderHub();if(ui.view==="plan")renderPlanSide();if(ui.view==="board")renderBoard();if(ui.view==="calendar")renderCalendar();}
+function init(){
+  const saved=Store.load();
+  if(saved&&Array.isArray(saved.cases)){state=saved;if(!state.settings)state.settings={roomLabel:"HKL"};migrate();}
+  else loadDemo();
+  document.getElementById("f-date").value=ui.currentDate;
+  document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.view)));
+  document.querySelectorAll(".hub-card").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.goto)));
+  document.getElementById("toggleLabel").addEventListener("click",()=>{state.settings.roomLabel=state.settings.roomLabel==="HKL"?"Tisch":"HKL";persist();refreshAll();toast("Beschriftung: "+state.settings.roomLabel+" 1–4");});
+  document.getElementById("saveCase").addEventListener("click",saveCase);
+  document.getElementById("cancelEdit").addEventListener("click",()=>{resetForm();renderPlanSide();});
+  document.getElementById("f-date").addEventListener("change",renderPlanSide);
+  document.getElementById("planToBoard").addEventListener("click",()=>{ui.currentDate=document.getElementById("f-date").value||ui.currentDate;setView("board");});
+  document.getElementById("prevDay").addEventListener("click",()=>{ui.currentDate=addDays(ui.currentDate,-1);renderBoard();});
+  document.getElementById("nextDay").addEventListener("click",()=>{ui.currentDate=addDays(ui.currentDate,1);renderBoard();});
+  document.getElementById("boardToday").addEventListener("click",()=>{ui.currentDate=isoToday();renderBoard();});
+  document.getElementById("boardDate").addEventListener("change",e=>{ui.currentDate=e.target.value;renderBoard();});
+  document.getElementById("prevMonth").addEventListener("click",()=>{const d=parseIso(ui.calMonth);ui.calMonth=iso(new Date(d.getFullYear(),d.getMonth()-1,1));renderCalendar();});
+  document.getElementById("nextMonth").addEventListener("click",()=>{const d=parseIso(ui.calMonth);ui.calMonth=iso(new Date(d.getFullYear(),d.getMonth()+1,1));renderCalendar();});
+  document.getElementById("exportBtn").addEventListener("click",exportData);
+  document.getElementById("importBtn").addEventListener("click",()=>document.getElementById("importFile").click());
+  document.getElementById("importFile").addEventListener("change",e=>{if(e.target.files[0])importData(e.target.files[0]);e.target.value="";});
+  document.getElementById("demoBtn").addEventListener("click",loadDemo);
+  document.getElementById("clearBtn").addEventListener("click",clearAll);
+  setView("hub");
+}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
