@@ -1,41 +1,57 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HKL-Tagesplan – Digitales Katheterlabor-Management (Prototyp)</title>
 <style>
   /* ============================================================
-     HKL-Tagesplan – Prototyp / Working Dummy  (v2)
-     Eigenständige Datei, keine externen Abhängigkeiten.
-     Datenhaltung nur in diesem Browser (Demo). Geteilter
-     Mehr-PC-Betrieb erfordert einen Server mit Datenbank (IT).
+     HKL-Tagesplan – Prototyp / Working Dummy  (v4)
+     Dunkelmodus Standard. Eigenständige Datei, keine Abhängigkeiten.
+     Daten nur in diesem Browser (Demo). Geteilter Mehr-PC-Betrieb
+     + echte Rollen-Rechte erfordern einen Server mit Datenbank (IT).
      ============================================================ */
   :root{
-    --surface:#eef2f5; --panel:#ffffff; --ink:#0f1f29; --muted:#5b7180;
-    --line:#dbe4ea; --brand:#0e5a6b; --brand-d:#0a3f4b; --brand-l:#0891a8;
-    --danger:#b91c1c; --done-bg:#e7f6ec; --done-line:#bfe6cb; --done-ink:#15803d;
+    --surface:#0b171d; --surface-2:#102129; --panel:#15282f; --panel-2:#1b333d;
+    --input-bg:#0e1f27; --ink:#e7eff3; --muted:#8ea7b2; --line:#284752;
+    --brand:#19b0c7; --brand-d:#0f8195; --brand-l:#3fd0e6; --accent-day:#22c1d6;
+    --danger:#ff5d5d; --crit:#ff4d4f; --crit-bg:#3a1416; --crit-line:#7a2326;
+    --done-bg:#10301f; --done-line:#1f6b40; --done-ink:#36d399;
+    --cancel:#e06b3a; --cancel-bg:#33201a;
+    --header-bg:linear-gradient(180deg,#162c35,#0f2026); --header-ink:#e3eef2; --header-sub:#7f9aa6;
+    --tab-active-fg:#06222a;
+    --shadow:0 1px 2px rgba(0,0,0,.45),0 6px 18px rgba(0,0,0,.40);
+    --tint-amt:0.86; --radius:10px; color-scheme:dark;
+  }
+  html[data-theme="light"]{
+    --surface:#eef2f5; --surface-2:#e3ecf0; --panel:#ffffff; --panel-2:#f4f8fa;
+    --input-bg:#ffffff; --ink:#0f1f29; --muted:#5b7180; --line:#dbe4ea;
+    --brand:#0e5a6b; --brand-d:#0a3f4b; --brand-l:#0891a8; --accent-day:#0e5a6b;
+    --danger:#b91c1c; --crit:#dc2626; --crit-bg:#fde7e7; --crit-line:#f3c4c4;
+    --done-bg:#e7f6ec; --done-line:#bfe6cb; --done-ink:#15803d;
+    --cancel:#c2410c; --cancel-bg:#fbe9df;
+    --header-bg:linear-gradient(180deg,#0e5a6b,#0a3f4b); --header-ink:#ffffff; --header-sub:#bfe3ea;
     --shadow:0 1px 2px rgba(15,31,41,.06),0 4px 12px rgba(15,31,41,.06);
-    --radius:10px;
+    color-scheme:light;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
-  body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
-    background:var(--surface);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;background:var(--surface);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
   button{font-family:inherit;cursor:pointer}
-  /* ---- Kopfleiste ---- */
-  header.topbar{background:linear-gradient(180deg,var(--brand),var(--brand-d));color:#fff;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(10,63,75,.25)}
-  .topbar-inner{max-width:1600px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  header.topbar{background:var(--header-bg);color:var(--header-ink);position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.35);border-bottom:1px solid var(--line)}
+  .topbar-inner{max-width:1600px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .brand{display:flex;align-items:baseline;gap:10px}
-  .brand h1{font-size:18px;font-weight:700;margin:0;letter-spacing:.2px}
-  .brand .sub{font-size:12px;color:#bfe3ea;font-weight:500}
+  .brand h1{font-size:18px;font-weight:800;margin:0;letter-spacing:.3px;color:var(--header-ink)}
+  .brand .sub{font-size:12px;color:var(--header-sub);font-weight:500}
+  .role-badge{display:none;background:var(--cancel);color:#fff;font-size:11px;font-weight:800;letter-spacing:.4px;padding:3px 9px;border-radius:20px;text-transform:uppercase}
+  body.role-station .role-badge{display:inline-block}
   nav.tabs{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
-  nav.tabs button{background:rgba(255,255,255,.08);color:#eaf6f8;border:1px solid rgba(255,255,255,.14);padding:7px 14px;border-radius:8px;font-size:14px;font-weight:600;transition:background .12s}
-  nav.tabs button:hover{background:rgba(255,255,255,.18)}
-  nav.tabs button.active{background:#fff;color:var(--brand-d);border-color:#fff}
-  .tool-btn{background:rgba(255,255,255,.10);color:#eaf6f8;border:1px solid rgba(255,255,255,.16);padding:6px 11px;border-radius:8px;font-size:13px;font-weight:600}
-  .tool-btn:hover{background:rgba(255,255,255,.2)}
-  /* ---- Layout ---- */
+  nav.tabs button{background:rgba(255,255,255,.08);color:var(--header-ink);border:1px solid rgba(255,255,255,.14);padding:7px 13px;border-radius:8px;font-size:14px;font-weight:600;transition:background .12s}
+  nav.tabs button:hover{background:rgba(255,255,255,.16)}
+  nav.tabs button.active{background:var(--brand);color:var(--tab-active-fg);border-color:var(--brand);font-weight:700}
+  .tool-btn{background:rgba(255,255,255,.08);color:var(--header-ink);border:1px solid rgba(255,255,255,.16);padding:6px 11px;border-radius:8px;font-size:13px;font-weight:600}
+  .tool-btn:hover{background:rgba(255,255,255,.18)}
+  .tool-btn.role{background:var(--brand);color:var(--tab-active-fg);border-color:var(--brand);font-weight:700}
   main{max-width:1600px;margin:0 auto;padding:18px}
   .view{display:none;animation:fade .18s ease}
   .view.active{display:block}
@@ -44,66 +60,81 @@
   h2.section{font-size:20px;margin:0 0 4px}
   .lead{color:var(--muted);margin:0 0 18px;font-size:14px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
-  /* ---- Hauptmenü ---- */
-  .hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:22px}
-  .hub-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);text-align:left;display:flex;flex-direction:column;gap:8px;transition:transform .12s,box-shadow .12s;width:100%}
-  .hub-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(15,31,41,.12)}
+  /* Tages-Indikator */
+  .daybanner{display:flex;align-items:center;gap:16px;background:var(--panel);border:1px solid var(--line);border-left:7px solid var(--accent-day);border-radius:12px;padding:14px 20px;margin-bottom:18px;box-shadow:var(--shadow);flex-wrap:wrap}
+  .daybanner .navbtn{background:var(--panel-2);border:1px solid var(--line);border-radius:9px;width:42px;height:42px;font-size:22px;color:var(--brand);box-shadow:var(--shadow)}
+  .daybanner .navbtn:hover{background:var(--brand);color:#06222a;border-color:var(--brand)}
+  .daybanner .dbtext{flex:1;min-width:200px}
+  .daybanner .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:800;margin-bottom:2px}
+  .daybanner .big{font-size:28px;font-weight:800;color:var(--accent-day);line-height:1.05}
+  .daybanner .big .wd{text-transform:uppercase;margin-right:8px}
+  .daybanner .db-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .daybanner input[type=date]{border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:14px;font-family:inherit;background:var(--input-bg);color:var(--ink)}
+  .daybanner .today{background:var(--brand);color:#06222a;border:none;border-radius:8px;padding:10px 16px;font-weight:700;font-size:13px}
+  .daybanner.plan-day{border-left-color:var(--brand)}
+  /* Hub */
+  .hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:22px}
+  .hub-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);text-align:left;display:flex;flex-direction:column;gap:8px;transition:transform .12s,box-shadow .12s;width:100%;color:var(--ink)}
+  .hub-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.4);border-color:var(--brand-d)}
   .hub-card .ic{font-size:26px;line-height:1}
   .hub-card .t{font-size:17px;font-weight:700}
   .hub-card .d{font-size:13px;color:var(--muted)}
   .summary-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
   .summary-head h3{margin:0;font-size:15px}
-  /* ---- Belegung (Occupancy) ---- */
+  /* Belegung */
   .occ-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
   .occ-grid.vertical{grid-template-columns:1fr}
-  .occ-room{border:1px solid var(--line);border-radius:9px;background:#f7fafb;overflow:hidden}
-  .occ-room .orh{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;background:#fff;border-bottom:2px solid var(--brand)}
-  .occ-room .orh .rn{font-weight:700;font-size:14px;color:var(--brand-d)}
-  .occ-room .orh .cnt{background:var(--brand);color:#fff;border-radius:20px;font-size:12px;font-weight:700;padding:2px 9px;min-width:22px;text-align:center}
+  .occ-room{border:1px solid var(--line);border-radius:9px;background:var(--surface-2);overflow:hidden}
+  .occ-room .orh{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;background:var(--panel);border-bottom:2px solid var(--brand)}
+  .occ-room .orh .rn{font-weight:700;font-size:14px;color:var(--brand-l)}
+  .occ-room .orh .cnt{background:var(--brand);color:#06222a;border-radius:20px;font-size:12px;font-weight:800;padding:2px 9px;min-width:22px;text-align:center}
   .occ-list{list-style:none;margin:0;padding:7px 9px;display:flex;flex-direction:column;gap:6px}
   .occ-list li{font-size:12.5px;line-height:1.3;display:flex;gap:7px;align-items:flex-start}
   .occ-list li .od{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
   .occ-list li .ot b{color:var(--ink);font-weight:700}
   .occ-list li .ot .pr{color:var(--muted)}
+  .occ-list li .crit{color:var(--crit);font-weight:800;margin-right:2px}
   .occ-empty{color:var(--muted);font-size:12.5px;padding:9px 11px;font-style:italic}
-  /* ---- Datum-Navigation ---- */
-  .datebar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-  .datebar .navbtn{background:var(--panel);border:1px solid var(--line);border-radius:8px;width:38px;height:38px;font-size:18px;color:var(--brand);box-shadow:var(--shadow)}
-  .datebar .navbtn:hover{background:#f0f7f9}
-  .datebar .dlabel{font-size:17px;font-weight:700;min-width:230px}
-  .datebar .dlabel .wd{color:var(--brand);margin-right:8px}
-  .datebar input[type=date]{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit}
-  .datebar .today{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-weight:600;font-size:13px}
-  /* ---- Board: HORIZONTALE BAHNEN ---- */
+  /* Bahnen */
   .lanes{display:flex;flex-direction:column;gap:12px}
-  .lane{display:flex;background:#e3ecf0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;min-height:96px}
-  .lane-head{flex:0 0 132px;background:var(--panel);border-right:2px solid var(--brand);padding:12px;display:flex;flex-direction:column;justify-content:center;gap:8px}
-  .lane-head .rname{font-weight:700;font-size:16px;color:var(--brand-d)}
-  .lane-head .badge{background:var(--brand);color:#fff;border-radius:20px;font-size:12px;font-weight:700;padding:2px 0;text-align:center;width:40px}
+  .lane{display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;min-height:96px}
+  .lane-head{flex:0 0 150px;background:var(--panel);border-right:2px solid var(--brand);padding:12px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+  .lane-head .rname{font-weight:800;font-size:16px;color:var(--brand-l);line-height:1.15}
+  .lane-head .badge{background:var(--brand);color:#06222a;border-radius:20px;font-size:12px;font-weight:800;padding:2px 0;text-align:center;width:44px}
   .lane-strip{flex:1;display:flex;gap:10px;padding:10px;overflow-x:auto;align-items:stretch}
-  .lane-strip.dragover{background:#d3e6ec;outline:2px dashed var(--brand-l);outline-offset:-4px}
-  .lane-empty{color:var(--muted);font-size:13px;display:flex;align-items:center;padding:0 8px;font-style:italic}
-  /* ---- Karte (mit kräftigem Status-Banner) ---- */
-  .card{flex:0 0 244px;max-width:244px;border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);overflow:hidden;cursor:grab;display:flex;flex-direction:column;background:#fff}
+  .lane-strip.dragover{background:rgba(25,176,199,.14);outline:2px dashed var(--brand-l);outline-offset:-4px}
+  .lane-empty{color:var(--muted);font-size:13px;display:flex;align-items:center;padding:0 8px;font-style:italic;white-space:nowrap}
+  .addcard{flex:0 0 130px;align-self:stretch;border:2px dashed var(--line);border-radius:9px;background:transparent;color:var(--brand);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px;min-height:80px}
+  .addcard:hover{border-color:var(--brand);background:rgba(25,176,199,.10);color:var(--brand-l)}
+  /* Karte */
+  .card{flex:0 0 248px;max-width:248px;border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);overflow:hidden;cursor:grab;display:flex;flex-direction:column}
+  .card.nodrag{cursor:default}
   .card.dragging{opacity:.4;cursor:grabbing}
+  .card.critical{outline:2px solid var(--crit);box-shadow:0 0 0 3px rgba(255,77,79,.20),var(--shadow)}
   .card .banner{padding:6px 11px;font-size:12px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:6px;letter-spacing:.2px}
+  .card .banner .tags{display:flex;gap:5px;flex-shrink:0}
+  .card .banner .crit-tag{background:var(--crit);color:#fff;border-radius:12px;padding:1px 8px;font-size:11px;font-weight:800;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
   .card .banner .done-tag{background:rgba(255,255,255,.25);border-radius:12px;padding:1px 8px;font-size:11px}
   .card .inner{padding:9px 12px 10px;flex:1}
   .card .row1{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-  .card .pname{font-weight:700;font-size:15px;line-height:1.25}
+  .card .pname{font-weight:700;font-size:15px;line-height:1.25;color:var(--ink)}
   .card .acts{display:flex;gap:3px;flex-shrink:0}
-  .card .iconbtn{background:#f1f5f7;border:1px solid var(--line);border-radius:6px;width:27px;height:27px;font-size:13px;color:var(--muted);line-height:1}
-  .card .iconbtn:hover{background:#e6eef1;color:var(--ink)}
-  .card .iconbtn.del:hover{background:#fde7e7;color:var(--danger);border-color:#f3c4c4}
+  .card .iconbtn{background:var(--panel-2);border:1px solid var(--line);border-radius:6px;width:27px;height:27px;font-size:13px;color:var(--muted);line-height:1}
+  .card .iconbtn:hover{background:var(--brand);color:#06222a;border-color:var(--brand)}
+  .card .iconbtn.del:hover{background:var(--crit);color:#fff;border-color:var(--crit)}
+  .card .iconbtn.cancel:hover{background:var(--cancel);color:#fff;border-color:var(--cancel)}
   .card .meta{font-size:12.5px;color:var(--muted);margin-top:6px;display:flex;flex-direction:column;gap:3px}
   .card .meta b{color:var(--ink);font-weight:600}
-  .card .footer{border-top:1px solid var(--line);padding:8px 11px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fafcfd}
-  .card select.status{font-family:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:7px;padding:4px 6px;background:#fff;max-width:150px;flex:1;min-width:0}
+  .card .meta .stcrit b{color:var(--crit)}
+  .card .footer{border-top:1px solid var(--line);padding:8px 11px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--panel-2)}
+  .card select.status{font-family:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:7px;padding:4px 6px;background:var(--input-bg);color:var(--ink);max-width:160px;flex:1;min-width:0}
+  .card .statictstatus{font-size:12px;font-weight:700;color:var(--muted)}
   .card .donebox{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
   .card .donebox input{width:15px;height:15px;accent-color:var(--done-ink)}
   .card.done{outline:2px solid var(--done-line)}
+  .card.done.critical{outline:2px solid var(--crit)}
   .card.done .footer{background:var(--done-bg)}
-  /* ---- Formular ---- */
+  /* Formular */
   .form-wrap{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,1fr);gap:18px}
   @media(max-width:900px){.form-wrap{grid-template-columns:1fr}}
   .panel h3{margin:0 0 14px;font-size:16px}
@@ -112,79 +143,113 @@
   .field.full{grid-column:1/-1}
   .field label{font-size:12.5px;font-weight:600;color:var(--muted)}
   .field label .req{color:var(--danger)}
-  .field input,.field select,.field textarea{font-family:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff;width:100%}
+  .field input,.field select,.field textarea{font-family:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:var(--input-bg);color:var(--ink);width:100%}
   .field textarea{resize:vertical;min-height:60px}
+  .field input::placeholder,.field textarea::placeholder{color:var(--muted);opacity:.7}
   .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--brand-l);outline-offset:0;border-color:var(--brand-l)}
   .form-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
-  .btn-primary{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-weight:700;font-size:14px}
-  .btn-primary:hover{background:var(--brand-d)}
-  .btn-ghost{background:#fff;color:var(--brand-d);border:1px solid var(--line);border-radius:8px;padding:11px 18px;font-weight:600;font-size:14px}
-  .btn-ghost:hover{background:#f0f7f9}
-  .editbanner{background:#fff7e6;border:1px solid #f3dca0;color:#8a6400;border-radius:8px;padding:9px 13px;font-size:13px;margin-bottom:14px;font-weight:600}
-  /* ---- Kalender ---- */
+  .btn-primary{background:var(--brand);color:#06222a;border:none;border-radius:8px;padding:11px 20px;font-weight:800;font-size:14px}
+  .btn-primary:hover{background:var(--brand-l)}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed}
+  .btn-ghost{background:var(--panel-2);color:var(--brand-l);border:1px solid var(--line);border-radius:8px;padding:11px 18px;font-weight:600;font-size:14px}
+  .btn-ghost:hover{background:var(--brand);color:#06222a;border-color:var(--brand)}
+  .editbanner{background:var(--crit-bg);border:1px solid var(--crit-line);color:var(--ink);border-radius:8px;padding:9px 13px;font-size:13px;margin-bottom:14px;font-weight:600}
+  /* Kalender */
   .cal-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .cal-head .navbtn{background:var(--panel);border:1px solid var(--line);border-radius:8px;width:38px;height:38px;font-size:18px;color:var(--brand);box-shadow:var(--shadow)}
+  .cal-head .navbtn:hover{background:var(--brand);color:#06222a}
   .cal-head .mlabel{font-size:18px;font-weight:700;min-width:190px;text-align:center}
   .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
   .cal-dow{font-size:12px;font-weight:700;color:var(--muted);text-align:center;padding:4px 0;text-transform:uppercase;letter-spacing:.5px}
-  .cal-cell{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:8px;min-height:86px;padding:7px 8px;text-align:left;display:flex;flex-direction:column;gap:4px;transition:transform .1s;box-shadow:var(--shadow);cursor:pointer}
+  .cal-cell{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:8px;min-height:92px;padding:7px 8px;text-align:left;display:flex;flex-direction:column;gap:4px;transition:transform .1s;box-shadow:var(--shadow);cursor:pointer;color:var(--ink)}
   .cal-cell:hover{transform:translateY(-2px);border-color:var(--brand-l)}
   .cal-cell:focus-visible{outline:2px solid var(--brand-l);outline-offset:2px}
-  .cal-cell.other{opacity:.45}
-  .cal-cell.today{border:2px solid var(--brand);box-shadow:0 0 0 2px rgba(14,90,107,.12)}
-  .cal-cell .dn{font-weight:700;font-size:14px}
+  .cal-cell.other{opacity:.4}
+  .cal-cell.today{border:2px solid var(--accent-day);box-shadow:0 0 0 2px rgba(34,193,214,.18)}
+  .cal-cell .dn{font-weight:700;font-size:15px}
   .cal-cell .cc{font-size:11.5px;color:var(--muted)}
   .cal-cell .dots{display:flex;gap:3px;margin-top:auto;flex-wrap:wrap}
   .cal-cell .pdot{width:7px;height:7px;border-radius:50%;background:var(--brand-l)}
-  .cal-total{background:var(--brand);color:#fff;border-radius:20px;font-size:11px;font-weight:700;padding:1px 8px;align-self:flex-start}
-  .cal-plus{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:7px;border:1px solid var(--line);background:#f0f7f9;color:var(--brand);font-size:16px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
-  .cal-plus:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
-  /* ---- Toast / Hinweise ---- */
-  #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:10px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+  .cal-cell .pdot.crit{background:var(--crit)}
+  .cal-total{background:var(--brand);color:#06222a;border-radius:20px;font-size:11px;font-weight:800;padding:1px 8px;align-self:flex-start}
+  .cal-plus{position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:8px;border:1px solid var(--brand-d);background:var(--brand);color:#06222a;font-size:19px;font-weight:800;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+  .cal-plus:hover{background:var(--brand-l);transform:scale(1.08)}
+  /* Absagen */
+  .cx-day{margin-bottom:16px}
+  .cx-day h3{margin:0 0 8px;font-size:15px;color:var(--brand-l)}
+  .cx-card{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--cancel);border-radius:9px;padding:12px 14px;margin-bottom:8px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .cx-card .cxn{font-weight:700}
+  .cx-card .cxm{font-size:12.5px;color:var(--muted);margin-top:3px;display:flex;flex-direction:column;gap:2px}
+  .cx-card .cxm b{color:var(--ink)}
+  .cx-reason{display:inline-block;background:var(--cancel-bg);color:var(--cancel);border:1px solid var(--cancel);border-radius:20px;font-size:11px;font-weight:700;padding:1px 9px;margin-left:4px}
+  /* Modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.6);width:100%;max-width:440px;padding:22px}
+  .modal h3{margin:0 0 4px;font-size:18px}
+  .modal .modal-pat{font-size:13px;color:var(--muted);margin-bottom:16px}
+  .modal .modal-pat b{color:var(--ink)}
+  .modal .field{margin-bottom:13px}
+  .modal-actions{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+  /* Toast/Hinweise */
+  #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:#04303a;color:#eaffff;padding:11px 20px;border-radius:10px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:300;box-shadow:0 8px 24px rgba(0,0,0,.5);border:1px solid var(--brand-d)}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .demo-note{background:#fff;border:1px solid var(--line);border-left:4px solid var(--brand-l);border-radius:8px;padding:11px 15px;font-size:12.5px;color:var(--muted);margin-top:22px;box-shadow:var(--shadow)}
+  .demo-note{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--brand-l);border-radius:8px;padding:11px 15px;font-size:12.5px;color:var(--muted);margin-top:22px;box-shadow:var(--shadow)}
   .demo-note b{color:var(--ink)}
+  body.role-station .hide-station{display:none!important}
   .footer-tools{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-  .footer-tools button{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;color:var(--brand-d)}
-  .footer-tools button:hover{background:#f0f7f9}
+  .footer-tools button{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;color:var(--brand-l)}
+  .footer-tools button:hover{background:var(--brand);color:#06222a;border-color:var(--brand)}
   .footer-tools button.danger{color:var(--danger)}
-  .footer-tools button.danger:hover{background:#fde7e7}
+  .crit-legend{font-size:11.5px;color:var(--muted);margin-top:6px}
+  .crit-legend b{color:var(--crit)}
+  .station-hint{background:var(--cancel-bg);border:1px solid var(--cancel);color:var(--ink);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;font-weight:600;display:none}
+  body.role-station .station-hint{display:block}
 </style>
 </head>
 <body>
 
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand"><h1>HKL-Tagesplan</h1><span class="sub">Digitales Katheterlabor-Management · Prototyp</span></div>
+    <div class="brand"><h1>HKL-Tagesplan</h1><span class="sub">Digitales Katheterlabor-Management · Prototyp</span><span class="role-badge">Stationsansicht</span></div>
     <nav class="tabs" id="tabs">
-      <button data-view="hub" class="active">Hauptmenü</button>
-      <button data-view="plan">Patient&nbsp;planen</button>
+      <button data-view="hub" class="active hide-station">Hauptmenü</button>
+      <button data-view="plan" class="hide-station">Patient&nbsp;planen</button>
       <button data-view="board">Aktueller&nbsp;Plan</button>
-      <button data-view="calendar">Kalender</button>
+      <button data-view="calendar" class="hide-station">Kalender</button>
+      <button data-view="cancelled" class="hide-station">Absagen</button>
     </nav>
-    <button class="tool-btn" id="toggleLabel" title="Beschriftung der Räume umschalten">HKL ⇄ Tisch</button>
+    <button class="tool-btn role" id="roleBtn" title="Zwischen Labor- und Stationsansicht wechseln">Zur Stationsansicht</button>
+    <button class="tool-btn hide-station" id="themeBtn" title="Hell/Dunkel umschalten">☀ Hell</button>
+    <button class="tool-btn hide-station" id="toggleLabel" title="HKL/Tisch umschalten">HKL ⇄ Tisch</button>
   </div>
 </header>
 
 <main>
-  <!-- ============ HAUPTMENÜ ============ -->
+  <!-- HAUPTMENÜ -->
   <section class="view active" id="view-hub">
     <h2 class="section">Hauptmenü</h2>
     <p class="lead">Zentraler Einstieg. Wählen Sie eine Aufgabe – alle Ansichten greifen ineinander.</p>
     <div class="hub-grid">
       <button class="hub-card" data-goto="plan"><span class="ic">➕</span><span class="t">Patient / Eingriff planen</span><span class="d">Neuen Fall erfassen: Name, Indikation, Untersuchung, Zugang, Raum und Tag.</span></button>
-      <button class="hub-card" data-goto="board"><span class="ic">🗂️</span><span class="t">Aktueller Katheterplan</span><span class="d">Tagesansicht: vier Räume als Bahnen, Status je Patient, Drag-and-Drop.</span></button>
+      <button class="hub-card" data-goto="board"><span class="ic">🗂️</span><span class="t">Aktueller Katheterplan</span><span class="d">Tagesansicht: Räume als Bahnen, Status je Patient, Drag-and-Drop.</span></button>
       <button class="hub-card" data-goto="calendar"><span class="ic">📅</span><span class="t">Kalender / Monatsübersicht</span><span class="d">Tage auswählen, Belegung sehen, direkt einen Fall einplanen.</span></button>
+      <button class="hub-card" data-goto="cancelled"><span class="ic">⊘</span><span class="t">Absagen</span><span class="d">Abgesagte Patienten je Tag mit Grund, Bemerkung und absagender Person.</span></button>
     </div>
     <div class="panel">
       <div class="summary-head"><h3 id="hubSummaryTitle">Belegung heute</h3></div>
       <div class="occ-grid" id="hubOcc"></div>
+      <div class="crit-legend">Hervorgehoben = <b>kritisch</b> (Station C61/C72/C73/C82/ZNA oder Indikation „STEMI").</div>
     </div>
   </section>
 
-  <!-- ============ PATIENT PLANEN ============ -->
+  <!-- PATIENT PLANEN -->
   <section class="view" id="view-plan">
     <h2 class="section">Patient / Eingriff planen</h2>
-    <p class="lead">Fall erfassen und einem Raum sowie Tag zuordnen. Die Reihenfolge legen Sie später im Tagesplan per Drag-and-Drop fest.</p>
+    <div class="daybanner plan-day">
+      <button class="navbtn" id="planPrevDay" title="Vorheriger Tag">‹</button>
+      <div class="dbtext"><div class="eyebrow">Sie planen für</div><div class="big" id="planDayLabel">—</div></div>
+      <div class="db-tools"><button class="today" id="planToday">Heute</button><button class="navbtn" id="planNextDay" title="Nächster Tag">›</button></div>
+    </div>
     <div id="editBanner" class="editbanner" style="display:none"></div>
     <div class="form-wrap">
       <div class="panel">
@@ -193,12 +258,14 @@
           <div class="field"><label>Nachname <span class="req">*</span></label><input id="f-nachname" placeholder="z. B. Mustermann" autocomplete="off"></div>
           <div class="field"><label>Vorname</label><input id="f-vorname" placeholder="z. B. Max" autocomplete="off"></div>
           <div class="field"><label>Anrede</label><select id="f-anrede"><option value="">—</option><option>Herr</option><option>Frau</option><option>Divers</option></select></div>
-          <div class="field"><label>Station</label><input id="f-station" placeholder="z. B. K3 / Intensiv" autocomplete="off"></div>
+          <div class="field"><label>Station</label><input id="f-station" placeholder="z. B. K3, C72, ZNA" autocomplete="off"></div>
+          <div class="field"><label>Fallnummer (optional)</label><input id="f-fallnr" placeholder="z. B. 2026-04711" autocomplete="off"></div>
+          <div class="field"><label>Geburtsdatum (optional)</label><input type="date" id="f-gebdat"></div>
           <div class="field full"><label>Untersucher</label><input id="f-untersucher" placeholder="z. B. Dr. Becker · Dr. Wagner (mehrere möglich)" autocomplete="off"></div>
-          <div class="field full"><label>Indikation</label><input id="f-indikation" placeholder="z. B. NSTEMI, instabile Angina pectoris, V. a. KHK" autocomplete="off"></div>
+          <div class="field full"><label>Indikation</label><input id="f-indikation" placeholder="z. B. STEMI, NSTEMI, instabile Angina pectoris, V. a. KHK" autocomplete="off"></div>
           <div class="field full"><label>Untersuchung</label><textarea id="f-untersuchung" placeholder="z. B. Koronarangiographie mit ggf. PCI, EPU + Ablation, TAVI …"></textarea></div>
           <div class="field full"><label>Zugang</label><textarea id="f-zugang" placeholder="z. B. Femoral links, radial rechts, beidseitig femoral …"></textarea></div>
-          <div class="field"><label>Raum <span class="req">*</span></label><select id="f-room"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+          <div class="field"><label>Raum <span class="req">*</span></label><select id="f-room"></select></div>
           <div class="field"><label>Tag <span class="req">*</span></label><input type="date" id="f-date"></div>
         </div>
         <div class="form-actions">
@@ -214,37 +281,36 @@
     </div>
   </section>
 
-  <!-- ============ AKTUELLER PLAN (BAHNEN) ============ -->
+  <!-- AKTUELLER PLAN -->
   <section class="view" id="view-board">
     <h2 class="section">Aktueller Katheterplan</h2>
-    <p class="lead">Räume als waagerechte Bahnen. Karten innerhalb einer Bahn sortieren oder in eine andere Bahn an die gewünschte Stelle ziehen.</p>
-    <div class="datebar">
+    <div class="station-hint">Stationsansicht (eingeschränkt): Sie sehen den Tagesplan und können nur die Vor-Eingriff-Status setzen. Planen, Verschieben, Bearbeiten und Absagen sind dem Katheterlabor vorbehalten.</div>
+    <div class="daybanner">
       <button class="navbtn" id="prevDay" title="Vorheriger Tag">‹</button>
-      <div class="dlabel" id="boardDateLabel"></div>
-      <button class="navbtn" id="nextDay" title="Nächster Tag">›</button>
-      <input type="date" id="boardDate">
-      <button class="today" id="boardToday">Heute</button>
+      <div class="dbtext"><div class="eyebrow">Angezeigter Tag</div><div class="big" id="boardDateLabel">—</div></div>
+      <div class="db-tools"><input type="date" id="boardDate"><button class="today" id="boardToday">Heute</button><button class="navbtn" id="nextDay" title="Nächster Tag">›</button></div>
     </div>
     <div class="lanes" id="lanes"></div>
   </section>
 
-  <!-- ============ KALENDER ============ -->
+  <!-- KALENDER -->
   <section class="view" id="view-calendar">
     <h2 class="section">Kalender / Monatsübersicht</h2>
     <p class="lead">Tag anklicken öffnet den Tagesplan. Mit <b>+</b> direkt einen Fall für diesen Tag einplanen. Zahl = geplante Patienten.</p>
-    <div class="cal-head">
-      <button class="navbtn" id="prevMonth">‹</button>
-      <div class="mlabel" id="calMonthLabel"></div>
-      <button class="navbtn" id="nextMonth">›</button>
-    </div>
+    <div class="cal-head"><button class="navbtn" id="prevMonth">‹</button><div class="mlabel" id="calMonthLabel"></div><button class="navbtn" id="nextMonth">›</button></div>
     <div class="calendar" id="calendar"></div>
   </section>
 
+  <!-- ABSAGEN -->
+  <section class="view" id="view-cancelled">
+    <h2 class="section">Abgesagte Patienten</h2>
+    <p class="lead">Nach Tag gegliedert. Jede Absage hält fest, wer abgesagt hat, den Grund und eine Bemerkung. Wiederherstellen holt den Fall zurück in den Plan.</p>
+    <div id="cancelledList"></div>
+  </section>
+
   <div class="demo-note">
-    <b>Demo-Modus.</b> Attrappe zur Veranschaulichung. Die Daten liegen ausschließlich in diesem Browser
-    (kein geteilter Stand zwischen mehreren PCs). Echter Mehrbenutzer-Betrieb erfordert einen Server mit Datenbank –
-    der Teil, den die IT umsetzt. Export/Import sichert Testdaten als Datei.
-    <div class="footer-tools">
+    <b>Demo-Modus.</b> Attrappe zur Veranschaulichung. Daten liegen nur in diesem Browser; der Rollen-Umschalter ist eine <b>Anschauung</b> der eingeschränkten Stationssicht – echte Rechte-Trennung erfolgt serverseitig (IT). Export/Import sichert Testdaten als Datei.
+    <div class="footer-tools hide-station">
       <button id="exportBtn">Plan exportieren (Datei)</button>
       <button id="importBtn">Plan importieren (Datei)</button>
       <input type="file" id="importFile" accept="application/json" style="display:none">
@@ -254,39 +320,68 @@
   </div>
 </main>
 
+<!-- ABSAGE-MASKE -->
+<div class="modal-overlay" id="modalOverlay" style="display:none">
+  <div class="modal">
+    <h3>Patient absagen</h3>
+    <div class="modal-pat" id="cancelPatient"></div>
+    <div class="field"><label>Absage eingegeben von <span class="req">*</span></label><input id="c-by" placeholder="Name der absagenden Person" autocomplete="off"></div>
+    <div class="field"><label>Grund für Absage</label><select id="c-reason"><option value="">—</option><option>Verschoben</option><option>Krank</option><option>Verstorben</option><option>Vergessen</option><option>Nicht gekommen</option><option>Sonstiges</option></select></div>
+    <div class="field"><label>Bemerkung (Freitext)</label><textarea id="c-note" placeholder="Optionale Anmerkung …"></textarea></div>
+    <div class="modal-actions"><button class="btn-primary" id="cancelConfirm" disabled>Absage bestätigen</button><button class="btn-ghost" id="cancelAbort">Abbrechen</button></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
 "use strict";
-/* ===== 1) STATUS (Reihenfolge = Ablauf im HKL) ===== */
+/* ===== STATUS ===== */
 const STATUSES=[
-  {key:"geplant",        label:"Geplant",                      color:"#64748b"},
-  {key:"station_an",     label:"Auf Station angekommen",       color:"#0891a8"},
-  {key:"aufgenommen",    label:"Fertig aufgenommen",           color:"#0e7490"},
-  {key:"abgerufen",      label:"Patient abgerufen",            color:"#7c3aed"},
-  {key:"vorbereitet",    label:"Patient vorbereitet",          color:"#b45309"},
-  {key:"im_bett",        label:"Angekommen / im Bett wartend", color:"#ca8a04"},
-  {key:"wird_aufgelegt", label:"Wird aufgelegt",               color:"#ea580c"},
-  {key:"auf_tisch",      label:"Auf dem Tisch",                color:"#2563eb"},
-  {key:"begonnen",       label:"Untersuchung begonnen",        color:"#1d4ed8"},
-  {key:"beendet",        label:"Untersuchung beendet",         color:"#15803d"},
-  {key:"ruecktransport", label:"Wartet auf Rücktransport",     color:"#16a34a"},
-  {key:"ueberwachung",   label:"Überwachungspflichtig",        color:"#dc2626"},
-  {key:"freigabe",       label:"Freigabe durch Untersucher",   color:"#166534"},
+  {key:"geplant",              label:"Geplant",                       color:"#64748b"},
+  {key:"station_an",           label:"Auf Station angekommen",        color:"#0891a8"},
+  {key:"aufgenommen",          label:"Fertig aufgenommen",            color:"#0e7490"},
+  {key:"abgerufen",            label:"Patient abgerufen",             color:"#7c3aed"},
+  {key:"vorbereitet",          label:"Patient vorbereitet",           color:"#b45309"},
+  {key:"transport_vorbereitet",label:"Patient für Transport vorbereitet",color:"#9a3412"},
+  {key:"transport_abgeholt",   label:"Patient vom Transport abgeholt", color:"#c2410c"},
+  {key:"im_bett",              label:"In Bettenwarte angekommen",     color:"#ca8a04"},
+  {key:"wird_aufgelegt",       label:"Wird aufgelegt",                color:"#ea580c"},
+  {key:"auf_tisch",            label:"Auf dem Tisch",                 color:"#2563eb"},
+  {key:"begonnen",             label:"Untersuchung begonnen",         color:"#1d4ed8"},
+  {key:"beendet",              label:"Untersuchung beendet",          color:"#15803d"},
+  {key:"ruecktransport",       label:"Wartet auf Rücktransport",      color:"#16a34a"},
+  {key:"ueberwachung",         label:"Überwachungspflichtig",         color:"#dc2626"},
+  {key:"freigabe",             label:"Freigabe durch Untersucher",    color:"#166534"},
 ];
 const STATUS_MAP=Object.fromEntries(STATUSES.map(s=>[s.key,s]));
-const ROOMS=[1,2,3,4];
+/* Für die Stationsansicht erlaubte Status (Vor-Eingriff) */
+const STATION_ALLOWED=["station_an","aufgenommen","abgerufen","vorbereitet","transport_vorbereitet","transport_abgeholt"];
+const ROOMS=["bw","1","2","3","4"];
+const CRITICAL_STATIONS=["C61","C72","C73","C82","ZNA"];
 
-/* ===== 2) DATENHALTUNG (localStorage mit Fallback) ===== */
+/* ===== DATENHALTUNG ===== */
 const Store={
   ok:(()=>{try{localStorage.setItem("__t","1");localStorage.removeItem("__t");return true;}catch(e){return false;}})(),
   load(){if(!this.ok)return null;try{return JSON.parse(localStorage.getItem("hkl_plan")||"null");}catch(e){return null;}},
   save(d){if(!this.ok)return;try{localStorage.setItem("hkl_plan",JSON.stringify(d));}catch(e){}}
 };
-let state={cases:[],settings:{roomLabel:"HKL"}};
-let ui={view:"hub",currentDate:isoToday(),calMonth:firstOfMonth(isoToday()),editingId:null};
+let state={cases:[],settings:{roomLabel:"HKL",theme:"dark",role:"kathlab"}};
+let ui={view:"hub",currentDate:isoToday(),calMonth:firstOfMonth(isoToday()),editingId:null,pendingCancelId:null};
 
-/* ===== 3) DATUM ===== */
+/* ===== Theme/Rolle ===== */
+let TINT_TARGET=[21,40,47], TINT_AMT=0.86;
+function tint(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);const[tr,tg,tb]=TINT_TARGET;const m=(c,t)=>Math.round(c+(t-c)*TINT_AMT);return "rgb("+m(r,tr)+","+m(g,tg)+","+m(b,tb)+")";}
+function applyTheme(theme){document.documentElement.dataset.theme=theme;state.settings.theme=theme;if(theme==="dark"){TINT_TARGET=[21,40,47];TINT_AMT=0.86;document.getElementById("themeBtn").textContent="☀ Hell";}else{TINT_TARGET=[255,255,255];TINT_AMT=0.90;document.getElementById("themeBtn").textContent="☾ Dunkel";}}
+function isStation(){return state.settings.role==="station";}
+function applyRole(role){
+  state.settings.role=role;
+  document.body.classList.toggle("role-station",role==="station");
+  document.getElementById("roleBtn").textContent = role==="station" ? "Zur Laboransicht" : "Zur Stationsansicht";
+  if(role==="station"){ui.view="board";}
+}
+
+/* ===== DATUM ===== */
 function isoToday(){return iso(new Date());}
 function iso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
 function parseIso(s){const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d);}
@@ -296,220 +391,181 @@ const MONTHS=["Januar","Februar","März","April","Mai","Juni","Juli","August","S
 const WD=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
 function displayDate(s){const d=parseIso(s);return d.getDate()+". "+MONTHS[d.getMonth()]+" "+d.getFullYear();}
 function weekday(s){return WD[parseIso(s).getDay()];}
+function bigDay(s){return '<span class="wd">'+weekday(s)+'</span>'+displayDate(s);}
 
-/* ===== 4) FALL-HILFEN ===== */
+/* ===== FALL-HILFEN ===== */
 function uid(){return "c"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
-function casesForRoom(date,room){return state.cases.filter(c=>c.date===date&&c.room===room).sort((a,b)=>a.position-b.position);}
-function countForDate(date){return state.cases.filter(c=>c.date===date).length;}
+function casesForRoom(date,room){return state.cases.filter(c=>c.date===date&&c.room===room&&!c.cancelled).sort((a,b)=>a.position-b.position);}
+function countForDate(date){return state.cases.filter(c=>c.date===date&&!c.cancelled).length;}
 function renumber(date,room){casesForRoom(date,room).forEach((c,i)=>c.position=i);}
-function roomName(n){return state.settings.roomLabel+" "+n;}
+function roomName(rk){return rk==="bw"?"Bettenwarte":state.settings.roomLabel+" "+rk;}
 function fullName(c){return (c.nachname||"")+(c.vorname?", "+c.vorname:"");}
+function normStation(s){return String(s||"").toUpperCase().replace(/\s+/g,"");}
+function isCritical(c){return CRITICAL_STATIONS.includes(normStation(c.station))||/STEMI/i.test(c.indikation||"");}
 function persist(){Store.save(state);}
-function tint(hex,amt){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);const m=c=>Math.round(c+(255-c)*amt);return "rgb("+m(r)+","+m(g)+","+m(b)+")";}
 
-/* ===== 5) NAVIGATION ===== */
+/* ===== NAVIGATION ===== */
 function setView(v){
+  if(isStation()&&v!=="board")v="board";
   ui.view=v;
   document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
   document.getElementById("view-"+v).classList.add("active");
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("active",b.dataset.view===v));
   if(v==="hub")renderHub();
-  if(v==="plan"){ if(!ui.editingId) document.getElementById("f-date").value=ui.currentDate; renderPlanSide(); }
+  if(v==="plan"){if(!ui.editingId)document.getElementById("f-date").value=ui.currentDate;renderPlanSide();}
   if(v==="board")renderBoard();
   if(v==="calendar")renderCalendar();
+  if(v==="cancelled")renderCancelled();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
-/* ===== 6) BELEGUNG (Hub + Planung): Patienten + Eingriffe ===== */
+/* ===== BELEGUNG ===== */
 function renderOccupancy(container,date){
   container.innerHTML="";
-  ROOMS.forEach(r=>{
-    const list=casesForRoom(date,r);
+  ROOMS.forEach(rk=>{
+    const list=casesForRoom(date,rk);
     const box=document.createElement("div"); box.className="occ-room";
-    let html='<div class="orh"><span class="rn">'+roomName(r)+'</span><span class="cnt">'+list.length+'</span></div>';
-    if(list.length===0){ html+='<div class="occ-empty">frei</div>'; }
-    else{
-      html+='<ul class="occ-list">';
-      list.forEach(c=>{
-        const st=STATUS_MAP[c.status]||STATUSES[0];
-        html+='<li><span class="od" style="background:'+st.color+'"></span>'+
-              '<span class="ot"><b>'+escapeHtml(fullName(c))+'</b>'+
-              (c.untersuchung?' <span class="pr">– '+escapeHtml(c.untersuchung)+'</span>':'')+'</span></li>';
-      });
-      html+='</ul>';
-    }
+    let html='<div class="orh"><span class="rn">'+roomName(rk)+'</span><span class="cnt">'+list.length+'</span></div>';
+    if(list.length===0){html+='<div class="occ-empty">frei</div>';}
+    else{html+='<ul class="occ-list">';list.forEach(c=>{const st=STATUS_MAP[c.status]||STATUSES[0];html+='<li><span class="od" style="background:'+st.color+'"></span><span class="ot">'+(isCritical(c)?'<span class="crit">⚠</span>':'')+'<b>'+escapeHtml(fullName(c))+'</b>'+(c.untersuchung?' <span class="pr">– '+escapeHtml(c.untersuchung)+'</span>':'')+'</span></li>';});html+='</ul>';}
     box.innerHTML=html; container.appendChild(box);
   });
 }
-function renderHub(){
-  document.getElementById("hubSummaryTitle").textContent="Belegung am "+weekday(ui.currentDate)+", "+displayDate(ui.currentDate);
-  renderOccupancy(document.getElementById("hubOcc"),ui.currentDate);
-}
+function renderHub(){document.getElementById("hubSummaryTitle").textContent="Belegung am "+weekday(ui.currentDate)+", "+displayDate(ui.currentDate);renderOccupancy(document.getElementById("hubOcc"),ui.currentDate);}
 
-/* ===== 7) PATIENT PLANEN ===== */
-function resetForm(){
-  ui.editingId=null;
-  document.getElementById("editBanner").style.display="none";
-  document.getElementById("cancelEdit").style.display="none";
-  document.getElementById("saveCase").textContent="Patient hinzufügen";
-  ["f-nachname","f-vorname","f-station","f-untersucher","f-indikation","f-untersuchung","f-zugang"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("f-anrede").value="";
-  document.getElementById("f-room").value="1";
-  document.getElementById("f-date").value=ui.currentDate;
-}
-function loadIntoForm(c){
-  ui.editingId=c.id;
-  const b=document.getElementById("editBanner");
-  b.style.display="block"; b.textContent="Bearbeitung: "+(c.anrede?c.anrede+" ":"")+fullName(c);
-  document.getElementById("cancelEdit").style.display="inline-block";
-  document.getElementById("saveCase").textContent="Änderungen speichern";
-  document.getElementById("f-anrede").value=c.anrede||"";
-  document.getElementById("f-nachname").value=c.nachname||"";
-  document.getElementById("f-vorname").value=c.vorname||"";
-  document.getElementById("f-station").value=c.station||"";
-  document.getElementById("f-untersucher").value=c.untersucher||"";
-  document.getElementById("f-indikation").value=c.indikation||"";
-  document.getElementById("f-untersuchung").value=c.untersuchung||"";
-  document.getElementById("f-zugang").value=c.zugang||"";
-  document.getElementById("f-room").value=String(c.room);
-  document.getElementById("f-date").value=c.date;
-}
+/* ===== PATIENT PLANEN ===== */
+function populateRoomSelect(){const sel=document.getElementById("f-room");const cur=sel.value;sel.innerHTML="";ROOMS.forEach(rk=>{const o=document.createElement("option");o.value=rk;o.textContent=roomName(rk);sel.appendChild(o);});if(cur)sel.value=cur;}
+function resetForm(){ui.editingId=null;document.getElementById("editBanner").style.display="none";document.getElementById("cancelEdit").style.display="none";document.getElementById("saveCase").textContent="Patient hinzufügen";["f-nachname","f-vorname","f-station","f-fallnr","f-gebdat","f-untersucher","f-indikation","f-untersuchung","f-zugang"].forEach(id=>document.getElementById(id).value="");document.getElementById("f-anrede").value="";document.getElementById("f-room").value="1";document.getElementById("f-date").value=ui.currentDate;}
+function loadIntoForm(c){ui.editingId=c.id;const b=document.getElementById("editBanner");b.style.display="block";b.textContent="Bearbeitung: "+(c.anrede?c.anrede+" ":"")+fullName(c);document.getElementById("cancelEdit").style.display="inline-block";document.getElementById("saveCase").textContent="Änderungen speichern";document.getElementById("f-anrede").value=c.anrede||"";document.getElementById("f-nachname").value=c.nachname||"";document.getElementById("f-vorname").value=c.vorname||"";document.getElementById("f-station").value=c.station||"";document.getElementById("f-fallnr").value=c.fallnummer||"";document.getElementById("f-gebdat").value=c.geburtsdatum||"";document.getElementById("f-untersucher").value=c.untersucher||"";document.getElementById("f-indikation").value=c.indikation||"";document.getElementById("f-untersuchung").value=c.untersuchung||"";document.getElementById("f-zugang").value=c.zugang||"";document.getElementById("f-room").value=String(c.room);document.getElementById("f-date").value=c.date;}
 function saveCase(){
   const nachname=document.getElementById("f-nachname").value.trim();
-  if(!nachname){ toast("Bitte einen Nachnamen eingeben."); document.getElementById("f-nachname").focus(); return; }
-  const data={
-    anrede:document.getElementById("f-anrede").value,
-    nachname:nachname,
-    vorname:document.getElementById("f-vorname").value.trim(),
-    station:document.getElementById("f-station").value.trim(),
-    untersucher:document.getElementById("f-untersucher").value.trim(),
-    indikation:document.getElementById("f-indikation").value.trim(),
-    untersuchung:document.getElementById("f-untersuchung").value.trim(),
-    zugang:document.getElementById("f-zugang").value.trim(),
-    room:Number(document.getElementById("f-room").value),
-    date:document.getElementById("f-date").value
-  };
-  if(ui.editingId){
-    const c=state.cases.find(x=>x.id===ui.editingId);
-    const od=c.date,or=c.room;
-    Object.assign(c,data);
-    if(od!==c.date||or!==c.room){ c.position=casesForRoom(c.date,c.room).length-1; renumber(od,or); }
-    toast("Änderungen gespeichert.");
-  } else {
-    data.id=uid(); data.status="geplant"; data.done=false;
-    data.position=casesForRoom(data.date,data.room).length;
-    state.cases.push(data);
-    toast("Patient hinzugefügt – "+roomName(data.room)+".");
-  }
-  persist();
-  ui.currentDate=data.date;
-  const keepDate=data.date;
-  resetForm();
-  document.getElementById("f-date").value=keepDate;  /* auf demselben Tag weiterplanen */
-  renderPlanSide();
+  if(!nachname){toast("Bitte einen Nachnamen eingeben.");document.getElementById("f-nachname").focus();return;}
+  const data={anrede:document.getElementById("f-anrede").value,nachname:nachname,vorname:document.getElementById("f-vorname").value.trim(),station:document.getElementById("f-station").value.trim(),fallnummer:document.getElementById("f-fallnr").value.trim(),geburtsdatum:document.getElementById("f-gebdat").value,untersucher:document.getElementById("f-untersucher").value.trim(),indikation:document.getElementById("f-indikation").value.trim(),untersuchung:document.getElementById("f-untersuchung").value.trim(),zugang:document.getElementById("f-zugang").value.trim(),room:document.getElementById("f-room").value,date:document.getElementById("f-date").value};
+  if(ui.editingId){const c=state.cases.find(x=>x.id===ui.editingId);const od=c.date,or=c.room;Object.assign(c,data);if(od!==c.date||or!==c.room){c.position=casesForRoom(c.date,c.room).length-1;renumber(od,or);}toast("Änderungen gespeichert.");}
+  else{data.id=uid();data.status="geplant";data.done=false;data.cancelled=null;data.position=casesForRoom(data.date,data.room).length;state.cases.push(data);toast("Patient hinzugefügt – "+roomName(data.room)+".");}
+  persist();ui.currentDate=data.date;const keepDate=data.date;resetForm();document.getElementById("f-date").value=keepDate;renderPlanSide();
 }
-function renderPlanSide(){
-  const refDate=document.getElementById("f-date").value||ui.currentDate;
-  document.getElementById("planSideTitle").textContent="Belegung am "+displayDate(refDate);
-  renderOccupancy(document.getElementById("planOcc"),refDate);
-}
+function renderPlanSide(){const refDate=document.getElementById("f-date").value||ui.currentDate;document.getElementById("planDayLabel").innerHTML=bigDay(refDate);document.getElementById("planSideTitle").textContent="Belegung am "+displayDate(refDate);renderOccupancy(document.getElementById("planOcc"),refDate);}
+function planShiftDay(n){const cur=document.getElementById("f-date").value||ui.currentDate;const nd=addDays(cur,n);document.getElementById("f-date").value=nd;ui.currentDate=nd;renderPlanSide();}
 
-/* ===== 8) TAGESPLAN / BAHNEN (Drag-and-Drop horizontal) ===== */
+/* ===== BAHNEN + DnD ===== */
 function renderBoard(){
   document.getElementById("boardDate").value=ui.currentDate;
-  document.getElementById("boardDateLabel").innerHTML='<span class="wd">'+weekday(ui.currentDate)+'</span>'+displayDate(ui.currentDate);
+  document.getElementById("boardDateLabel").innerHTML=bigDay(ui.currentDate);
+  const station=isStation();
   const lanes=document.getElementById("lanes"); lanes.innerHTML="";
-  ROOMS.forEach(r=>{
-    const list=casesForRoom(ui.currentDate,r);
+  ROOMS.forEach(rk=>{
+    const list=casesForRoom(ui.currentDate,rk);
     const lane=document.createElement("div"); lane.className="lane";
-    lane.innerHTML='<div class="lane-head"><span class="rname">'+roomName(r)+'</span><span class="badge">'+list.length+'</span></div>';
-    const strip=document.createElement("div"); strip.className="lane-strip"; strip.dataset.room=String(r);
-    if(list.length===0){ const e=document.createElement("div"); e.className="lane-empty"; e.textContent="frei – Karte hierher ziehen oder Fall planen"; strip.appendChild(e); }
-    else list.forEach(c=>strip.appendChild(makeCard(c)));
-    attachDnD(strip);
+    lane.innerHTML='<div class="lane-head"><span class="rname">'+roomName(rk)+'</span><span class="badge">'+list.length+'</span></div>';
+    const strip=document.createElement("div"); strip.className="lane-strip"; strip.dataset.room=rk;
+    if(list.length===0){const e=document.createElement("div");e.className="lane-empty";e.textContent="frei";strip.appendChild(e);}
+    else list.forEach(c=>strip.appendChild(makeCard(c,station)));
+    if(!station){const add=document.createElement("button");add.className="addcard";add.innerHTML="＋ Patient";add.addEventListener("click",()=>{resetForm();document.getElementById("f-room").value=rk;document.getElementById("f-date").value=ui.currentDate;setView("plan");toast("Neuer Fall für "+roomName(rk));});strip.appendChild(add);}
+    if(!station)attachDnD(strip);
     lane.appendChild(strip); lanes.appendChild(lane);
   });
 }
-function makeCard(c){
+function makeCard(c,station){
   const st=STATUS_MAP[c.status]||STATUSES[0];
+  const crit=isCritical(c);
   const card=document.createElement("div");
-  card.className="card"+(c.done?" done":""); card.draggable=true; card.dataset.id=c.id;
-  card.style.background=tint(st.color,0.9);            /* leichte Tönung je Status */
+  card.className="card"+(c.done?" done":"")+(crit?" critical":"")+(station?" nodrag":"");
+  card.draggable=!station; card.dataset.id=c.id;
+  card.style.background=tint(c.done?"#15803d":st.color);
   const nameLine=(c.anrede?c.anrede+" ":"")+escapeHtml(fullName(c));
+  const stationCrit=CRITICAL_STATIONS.includes(normStation(c.station));
   let meta="";
-  if(c.station)     meta+='<span>Station: <b>'+escapeHtml(c.station)+'</b></span>';
-  if(c.indikation)  meta+='<span>Indikation: <b>'+escapeHtml(c.indikation)+'</b></span>';
+  if(c.station)     meta+='<span'+(stationCrit?' class="stcrit"':'')+'>Station: <b>'+escapeHtml(c.station)+'</b></span>';
+  if(c.indikation)  meta+='<span'+(/STEMI/i.test(c.indikation)?' class="stcrit"':'')+'>Indikation: <b>'+escapeHtml(c.indikation)+'</b></span>';
   if(c.untersuchung)meta+='<span>Untersuchung: <b>'+escapeHtml(c.untersuchung)+'</b></span>';
   if(c.zugang)      meta+='<span>Zugang: <b>'+escapeHtml(c.zugang)+'</b></span>';
   if(c.untersucher) meta+='<span>Untersucher: <b>'+escapeHtml(c.untersucher)+'</b></span>';
-  card.innerHTML=
-    '<div class="banner" style="background:'+st.color+'"><span>'+escapeHtml(st.label)+'</span>'+(c.done?'<span class="done-tag">✓ Fertig</span>':'')+'</div>'+
-    '<div class="inner">'+
-      '<div class="row1"><div class="pname">'+nameLine+'</div>'+
-        '<div class="acts"><button class="iconbtn edit" title="Bearbeiten">✎</button><button class="iconbtn del" title="Entfernen">✕</button></div>'+
-      '</div><div class="meta">'+meta+'</div>'+
-    '</div>'+
-    '<div class="footer"><select class="status" title="Status ändern"></select>'+
-      '<label class="donebox"><input type="checkbox" '+(c.done?"checked":"")+'> Fertig</label></div>';
+  if(c.fallnummer)  meta+='<span>Fallnr.: <b>'+escapeHtml(c.fallnummer)+'</b></span>';
+  if(c.geburtsdatum)meta+='<span>geb.: <b>'+escapeHtml(c.geburtsdatum.split("-").reverse().join("."))+'</b></span>';
+  let tags=""; if(crit)tags+='<span class="crit-tag">⚠ Kritisch</span>'; if(c.done)tags+='<span class="done-tag">✓ Fertig</span>';
+  let acts="";
+  if(!station)acts='<button class="iconbtn edit" title="Bearbeiten">✎</button><button class="iconbtn cancel" title="Patient absagen">⊘</button><button class="iconbtn del" title="Entfernen">✕</button>';
+  /* Footer: Status-Steuerung je nach Rolle */
+  let footer="";
+  if(station){
+    if(STATION_ALLOWED.includes(c.status)){footer='<select class="status" title="Status setzen"></select>';}
+    else{footer='<span class="statictstatus">Status: '+escapeHtml(st.label)+'</span>';}
+  }else{
+    footer='<select class="status" title="Status ändern"></select><label class="donebox"><input type="checkbox" '+(c.done?"checked":"")+'> Fertig</label>';
+  }
+  card.innerHTML='<div class="banner" style="background:'+st.color+'"><span>'+escapeHtml(st.label)+'</span><span class="tags">'+tags+'</span></div>'+
+    '<div class="inner"><div class="row1"><div class="pname">'+nameLine+'</div><div class="acts">'+acts+'</div></div><div class="meta">'+meta+'</div></div>'+
+    '<div class="footer">'+footer+'</div>';
   const sel=card.querySelector("select.status");
-  STATUSES.forEach(s=>{const o=document.createElement("option");o.value=s.key;o.textContent=s.label;sel.appendChild(o);});
-  sel.value=c.status;
-  sel.addEventListener("change",e=>{c.status=e.target.value;persist();renderBoard();});
-  sel.addEventListener("mousedown",e=>e.stopPropagation());
-  card.querySelector(".donebox input").addEventListener("change",e=>{c.done=e.target.checked;persist();renderBoard();});
-  card.querySelector(".donebox").addEventListener("mousedown",e=>e.stopPropagation());
-  card.querySelector(".edit").addEventListener("click",e=>{e.stopPropagation();loadIntoForm(c);setView("plan");});
-  card.querySelector(".del").addEventListener("click",e=>{e.stopPropagation();if(confirm("Diesen Patienten aus dem Plan entfernen?")){const d=c.date,r=c.room;state.cases=state.cases.filter(x=>x.id!==c.id);renumber(d,r);persist();renderBoard();toast("Patient entfernt.");}});
-  card.addEventListener("dragstart",e=>{card.classList.add("dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",c.id);});
-  card.addEventListener("dragend",()=>{card.classList.remove("dragging");document.querySelectorAll(".lane-strip").forEach(s=>s.classList.remove("dragover"));renderBoard();});
+  if(sel){
+    const opts = station ? STATUSES.filter(s=>STATION_ALLOWED.includes(s.key)) : STATUSES;
+    opts.forEach(s=>{const o=document.createElement("option");o.value=s.key;o.textContent=s.label;sel.appendChild(o);});
+    sel.value=c.status;
+    sel.addEventListener("change",e=>{c.status=e.target.value;persist();renderBoard();});
+    sel.addEventListener("mousedown",e=>e.stopPropagation());
+  }
+  if(!station){
+    card.querySelector(".donebox input").addEventListener("change",e=>{c.done=e.target.checked;persist();renderBoard();});
+    card.querySelector(".donebox").addEventListener("mousedown",e=>e.stopPropagation());
+    card.querySelector(".edit").addEventListener("click",e=>{e.stopPropagation();loadIntoForm(c);setView("plan");});
+    card.querySelector(".cancel").addEventListener("click",e=>{e.stopPropagation();openCancelModal(c.id);});
+    card.querySelector(".del").addEventListener("click",e=>{e.stopPropagation();if(confirm("Diesen Patienten endgültig aus dem Plan entfernen? (Für Absagen bitte den ⊘-Knopf nutzen)")){const d=c.date,r=c.room;state.cases=state.cases.filter(x=>x.id!==c.id);renumber(d,r);persist();renderBoard();toast("Patient entfernt.");}});
+    card.addEventListener("dragstart",e=>{card.classList.add("dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",c.id);});
+    card.addEventListener("dragend",()=>{card.classList.remove("dragging");document.querySelectorAll(".lane-strip").forEach(s=>s.classList.remove("dragover"));renderBoard();});
+  }
   return card;
 }
 function attachDnD(strip){
-  strip.addEventListener("dragover",e=>{
-    e.preventDefault(); strip.classList.add("dragover");
-    const dragging=document.querySelector(".card.dragging"); if(!dragging)return;
-    const empty=strip.querySelector(".lane-empty"); if(empty)empty.remove();
-    const after=getDragAfterElementX(strip,e.clientX);
-    if(after==null)strip.appendChild(dragging); else strip.insertBefore(dragging,after);
-  });
+  strip.addEventListener("dragover",e=>{e.preventDefault();strip.classList.add("dragover");const dragging=document.querySelector(".card.dragging");if(!dragging)return;const empty=strip.querySelector(".lane-empty");if(empty)empty.remove();const after=getDragAfterElementX(strip,e.clientX);const addtile=strip.querySelector(".addcard");if(after==null){if(addtile)strip.insertBefore(dragging,addtile);else strip.appendChild(dragging);}else strip.insertBefore(dragging,after);});
   strip.addEventListener("dragleave",e=>{if(!strip.contains(e.relatedTarget))strip.classList.remove("dragover");});
-  strip.addEventListener("drop",e=>{
-    e.preventDefault(); strip.classList.remove("dragover");
-    const id=e.dataTransfer.getData("text/plain"); const c=state.cases.find(x=>x.id===id); if(!c)return;
-    const od=c.date,or=c.room, nr=Number(strip.dataset.room);
-    const order=[...strip.querySelectorAll(".card")].map(el=>el.dataset.id);
-    order.forEach((cid,i)=>{const cc=state.cases.find(x=>x.id===cid);if(cc){cc.room=nr;cc.date=ui.currentDate;cc.position=i;}});
-    if(or!==nr||od!==ui.currentDate)renumber(od,or);
-    persist(); renderBoard();
-  });
+  strip.addEventListener("drop",e=>{e.preventDefault();strip.classList.remove("dragover");const id=e.dataTransfer.getData("text/plain");const c=state.cases.find(x=>x.id===id);if(!c)return;const od=c.date,or=c.room,nr=strip.dataset.room;const order=[...strip.querySelectorAll(".card")].map(el=>el.dataset.id);order.forEach((cid,i)=>{const cc=state.cases.find(x=>x.id===cid);if(cc){cc.room=nr;cc.date=ui.currentDate;cc.position=i;}});if(or!==nr||od!==ui.currentDate)renumber(od,or);persist();renderBoard();});
 }
-function getDragAfterElementX(container,x){
-  const els=[...container.querySelectorAll(".card:not(.dragging)")];
-  let closest={offset:-Infinity,element:null};
-  els.forEach(child=>{const box=child.getBoundingClientRect();const offset=x-box.left-box.width/2;if(offset<0&&offset>closest.offset)closest={offset,element:child};});
-  return closest.element;
+function getDragAfterElementX(container,x){const els=[...container.querySelectorAll(".card:not(.dragging)")];let closest={offset:-Infinity,element:null};els.forEach(child=>{const box=child.getBoundingClientRect();const offset=x-box.left-box.width/2;if(offset<0&&offset>closest.offset)closest={offset,element:child};});return closest.element;}
+
+/* ===== ABSAGE-MASKE ===== */
+function openCancelModal(id){ui.pendingCancelId=id;const c=state.cases.find(x=>x.id===id);if(!c)return;document.getElementById("cancelPatient").innerHTML='Fall: <b>'+escapeHtml((c.anrede?c.anrede+" ":"")+fullName(c))+'</b> · '+roomName(c.room)+' · '+displayDate(c.date);document.getElementById("c-by").value="";document.getElementById("c-reason").value="";document.getElementById("c-note").value="";document.getElementById("cancelConfirm").disabled=true;document.getElementById("modalOverlay").style.display="flex";setTimeout(()=>document.getElementById("c-by").focus(),50);}
+function closeCancelModal(){document.getElementById("modalOverlay").style.display="none";ui.pendingCancelId=null;}
+function confirmCancel(){const by=document.getElementById("c-by").value.trim();if(!by){toast("Bitte die absagende Person eintragen.");document.getElementById("c-by").focus();return;}const c=state.cases.find(x=>x.id===ui.pendingCancelId);if(!c)return;const od=c.date,or=c.room;c.cancelled={by:by,reason:document.getElementById("c-reason").value,note:document.getElementById("c-note").value.trim(),at:new Date().toISOString(),status_at:c.status};renumber(od,or);persist();closeCancelModal();renderBoard();toast("Patient abgesagt.");}
+
+/* ===== ABSAGEN-ANSICHT ===== */
+function renderCancelled(){
+  const cont=document.getElementById("cancelledList");cont.innerHTML="";
+  const cx=state.cases.filter(c=>c.cancelled);
+  if(cx.length===0){cont.innerHTML='<div class="occ-empty">Keine abgesagten Patienten.</div>';return;}
+  const byDate={};cx.forEach(c=>{(byDate[c.date]=byDate[c.date]||[]).push(c);});
+  Object.keys(byDate).sort().reverse().forEach(date=>{
+    const day=document.createElement("div");day.className="cx-day";
+    day.innerHTML='<h3>'+weekday(date)+', '+displayDate(date)+'</h3>';
+    byDate[date].sort((a,b)=>(b.cancelled.at||"").localeCompare(a.cancelled.at||"")).forEach(c=>{
+      const cc=document.createElement("div");cc.className="cx-card";
+      const when=c.cancelled.at?new Date(c.cancelled.at).toLocaleString("de-DE"):"";
+      let m='';
+      if(c.untersuchung)m+='<span>Untersuchung: <b>'+escapeHtml(c.untersuchung)+'</b></span>';
+      m+='<span>Abgesagt von: <b>'+escapeHtml(c.cancelled.by)+'</b>'+(when?' · '+escapeHtml(when):'')+'</span>';
+      if(c.cancelled.note)m+='<span>Bemerkung: '+escapeHtml(c.cancelled.note)+'</span>';
+      cc.innerHTML='<div><div class="cxn">'+escapeHtml((c.anrede?c.anrede+" ":"")+fullName(c))+' · '+roomName(c.room)+(c.cancelled.reason?'<span class="cx-reason">'+escapeHtml(c.cancelled.reason)+'</span>':'')+'</div><div class="cxm">'+m+'</div></div>'+
+        '<div><button class="btn-ghost restore">Wiederherstellen</button></div>';
+      cc.querySelector(".restore").addEventListener("click",()=>{c.cancelled=null;c.position=casesForRoom(c.date,c.room).length;persist();renderCancelled();toast("Patient wiederhergestellt.");});
+      day.appendChild(cc);
+    });
+    cont.appendChild(day);
+  });
 }
 
-/* ===== 9) KALENDER (mit Plus → Planung) ===== */
+/* ===== KALENDER ===== */
 function renderCalendar(){
   const first=parseIso(ui.calMonth);
   document.getElementById("calMonthLabel").textContent=MONTHS[first.getMonth()]+" "+first.getFullYear();
-  const cal=document.getElementById("calendar"); cal.innerHTML="";
+  const cal=document.getElementById("calendar");cal.innerHTML="";
   ["Mo","Di","Mi","Do","Fr","Sa","So"].forEach(d=>{const h=document.createElement("div");h.className="cal-dow";h.textContent=d;cal.appendChild(h);});
-  const startOffset=(first.getDay()+6)%7;
-  const gridStart=new Date(first); gridStart.setDate(first.getDate()-startOffset);
-  const todayIso=isoToday();
+  const startOffset=(first.getDay()+6)%7;const gridStart=new Date(first);gridStart.setDate(first.getDate()-startOffset);const todayIso=isoToday();
   for(let i=0;i<42;i++){
-    const d=new Date(gridStart); d.setDate(gridStart.getDate()+i);
-    const dIso=iso(d), inMonth=d.getMonth()===first.getMonth(), total=countForDate(dIso);
-    const cell=document.createElement("div");
-    cell.className="cal-cell"+(inMonth?"":" other")+(dIso===todayIso?" today":"");
-    cell.tabIndex=0;
-    let dots=""; for(let k=0;k<Math.min(total,8);k++)dots+='<span class="pdot"></span>';
-    cell.innerHTML='<button class="cal-plus" title="Für diesen Tag einplanen">+</button>'+
-      '<div class="dn">'+d.getDate()+'</div>'+
-      (total>0?'<span class="cal-total">'+total+' Pat.</span>':'<div class="cc">frei</div>')+
-      '<div class="dots">'+dots+'</div>';
+    const d=new Date(gridStart);d.setDate(gridStart.getDate()+i);const dIso=iso(d),inMonth=d.getMonth()===first.getMonth();
+    const dayCases=state.cases.filter(c=>c.date===dIso&&!c.cancelled),total=dayCases.length;
+    const cell=document.createElement("div");cell.className="cal-cell"+(inMonth?"":" other")+(dIso===todayIso?" today":"");cell.tabIndex=0;
+    let dots="";dayCases.slice(0,8).forEach(c=>{dots+='<span class="pdot'+(isCritical(c)?' crit':'')+'"></span>';});
+    cell.innerHTML='<button class="cal-plus" title="Für diesen Tag einplanen">+</button><div class="dn">'+d.getDate()+'</div>'+(total>0?'<span class="cal-total">'+total+' Pat.</span>':'<div class="cc">frei</div>')+'<div class="dots">'+dots+'</div>';
     cell.addEventListener("click",()=>{ui.currentDate=dIso;setView("board");});
     cell.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();ui.currentDate=dIso;setView("board");}});
     cell.querySelector(".cal-plus").addEventListener("click",e=>{e.stopPropagation();ui.currentDate=dIso;resetForm();document.getElementById("f-date").value=dIso;setView("plan");toast("Planung für "+displayDate(dIso));});
@@ -517,59 +573,61 @@ function renderCalendar(){
   }
 }
 
-/* ===== 10) WERKZEUGE ===== */
-function exportData(){
-  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
-  const url=URL.createObjectURL(blob); const a=document.createElement("a");
-  a.href=url; a.download="HKL-Tagesplan_"+isoToday()+".json"; a.click(); URL.revokeObjectURL(url); toast("Plan exportiert.");
-}
-function importData(file){
-  const reader=new FileReader();
-  reader.onload=()=>{try{const obj=JSON.parse(reader.result);if(!obj||!Array.isArray(obj.cases))throw 0;state=obj;if(!state.settings)state.settings={roomLabel:"HKL"};migrate();persist();refreshAll();toast("Plan importiert.");}catch(e){toast("Datei konnte nicht gelesen werden.");}};
-  reader.readAsText(file);
-}
-function migrate(){ /* Altdaten mit Einzel-Feld "name" auf nachname/vorname heben */
-  state.cases.forEach(c=>{ if(c.name&&!c.nachname){ const p=c.name.split(",");c.nachname=(p[0]||"").trim();c.vorname=(p[1]||"").trim(); delete c.name; } if(!c.status)c.status="geplant"; if(c.done===undefined)c.done=false; });
-}
+/* ===== WERKZEUGE ===== */
+function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="HKL-Tagesplan_"+isoToday()+".json";a.click();URL.revokeObjectURL(url);toast("Plan exportiert.");}
+function importData(file){const reader=new FileReader();reader.onload=()=>{try{const obj=JSON.parse(reader.result);if(!obj||!Array.isArray(obj.cases))throw 0;state=obj;if(!state.settings)state.settings={roomLabel:"HKL",theme:"dark",role:"kathlab"};migrate();applyTheme(state.settings.theme||"dark");applyRole(state.settings.role||"kathlab");populateRoomSelect();persist();setView(isStation()?"board":"hub");toast("Plan importiert.");}catch(e){toast("Datei konnte nicht gelesen werden.");}};reader.readAsText(file);}
+function migrate(){state.cases.forEach(c=>{if(c.name&&!c.nachname){const p=c.name.split(",");c.nachname=(p[0]||"").trim();c.vorname=(p[1]||"").trim();delete c.name;}if(typeof c.room==="number")c.room=String(c.room);if(!c.status)c.status="geplant";if(c.done===undefined)c.done=false;if(c.cancelled===undefined)c.cancelled=null;});}
 function loadDemo(){
   const t=isoToday(),t1=addDays(t,1),t2=addDays(t,2);
   state.cases=[
-    mk(t,1,0,"Herr","Albrecht","Johann","K3","NSTEMI","Koronarangiographie + ggf. PCI","Radial rechts","Dr. Becker · Dr. Klein","begonnen",false),
-    mk(t,1,1,"Frau","Sommer","Karin","K4","Stabile AP","Koronarangiographie","Femoral rechts","Dr. Becker","vorbereitet",false),
-    mk(t,1,2,"Herr","Vogt","Heinz","Intensiv","Kardiogener Schock","Akut-PCI","Femoral links","Dr. Becker","geplant",false),
-    mk(t,2,0,"Frau","Lehmann","Petra","K3","Bradykardie","Schrittmacher-Implantation","Subklavia links","Dr. Wagner","auf_tisch",false),
-    mk(t,2,1,"Herr","Roth","Klaus","K5","VHF, Z. n. Ablation","EPU + Re-Ablation","Femoral beidseitig","Dr. Wagner · Dr. Süß","geplant",false),
-    mk(t,3,0,"Herr","Krämer","Otto","K4","Hochgradige AS","TAVI","Femoral rechts","Dr. Gradaus · Dr. Lang","aufgenommen",false),
-    mk(t,3,1,"Frau","Busch","Marie","K3","V. a. KHK","Koronarangiographie","Radial links","Dr. Gradaus","beendet",true),
-    mk(t,4,0,"Frau","Engel","Lisa","K5","ICD-Aggregatwechsel","ICD-Wechsel","Pectoral links","Dr. Wagner","ueberwachung",false),
-    mk(t1,1,0,"Herr","Pohl","Werner","K3","Stabile AP","Koronarangiographie","Radial rechts","Dr. Becker","geplant",false),
-    mk(t1,1,1,"Frau","Schulz","Anna","K4","NSTEMI","PCI","Femoral rechts","Dr. Becker","geplant",false),
-    mk(t1,2,0,"Herr","Berg","Rolf","K5","VHF","Kryoablation","Femoral beidseitig","Dr. Wagner","geplant",false),
-    mk(t2,3,0,"Frau","Huber","Eva","K3","Hochgradige AS","TAVI","Femoral rechts","Dr. Gradaus","geplant",false),
+    mk(t,"bw",0,"Frau","Wolf","Sabine","ZNA","NSTEMI","Koronarangiographie","Radial rechts","Dr. Becker","im_bett",false),
+    mk(t,"bw",1,"Herr","Frank","Dieter","K4","Stabile AP","Koronarangiographie","Femoral rechts","Dr. Wagner","transport_vorbereitet",false),
+    mk(t,"1",0,"Herr","Albrecht","Johann","C61","STEMI Vorderwand","Akut-PCI (RIVA)","Radial rechts","Dr. Becker · Dr. Klein","begonnen",false),
+    mk(t,"1",1,"Frau","Sommer","Karin","K4","Stabile AP","Koronarangiographie","Femoral rechts","Dr. Becker","vorbereitet",false),
+    mk(t,"1",2,"Herr","Vogt","Heinz","C82","Kardiogener Schock","Akut-PCI","Femoral links","Dr. Becker","geplant",false),
+    mk(t,"2",0,"Frau","Lehmann","Petra","K3","Bradykardie","Schrittmacher-Implantation","Subklavia links","Dr. Wagner","auf_tisch",false),
+    mk(t,"2",1,"Herr","Roth","Klaus","K5","VHF, Z. n. Ablation","EPU + Re-Ablation","Femoral beidseitig","Dr. Wagner · Dr. Süß","geplant",false),
+    mk(t,"3",0,"Herr","Krämer","Otto","K4","Hochgradige AS","TAVI","Femoral rechts","Dr. Gradaus · Dr. Lang","aufgenommen",false),
+    mk(t,"3",1,"Frau","Busch","Marie","C72","V. a. KHK","Koronarangiographie","Radial links","Dr. Gradaus","beendet",true),
+    mk(t,"4",0,"Frau","Engel","Lisa","K5","ICD-Aggregatwechsel","ICD-Wechsel","Pectoral links","Dr. Wagner","ueberwachung",false),
+    mk(t1,"1",0,"Herr","Pohl","Werner","K3","Stabile AP","Koronarangiographie","Radial rechts","Dr. Becker","geplant",false),
+    mk(t1,"1",1,"Frau","Schulz","Anna","ZNA","STEMI Hinterwand","Akut-PCI","Femoral rechts","Dr. Becker","geplant",false),
+    mk(t1,"2",0,"Herr","Berg","Rolf","K5","VHF","Kryoablation","Femoral beidseitig","Dr. Wagner","geplant",false),
+    mk(t2,"3",0,"Frau","Huber","Eva","K3","Hochgradige AS","TAVI","Femoral rechts","Dr. Gradaus","geplant",false),
   ];
-  persist(); refreshAll(); toast("Demo-Daten geladen.");
+  /* eine Beispiel-Absage */
+  const ex=mk(t,"1",99,"Herr","Maier","Paul","K3","Stabile AP","Koronarangiographie","Radial rechts","Dr. Becker","geplant",false);
+  ex.cancelled={by:"Schwester Anja",reason:"Krank",note:"Patient fiebert, Eingriff verschoben.",at:new Date().toISOString(),status_at:"geplant"};
+  state.cases.push(ex);
+  persist();refreshAll();toast("Demo-Daten geladen.");
 }
-function mk(date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher,status,done){
-  return {id:uid(),date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher,status,done};
-}
-function clearAll(){ if(confirm("Wirklich ALLE Patienten/Pläne löschen? (nur lokal in diesem Browser)")){state.cases=[];persist();refreshAll();toast("Alle Daten gelöscht.");} }
+function mk(date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher,status,done){return {id:uid(),date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher,status,done,cancelled:null};}
+function clearAll(){if(confirm("Wirklich ALLE Patienten/Pläne löschen? (nur lokal in diesem Browser)")){state.cases=[];persist();refreshAll();toast("Alle Daten gelöscht.");}}
 
-/* ===== 11) HILFEN + INIT ===== */
+/* ===== HILFEN + INIT ===== */
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 let toastTimer=null;
 function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2200);}
-function refreshAll(){if(ui.view==="hub")renderHub();if(ui.view==="plan")renderPlanSide();if(ui.view==="board")renderBoard();if(ui.view==="calendar")renderCalendar();}
+function refreshAll(){if(ui.view==="hub")renderHub();if(ui.view==="plan")renderPlanSide();if(ui.view==="board")renderBoard();if(ui.view==="calendar")renderCalendar();if(ui.view==="cancelled")renderCancelled();}
 function init(){
   const saved=Store.load();
-  if(saved&&Array.isArray(saved.cases)){state=saved;if(!state.settings)state.settings={roomLabel:"HKL"};migrate();}
+  if(saved&&Array.isArray(saved.cases)){state=saved;if(!state.settings)state.settings={roomLabel:"HKL",theme:"dark",role:"kathlab"};if(!state.settings.role)state.settings.role="kathlab";migrate();}
   else loadDemo();
+  applyTheme(state.settings.theme||"dark");
+  applyRole(state.settings.role||"kathlab");
+  populateRoomSelect();
   document.getElementById("f-date").value=ui.currentDate;
   document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.view)));
   document.querySelectorAll(".hub-card").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.goto)));
-  document.getElementById("toggleLabel").addEventListener("click",()=>{state.settings.roomLabel=state.settings.roomLabel==="HKL"?"Tisch":"HKL";persist();refreshAll();toast("Beschriftung: "+state.settings.roomLabel+" 1–4");});
+  document.getElementById("roleBtn").addEventListener("click",()=>{applyRole(isStation()?"kathlab":"station");persist();setView(isStation()?"board":"board");toast(isStation()?"Stationsansicht (eingeschränkt)":"Laboransicht (voll)");});
+  document.getElementById("themeBtn").addEventListener("click",()=>{applyTheme(state.settings.theme==="dark"?"light":"dark");persist();refreshAll();});
+  document.getElementById("toggleLabel").addEventListener("click",()=>{state.settings.roomLabel=state.settings.roomLabel==="HKL"?"Tisch":"HKL";persist();populateRoomSelect();refreshAll();toast("Beschriftung: "+state.settings.roomLabel+" 1–4");});
   document.getElementById("saveCase").addEventListener("click",saveCase);
   document.getElementById("cancelEdit").addEventListener("click",()=>{resetForm();renderPlanSide();});
-  document.getElementById("f-date").addEventListener("change",renderPlanSide);
+  document.getElementById("f-date").addEventListener("change",()=>{ui.currentDate=document.getElementById("f-date").value||ui.currentDate;renderPlanSide();});
+  document.getElementById("planPrevDay").addEventListener("click",()=>planShiftDay(-1));
+  document.getElementById("planNextDay").addEventListener("click",()=>planShiftDay(1));
+  document.getElementById("planToday").addEventListener("click",()=>{document.getElementById("f-date").value=isoToday();ui.currentDate=isoToday();renderPlanSide();});
   document.getElementById("planToBoard").addEventListener("click",()=>{ui.currentDate=document.getElementById("f-date").value||ui.currentDate;setView("board");});
   document.getElementById("prevDay").addEventListener("click",()=>{ui.currentDate=addDays(ui.currentDate,-1);renderBoard();});
   document.getElementById("nextDay").addEventListener("click",()=>{ui.currentDate=addDays(ui.currentDate,1);renderBoard();});
@@ -582,7 +640,12 @@ function init(){
   document.getElementById("importFile").addEventListener("change",e=>{if(e.target.files[0])importData(e.target.files[0]);e.target.value="";});
   document.getElementById("demoBtn").addEventListener("click",loadDemo);
   document.getElementById("clearBtn").addEventListener("click",clearAll);
-  setView("hub");
+  /* Absage-Maske */
+  document.getElementById("c-by").addEventListener("input",e=>{document.getElementById("cancelConfirm").disabled=e.target.value.trim().length===0;});
+  document.getElementById("cancelConfirm").addEventListener("click",confirmCancel);
+  document.getElementById("cancelAbort").addEventListener("click",closeCancelModal);
+  document.getElementById("modalOverlay").addEventListener("click",e=>{if(e.target.id==="modalOverlay")closeCancelModal();});
+  setView(isStation()?"board":"hub");
 }
 document.addEventListener("DOMContentLoaded",init);
 </script>
