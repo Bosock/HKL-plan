@@ -62,6 +62,8 @@
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
   /* Tages-Indikator */
   .daybanner{display:flex;align-items:center;gap:16px;background:var(--panel);border:1px solid var(--line);border-left:7px solid var(--accent-day);border-radius:12px;padding:14px 20px;margin-bottom:18px;box-shadow:var(--shadow);flex-wrap:wrap}
+  .board-meta{display:flex;gap:8px;flex-wrap:wrap;margin:-8px 0 14px}
+  .board-meta .lastchg{font-size:12px;color:var(--muted);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:3px 10px}
   .daybanner .navbtn{background:var(--panel-2);border:1px solid var(--line);border-radius:9px;width:42px;height:42px;font-size:22px;color:var(--brand);box-shadow:var(--shadow)}
   .daybanner .navbtn:hover{background:var(--brand);color:#06222a;border-color:var(--brand)}
   .daybanner .dbtext{flex:1;min-width:200px}
@@ -118,14 +120,34 @@
   .card .inner{padding:9px 12px 10px;flex:1}
   .card .row1{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
   .card .pname{font-weight:700;font-size:15px;line-height:1.25;color:var(--ink)}
-  .card .acts{display:flex;gap:3px;flex-shrink:0}
-  .card .iconbtn{background:var(--panel-2);border:1px solid var(--line);border-radius:6px;width:27px;height:27px;font-size:13px;color:var(--muted);line-height:1}
-  .card .iconbtn:hover{background:var(--brand);color:#06222a;border-color:var(--brand)}
-  .card .iconbtn.del:hover{background:var(--crit);color:#fff;border-color:var(--crit)}
-  .card .iconbtn.cancel:hover{background:var(--cancel);color:#fff;border-color:var(--cancel)}
+  .card .acts{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+  .card .actbtn{display:flex;flex-direction:column;align-items:center;gap:1px;background:var(--panel-2);border:1px solid var(--line);border-radius:7px;padding:3px 4px 2px;color:var(--muted);line-height:1;cursor:pointer;min-width:50px}
+  .card .actbtn .ico{font-size:14px}
+  .card .actbtn .lbl{font-size:8.5px;font-weight:700;letter-spacing:.2px}
+  .card .actbtn.edit:hover{background:var(--brand);color:#06222a;border-color:var(--brand)}
+  .card .actbtn.del:hover{background:var(--crit);color:#fff;border-color:var(--crit)}
+  .card .actbtn.cancel:hover{background:var(--cancel);color:#fff;border-color:var(--cancel)}
   .card .meta{font-size:12.5px;color:var(--muted);margin-top:6px;display:flex;flex-direction:column;gap:3px}
   .card .meta b{color:var(--ink);font-weight:600}
   .card .meta .stcrit b{color:var(--crit)}
+  /* Warn-Badges auf der Karte */
+  .card .wbadges{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+  .wbadge{display:inline-flex;align-items:center;gap:3px;background:rgba(245,158,11,.14);color:#b45309;border:1px solid #f59e0b;border-radius:10px;font-size:10px;font-weight:800;padding:1px 7px;line-height:1.5}
+  [data-theme="dark"] .wbadge{color:#fbbf24;background:rgba(245,158,11,.12)}
+  /* Wartezeit-Ampel-Punkt */
+  .waitdot{display:inline-flex;align-items:center;gap:4px;border-radius:12px;padding:1px 8px;font-size:11px;font-weight:800;color:#fff}
+  .waitdot .dot{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.35)}
+  .waitdot.ok{background:#15803d}.waitdot.warn{background:#d97706}.waitdot.crit{background:#dc2626}
+  /* Chip-Felder im Formular */
+  .hint{font-weight:500;color:var(--muted);font-size:11px}
+  .chipfield{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:7px;background:var(--input-bg);min-height:44px}
+  .chipfield .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chipfield .chip{display:inline-flex;align-items:center;gap:6px;background:var(--brand);color:#06222a;border-radius:14px;padding:3px 6px 3px 10px;font-size:12.5px;font-weight:700}
+  .chipfield .chip .x{cursor:pointer;font-weight:900;font-size:14px;line-height:1;opacity:.8}
+  .chipfield .chip .x:hover{opacity:1}
+  .chipfield .chip-add{font-family:inherit;font-size:12px;border:1px dashed var(--line);border-radius:8px;padding:4px 6px;background:var(--panel-2);color:var(--ink);cursor:pointer}
+  .chipfield .chip-guest{font-family:inherit;font-size:12px;font-weight:700;border:1px dashed var(--line);border-radius:8px;padding:4px 9px;background:var(--panel-2);color:var(--brand);cursor:pointer}
+  .chipfield .chip-guest:hover{background:var(--brand);color:#06222a}
   .card .footer{border-top:1px solid var(--line);padding:8px 11px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--panel-2)}
   .card select.status{font-family:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:7px;padding:4px 6px;background:var(--input-bg);color:var(--ink);max-width:160px;flex:1;min-width:0}
   .card .statictstatus{font-size:12px;font-weight:700;color:var(--muted)}
@@ -255,16 +277,31 @@
       <div class="panel">
         <h3>Falldaten</h3>
         <div class="fgrid">
+          <div class="field full"><label>Eingriffs-Vorlage <span class="hint">(füllt Untersuchung / Zugang / Anmerkungen vor)</span></label><select id="f-vorlage"><option value="">— keine —</option></select></div>
           <div class="field"><label>Nachname <span class="req">*</span></label><input id="f-nachname" placeholder="z. B. Mustermann" autocomplete="off"></div>
           <div class="field"><label>Vorname</label><input id="f-vorname" placeholder="z. B. Max" autocomplete="off"></div>
           <div class="field"><label>Anrede</label><select id="f-anrede"><option value="">—</option><option>Herr</option><option>Frau</option><option>Divers</option></select></div>
           <div class="field"><label>Station</label><input id="f-station" placeholder="z. B. K3, C72, ZNA" autocomplete="off"></div>
           <div class="field"><label>Fallnummer (optional)</label><input id="f-fallnr" placeholder="z. B. 2026-04711" autocomplete="off"></div>
           <div class="field"><label>Geburtsdatum (optional)</label><input type="date" id="f-gebdat"></div>
-          <div class="field full"><label>Untersucher</label><input id="f-untersucher" placeholder="z. B. Dr. Becker · Dr. Wagner (mehrere möglich)" autocomplete="off"></div>
+          <div class="field full"><label>Untersucher <span class="hint">(mehrere möglich)</span></label>
+            <div class="chipfield" id="cf-untersucher">
+              <span class="chips" id="chips-untersucher"></span>
+              <select class="chip-add" id="add-untersucher"><option value="">+ Untersucher …</option></select>
+              <button type="button" class="chip-guest" id="guest-untersucher">+ Gast</button>
+            </div>
+          </div>
           <div class="field full"><label>Indikation</label><input id="f-indikation" placeholder="z. B. STEMI, NSTEMI, instabile Angina pectoris, V. a. KHK" autocomplete="off"></div>
           <div class="field full"><label>Untersuchung</label><textarea id="f-untersuchung" placeholder="z. B. Koronarangiographie mit ggf. PCI, EPU + Ablation, TAVI …"></textarea></div>
           <div class="field full"><label>Zugang</label><textarea id="f-zugang" placeholder="z. B. Femoral links, radial rechts, beidseitig femoral …"></textarea></div>
+          <div class="field full"><label>Warnhinweise <span class="hint">(Allergie, Niere, Antikoagulation … – mehrere möglich)</span></label>
+            <div class="chipfield" id="cf-badges">
+              <span class="chips" id="chips-badges"></span>
+              <select class="chip-add" id="add-badge"><option value="">+ Warnhinweis …</option></select>
+              <button type="button" class="chip-guest" id="newbadge">+ Eigener</button>
+            </div>
+          </div>
+          <div class="field full"><label>Anmerkungen / Material <span class="hint">(z. B. IVUS, Impella, spezieller Stent)</span></label><textarea id="f-anmerkung" placeholder="Freitext für Material, Devices, Besonderheiten …"></textarea></div>
           <div class="field"><label>Raum <span class="req">*</span></label><select id="f-room"></select></div>
           <div class="field"><label>Tag <span class="req">*</span></label><input type="date" id="f-date"></div>
         </div>
@@ -290,6 +327,7 @@
       <div class="dbtext"><div class="eyebrow">Angezeigter Tag</div><div class="big" id="boardDateLabel">—</div></div>
       <div class="db-tools"><input type="date" id="boardDate"><button class="today" id="boardToday">Heute</button><button class="navbtn" id="nextDay" title="Nächster Tag">›</button></div>
     </div>
+    <div class="board-meta" id="boardMeta"></div>
     <div class="lanes" id="lanes"></div>
   </section>
 
@@ -350,9 +388,9 @@ const STATUSES=[
   {key:"auf_tisch",            label:"Auf dem Tisch",                 color:"#2563eb"},
   {key:"begonnen",             label:"Untersuchung begonnen",         color:"#1d4ed8"},
   {key:"beendet",              label:"Untersuchung beendet",          color:"#15803d"},
-  {key:"ruecktransport",       label:"Wartet auf Rücktransport",      color:"#16a34a"},
   {key:"ueberwachung",         label:"Überwachungspflichtig",         color:"#dc2626"},
-  {key:"freigabe",             label:"Freigabe durch Untersucher",    color:"#166534"},
+  {key:"ruecktransport",       label:"Wartet auf Rücktransport",      color:"#16a34a"},
+  {key:"ruecktransport_erfolgt",label:"Rücktransport erfolgt",        color:"#166534"},
 ];
 const STATUS_MAP=Object.fromEntries(STATUSES.map(s=>[s.key,s]));
 /* Für die Stationsansicht erlaubte Status (Vor-Eingriff) */
@@ -360,13 +398,34 @@ const STATION_ALLOWED=["station_an","aufgenommen","abgerufen","vorbereitet","tra
 const ROOMS=["bw","1","2","3","4"];
 const CRITICAL_STATIONS=["C61","C72","C73","C82","ZNA"];
 
+/* Wartezeit-Ampel: Start-/Stopp-Status je Phase */
+const WAIT_PHASES=[
+  {startKey:"im_bett",       stopKey:"wird_aufgelegt"},          // Phase 1: in Bettenwarte -> wird aufgelegt
+  {startKey:"ruecktransport", stopKey:"ruecktransport_erfolgt"}  // Phase 2: wartet auf Rücktransport -> erfolgt
+];
+
+/* Standard-Konfiguration (im Admin später pflegbar) */
+const DEFAULT_CONFIG={
+  untersucher:["Dr. Becker","Dr. Wagner","Dr. Gradaus","Dr. Klein","Dr. Lang","Dr. Sommer"],
+  badges:["KM-Allergie","Niereninsuffizienz","Antikoagulation (Marcumar/DOAK)","Metformin-Pause"],
+  vorlagen:[
+    {name:"Koronarangiographie", untersuchung:"Koronarangiographie",        zugang:"Radial rechts",      anmerkung:""},
+    {name:"PCI",                 untersuchung:"Koronarangiographie + PCI",   zugang:"Radial rechts",      anmerkung:""},
+    {name:"TAVI",                untersuchung:"TAVI",                        zugang:"Femoral rechts",     anmerkung:"Schrittmacher-Bereitschaft"},
+    {name:"Schrittmacher (SM)",  untersuchung:"Schrittmacher-Implantation",  zugang:"Subklavia links",    anmerkung:""},
+    {name:"ICD",                 untersuchung:"ICD-Implantation",            zugang:"Pectoral links",     anmerkung:""},
+    {name:"Ablation",            untersuchung:"EPU + Ablation",              zugang:"Femoral beidseitig", anmerkung:""}
+  ],
+  ampel:{orangeMin:30, redMin:60}
+};
+
 /* ===== DATENHALTUNG ===== */
 const Store={
   ok:(()=>{try{localStorage.setItem("__t","1");localStorage.removeItem("__t");return true;}catch(e){return false;}})(),
   load(){if(!this.ok)return null;try{return JSON.parse(localStorage.getItem("hkl_plan")||"null");}catch(e){return null;}},
   save(d){if(!this.ok)return;try{localStorage.setItem("hkl_plan",JSON.stringify(d));}catch(e){}}
 };
-let state={cases:[],settings:{roomLabel:"HKL",theme:"dark",role:"kathlab"}};
+let state={cases:[],settings:{roomLabel:"HKL",theme:"dark",role:"kathlab"},config:null};
 let ui={view:"hub",currentDate:isoToday(),calMonth:firstOfMonth(isoToday()),editingId:null,pendingCancelId:null};
 
 /* ===== Theme/Rolle ===== */
@@ -374,6 +433,62 @@ let TINT_TARGET=[21,40,47], TINT_AMT=0.86;
 function tint(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);const[tr,tg,tb]=TINT_TARGET;const m=(c,t)=>Math.round(c+(t-c)*TINT_AMT);return "rgb("+m(r,tr)+","+m(g,tg)+","+m(b,tb)+")";}
 function applyTheme(theme){document.documentElement.dataset.theme=theme;state.settings.theme=theme;if(theme==="dark"){TINT_TARGET=[21,40,47];TINT_AMT=0.86;document.getElementById("themeBtn").textContent="☀ Hell";}else{TINT_TARGET=[255,255,255];TINT_AMT=0.90;document.getElementById("themeBtn").textContent="☾ Dunkel";}}
 function isStation(){return state.settings.role==="station";}
+
+/* ===== KONFIG / NEUE HELFER ===== */
+function ensureConfig(){
+  if(!state.config)state.config=JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  const c=state.config;
+  ["untersucher","badges","vorlagen"].forEach(k=>{if(!Array.isArray(c[k]))c[k]=JSON.parse(JSON.stringify(DEFAULT_CONFIG[k]));});
+  if(!c.ampel)c.ampel={orangeMin:30,redMin:60};
+}
+function anredeKurz(a){return a==="Herr"?"Hr.":a==="Frau"?"Fr.":a==="Divers"?"Dvs.":"";}
+function untersucherText(c){return Array.isArray(c.untersucher)?c.untersucher.join(" · "):(c.untersucher||"");}
+function nowIso(){return new Date().toISOString();}
+function touchCase(c){c.updatedAt=nowIso();}
+function logStatusTime(c,st){c.statusTimes=c.statusTimes||{};c.statusTimes[st]=nowIso();}
+/* Wartezeit-Ampel: liefert {mins,color} oder null, je nach aktivem Status */
+function waitInfo(c){
+  if(!c.statusTimes)return null;
+  const ph=WAIT_PHASES.find(p=>p.startKey===c.status);
+  if(!ph)return null;                       // nicht in einer wartenden Phase
+  const start=c.statusTimes[ph.startKey];
+  if(!start)return null;
+  const mins=Math.floor((Date.now()-new Date(start).getTime())/60000);
+  const a=(state.config&&state.config.ampel)||{orangeMin:30,redMin:60};
+  const color=mins>=a.redMin?"crit":(mins>=a.orangeMin?"warn":"ok");
+  return {mins,color};
+}
+/* zuletzt geänderter Zeitpunkt der Fälle eines Tages */
+function lastChangedFor(date){
+  let max=null;
+  state.cases.forEach(c=>{if(c.date===date&&c.updatedAt&&(!max||c.updatedAt>max))max=c.updatedAt;});
+  return max;
+}
+function hhmm(isoStr){const d=new Date(isoStr);return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");}
+
+/* ===== CHIP-FELDER (Untersucher & Warnhinweise) ===== */
+let formUntersucher=[], formBadges=[];
+function renderChips(){
+  const u=document.getElementById("chips-untersucher");
+  if(u)u.innerHTML=formUntersucher.map((n,i)=>'<span class="chip">'+escapeHtml(n)+'<span class="x" data-u="'+i+'">×</span></span>').join("");
+  const b=document.getElementById("chips-badges");
+  if(b)b.innerHTML=formBadges.map((n,i)=>'<span class="chip">'+escapeHtml(n)+'<span class="x" data-b="'+i+'">×</span></span>').join("");
+  if(u)u.querySelectorAll(".x").forEach(x=>x.addEventListener("click",()=>{formUntersucher.splice(+x.dataset.u,1);renderChips();}));
+  if(b)b.querySelectorAll(".x").forEach(x=>x.addEventListener("click",()=>{formBadges.splice(+x.dataset.b,1);renderChips();}));
+}
+function fillChipSelects(){
+  ensureConfig();
+  const au=document.getElementById("add-untersucher");
+  if(au)au.innerHTML='<option value="">+ Untersucher …</option>'+state.config.untersucher.map(n=>'<option>'+escapeHtml(n)+'</option>').join("");
+  const ab=document.getElementById("add-badge");
+  if(ab)ab.innerHTML='<option value="">+ Warnhinweis …</option>'+state.config.badges.map(n=>'<option>'+escapeHtml(n)+'</option>').join("");
+}
+function fillVorlagen(){
+  ensureConfig();
+  const v=document.getElementById("f-vorlage");
+  if(v)v.innerHTML='<option value="">— keine —</option>'+state.config.vorlagen.map((t,i)=>'<option value="'+i+'">'+escapeHtml(t.name)+'</option>').join("");
+}
+
 function applyRole(role){
   state.settings.role=role;
   document.body.classList.toggle("role-station",role==="station");
@@ -435,14 +550,14 @@ function renderHub(){document.getElementById("hubSummaryTitle").textContent="Bel
 
 /* ===== PATIENT PLANEN ===== */
 function populateRoomSelect(){const sel=document.getElementById("f-room");const cur=sel.value;sel.innerHTML="";ROOMS.forEach(rk=>{const o=document.createElement("option");o.value=rk;o.textContent=roomName(rk);sel.appendChild(o);});if(cur)sel.value=cur;}
-function resetForm(){ui.editingId=null;document.getElementById("editBanner").style.display="none";document.getElementById("cancelEdit").style.display="none";document.getElementById("saveCase").textContent="Patient hinzufügen";["f-nachname","f-vorname","f-station","f-fallnr","f-gebdat","f-untersucher","f-indikation","f-untersuchung","f-zugang"].forEach(id=>document.getElementById(id).value="");document.getElementById("f-anrede").value="";document.getElementById("f-room").value="1";document.getElementById("f-date").value=ui.currentDate;}
-function loadIntoForm(c){ui.editingId=c.id;const b=document.getElementById("editBanner");b.style.display="block";b.textContent="Bearbeitung: "+(c.anrede?c.anrede+" ":"")+fullName(c);document.getElementById("cancelEdit").style.display="inline-block";document.getElementById("saveCase").textContent="Änderungen speichern";document.getElementById("f-anrede").value=c.anrede||"";document.getElementById("f-nachname").value=c.nachname||"";document.getElementById("f-vorname").value=c.vorname||"";document.getElementById("f-station").value=c.station||"";document.getElementById("f-fallnr").value=c.fallnummer||"";document.getElementById("f-gebdat").value=c.geburtsdatum||"";document.getElementById("f-untersucher").value=c.untersucher||"";document.getElementById("f-indikation").value=c.indikation||"";document.getElementById("f-untersuchung").value=c.untersuchung||"";document.getElementById("f-zugang").value=c.zugang||"";document.getElementById("f-room").value=String(c.room);document.getElementById("f-date").value=c.date;}
+function resetForm(){ui.editingId=null;document.getElementById("editBanner").style.display="none";document.getElementById("cancelEdit").style.display="none";document.getElementById("saveCase").textContent="Patient hinzufügen";["f-nachname","f-vorname","f-station","f-fallnr","f-gebdat","f-indikation","f-untersuchung","f-zugang","f-anmerkung"].forEach(id=>document.getElementById(id).value="");document.getElementById("f-anrede").value="";document.getElementById("f-room").value="1";document.getElementById("f-date").value=ui.currentDate;const v=document.getElementById("f-vorlage");if(v)v.value="";formUntersucher=[];formBadges=[];renderChips();}
+function loadIntoForm(c){ui.editingId=c.id;const b=document.getElementById("editBanner");b.style.display="block";b.textContent="Bearbeitung: "+(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+fullName(c);document.getElementById("cancelEdit").style.display="inline-block";document.getElementById("saveCase").textContent="Änderungen speichern";document.getElementById("f-anrede").value=c.anrede||"";document.getElementById("f-nachname").value=c.nachname||"";document.getElementById("f-vorname").value=c.vorname||"";document.getElementById("f-station").value=c.station||"";document.getElementById("f-fallnr").value=c.fallnummer||"";document.getElementById("f-gebdat").value=c.geburtsdatum||"";document.getElementById("f-indikation").value=c.indikation||"";document.getElementById("f-untersuchung").value=c.untersuchung||"";document.getElementById("f-zugang").value=c.zugang||"";document.getElementById("f-anmerkung").value=c.anmerkung||"";document.getElementById("f-room").value=String(c.room);document.getElementById("f-date").value=c.date;formUntersucher=Array.isArray(c.untersucher)?c.untersucher.slice():(c.untersucher?[c.untersucher]:[]);formBadges=Array.isArray(c.warnBadges)?c.warnBadges.slice():[];renderChips();const v=document.getElementById("f-vorlage");if(v)v.value="";}
 function saveCase(){
   const nachname=document.getElementById("f-nachname").value.trim();
   if(!nachname){toast("Bitte einen Nachnamen eingeben.");document.getElementById("f-nachname").focus();return;}
-  const data={anrede:document.getElementById("f-anrede").value,nachname:nachname,vorname:document.getElementById("f-vorname").value.trim(),station:document.getElementById("f-station").value.trim(),fallnummer:document.getElementById("f-fallnr").value.trim(),geburtsdatum:document.getElementById("f-gebdat").value,untersucher:document.getElementById("f-untersucher").value.trim(),indikation:document.getElementById("f-indikation").value.trim(),untersuchung:document.getElementById("f-untersuchung").value.trim(),zugang:document.getElementById("f-zugang").value.trim(),room:document.getElementById("f-room").value,date:document.getElementById("f-date").value};
-  if(ui.editingId){const c=state.cases.find(x=>x.id===ui.editingId);const od=c.date,or=c.room;Object.assign(c,data);if(od!==c.date||or!==c.room){c.position=casesForRoom(c.date,c.room).length-1;renumber(od,or);}toast("Änderungen gespeichert.");}
-  else{data.id=uid();data.status="geplant";data.done=false;data.cancelled=null;data.position=casesForRoom(data.date,data.room).length;state.cases.push(data);toast("Patient hinzugefügt – "+roomName(data.room)+".");}
+  const data={anrede:document.getElementById("f-anrede").value,nachname:nachname,vorname:document.getElementById("f-vorname").value.trim(),station:document.getElementById("f-station").value.trim(),fallnummer:document.getElementById("f-fallnr").value.trim(),geburtsdatum:document.getElementById("f-gebdat").value,untersucher:formUntersucher.slice(),indikation:document.getElementById("f-indikation").value.trim(),untersuchung:document.getElementById("f-untersuchung").value.trim(),zugang:document.getElementById("f-zugang").value.trim(),anmerkung:document.getElementById("f-anmerkung").value.trim(),warnBadges:formBadges.slice(),room:document.getElementById("f-room").value,date:document.getElementById("f-date").value};
+  if(ui.editingId){const c=state.cases.find(x=>x.id===ui.editingId);const od=c.date,or=c.room;Object.assign(c,data);touchCase(c);if(od!==c.date||or!==c.room){c.position=casesForRoom(c.date,c.room).length-1;renumber(od,or);}toast("Änderungen gespeichert.");}
+  else{data.id=uid();data.status="geplant";data.done=false;data.cancelled=null;data.statusTimes={geplant:nowIso()};data.updatedAt=nowIso();data.position=casesForRoom(data.date,data.room).length;state.cases.push(data);toast("Patient hinzugefügt – "+roomName(data.room)+".");}
   persist();ui.currentDate=data.date;const keepDate=data.date;resetForm();document.getElementById("f-date").value=keepDate;renderPlanSide();
 }
 function renderPlanSide(){const refDate=document.getElementById("f-date").value||ui.currentDate;document.getElementById("planDayLabel").innerHTML=bigDay(refDate);document.getElementById("planSideTitle").textContent="Belegung am "+displayDate(refDate);renderOccupancy(document.getElementById("planOcc"),refDate);}
@@ -452,6 +567,9 @@ function planShiftDay(n){const cur=document.getElementById("f-date").value||ui.c
 function renderBoard(){
   document.getElementById("boardDate").value=ui.currentDate;
   document.getElementById("boardDateLabel").innerHTML=bigDay(ui.currentDate);
+  const lc=lastChangedFor(ui.currentDate);
+  const bm=document.getElementById("boardMeta");
+  if(bm)bm.innerHTML=lc?'<span class="lastchg">zuletzt geändert: '+hhmm(lc)+' Uhr</span>':"";
   const station=isStation();
   const lanes=document.getElementById("lanes"); lanes.innerHTML="";
   ROOMS.forEach(rk=>{
@@ -473,19 +591,23 @@ function makeCard(c,station){
   card.className="card"+(c.done?" done":"")+(crit?" critical":"")+(station?" nodrag":"");
   card.draggable=!station; card.dataset.id=c.id;
   card.style.background=tint(c.done?"#15803d":st.color);
-  const nameLine=(c.anrede?c.anrede+" ":"")+escapeHtml(fullName(c));
+  const nameLine=(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+escapeHtml(fullName(c));
   const stationCrit=CRITICAL_STATIONS.includes(normStation(c.station));
   let meta="";
   if(c.station)     meta+='<span'+(stationCrit?' class="stcrit"':'')+'>Station: <b>'+escapeHtml(c.station)+'</b></span>';
   if(c.indikation)  meta+='<span'+(/STEMI/i.test(c.indikation)?' class="stcrit"':'')+'>Indikation: <b>'+escapeHtml(c.indikation)+'</b></span>';
   if(c.untersuchung)meta+='<span>Untersuchung: <b>'+escapeHtml(c.untersuchung)+'</b></span>';
   if(c.zugang)      meta+='<span>Zugang: <b>'+escapeHtml(c.zugang)+'</b></span>';
-  if(c.untersucher) meta+='<span>Untersucher: <b>'+escapeHtml(c.untersucher)+'</b></span>';
+  const utext=untersucherText(c); if(utext) meta+='<span>Untersucher: <b>'+escapeHtml(utext)+'</b></span>';
   if(c.fallnummer)  meta+='<span>Fallnr.: <b>'+escapeHtml(c.fallnummer)+'</b></span>';
   if(c.geburtsdatum)meta+='<span>geb.: <b>'+escapeHtml(c.geburtsdatum.split("-").reverse().join("."))+'</b></span>';
-  let tags=""; if(crit)tags+='<span class="crit-tag">⚠ Kritisch</span>'; if(c.done)tags+='<span class="done-tag">✓ Fertig</span>';
+  if(c.anmerkung)   meta+='<span>Anmerkung: <b>'+escapeHtml(c.anmerkung)+'</b></span>';
+  const wb=(Array.isArray(c.warnBadges)&&c.warnBadges.length)?'<div class="wbadges">'+c.warnBadges.map(b=>'<span class="wbadge" title="'+escapeHtml(b)+'">⚠ '+escapeHtml(b)+'</span>').join("")+'</div>':"";
+  let tags=""; const wi=waitInfo(c); if(wi)tags+='<span class="waitdot '+wi.color+'" title="Wartezeit in dieser Phase"><span class="dot"></span>'+wi.mins+' min</span>'; if(crit)tags+='<span class="crit-tag">⚠ Kritisch</span>'; if(c.done)tags+='<span class="done-tag">✓ Fertig</span>';
   let acts="";
-  if(!station)acts='<button class="iconbtn edit" title="Bearbeiten">✎</button><button class="iconbtn cancel" title="Patient absagen">⊘</button><button class="iconbtn del" title="Entfernen">✕</button>';
+  if(!station)acts='<button class="actbtn edit" title="Bearbeiten"><span class="ico">✎</span><span class="lbl">Bearbeiten</span></button>'+
+    '<button class="actbtn cancel" title="Patient absagen"><span class="ico">⊘</span><span class="lbl">Absagen</span></button>'+
+    '<button class="actbtn del" title="Entfernen"><span class="ico">✕</span><span class="lbl">Löschen</span></button>';
   /* Footer: Status-Steuerung je nach Rolle */
   let footer="";
   if(station){
@@ -495,18 +617,18 @@ function makeCard(c,station){
     footer='<select class="status" title="Status ändern"></select><label class="donebox"><input type="checkbox" '+(c.done?"checked":"")+'> Fertig</label>';
   }
   card.innerHTML='<div class="banner" style="background:'+st.color+'"><span>'+escapeHtml(st.label)+'</span><span class="tags">'+tags+'</span></div>'+
-    '<div class="inner"><div class="row1"><div class="pname">'+nameLine+'</div><div class="acts">'+acts+'</div></div><div class="meta">'+meta+'</div></div>'+
+    '<div class="inner"><div class="row1"><div class="pname">'+nameLine+'</div><div class="acts">'+acts+'</div></div><div class="meta">'+meta+'</div>'+wb+'</div>'+
     '<div class="footer">'+footer+'</div>';
   const sel=card.querySelector("select.status");
   if(sel){
     const opts = station ? STATUSES.filter(s=>STATION_ALLOWED.includes(s.key)) : STATUSES;
     opts.forEach(s=>{const o=document.createElement("option");o.value=s.key;o.textContent=s.label;sel.appendChild(o);});
     sel.value=c.status;
-    sel.addEventListener("change",e=>{c.status=e.target.value;persist();renderBoard();});
+    sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);persist();renderBoard();});
     sel.addEventListener("mousedown",e=>e.stopPropagation());
   }
   if(!station){
-    card.querySelector(".donebox input").addEventListener("change",e=>{c.done=e.target.checked;persist();renderBoard();});
+    card.querySelector(".donebox input").addEventListener("change",e=>{c.done=e.target.checked;touchCase(c);persist();renderBoard();});
     card.querySelector(".donebox").addEventListener("mousedown",e=>e.stopPropagation());
     card.querySelector(".edit").addEventListener("click",e=>{e.stopPropagation();loadIntoForm(c);setView("plan");});
     card.querySelector(".cancel").addEventListener("click",e=>{e.stopPropagation();openCancelModal(c.id);});
@@ -576,7 +698,7 @@ function renderCalendar(){
 /* ===== WERKZEUGE ===== */
 function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="HKL-Tagesplan_"+isoToday()+".json";a.click();URL.revokeObjectURL(url);toast("Plan exportiert.");}
 function importData(file){const reader=new FileReader();reader.onload=()=>{try{const obj=JSON.parse(reader.result);if(!obj||!Array.isArray(obj.cases))throw 0;state=obj;if(!state.settings)state.settings={roomLabel:"HKL",theme:"dark",role:"kathlab"};migrate();applyTheme(state.settings.theme||"dark");applyRole(state.settings.role||"kathlab");populateRoomSelect();persist();setView(isStation()?"board":"hub");toast("Plan importiert.");}catch(e){toast("Datei konnte nicht gelesen werden.");}};reader.readAsText(file);}
-function migrate(){state.cases.forEach(c=>{if(c.name&&!c.nachname){const p=c.name.split(",");c.nachname=(p[0]||"").trim();c.vorname=(p[1]||"").trim();delete c.name;}if(typeof c.room==="number")c.room=String(c.room);if(!c.status)c.status="geplant";if(c.done===undefined)c.done=false;if(c.cancelled===undefined)c.cancelled=null;});}
+function migrate(){ensureConfig();state.cases.forEach(c=>{if(c.name&&!c.nachname){const p=c.name.split(",");c.nachname=(p[0]||"").trim();c.vorname=(p[1]||"").trim();delete c.name;}if(typeof c.room==="number")c.room=String(c.room);if(!c.status)c.status="geplant";if(c.status==="freigabe")c.status="ruecktransport_erfolgt";if(c.done===undefined)c.done=false;if(c.cancelled===undefined)c.cancelled=null;if(typeof c.untersucher==="string")c.untersucher=c.untersucher?c.untersucher.split(" · ").filter(Boolean):[];if(!Array.isArray(c.untersucher))c.untersucher=[];if(!Array.isArray(c.warnBadges))c.warnBadges=[];if(c.anmerkung===undefined)c.anmerkung="";if(!c.statusTimes)c.statusTimes={};if(c.updatedAt===undefined)c.updatedAt=null;});}
 function loadDemo(){
   const t=isoToday(),t1=addDays(t,1),t2=addDays(t,2);
   state.cases=[
@@ -599,9 +721,13 @@ function loadDemo(){
   const ex=mk(t,"1",99,"Herr","Maier","Paul","K3","Stabile AP","Koronarangiographie","Radial rechts","Dr. Becker","geplant",false);
   ex.cancelled={by:"Schwester Anja",reason:"Krank",note:"Patient fiebert, Eingriff verschoben.",at:new Date().toISOString(),status_at:"geplant"};
   state.cases.push(ex);
+  /* Beispiel-Warnhinweise / Anmerkung */
+  if(state.cases[0])state.cases[0].warnBadges=["KM-Allergie"];
+  if(state.cases[2]){state.cases[2].warnBadges=["Antikoagulation (Marcumar/DOAK)"];state.cases[2].anmerkung="IVUS + Impella bereitlegen";}
+  if(state.cases[7])state.cases[7].warnBadges=["Niereninsuffizienz","Metformin-Pause"];
   persist();refreshAll();toast("Demo-Daten geladen.");
 }
-function mk(date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher,status,done){return {id:uid(),date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher,status,done,cancelled:null};}
+function mk(date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher,status,done){const t=new Date(Date.now()-35*60000).toISOString();return {id:uid(),date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher:(untersucher||"").split(" · ").filter(Boolean),warnBadges:[],anmerkung:"",status,done,cancelled:null,statusTimes:{[status]:t},updatedAt:t};}
 function clearAll(){if(confirm("Wirklich ALLE Patienten/Pläne löschen? (nur lokal in diesem Browser)")){state.cases=[];persist();refreshAll();toast("Alle Daten gelöscht.");}}
 
 /* ===== HILFEN + INIT ===== */
@@ -612,7 +738,8 @@ function refreshAll(){if(ui.view==="hub")renderHub();if(ui.view==="plan")renderP
 function init(){
   const saved=Store.load();
   if(saved&&Array.isArray(saved.cases)){state=saved;if(!state.settings)state.settings={roomLabel:"HKL",theme:"dark",role:"kathlab"};if(!state.settings.role)state.settings.role="kathlab";migrate();}
-  else loadDemo();
+  else {ensureConfig();loadDemo();}
+  ensureConfig();
   applyTheme(state.settings.theme||"dark");
   applyRole(state.settings.role||"kathlab");
   populateRoomSelect();
@@ -645,6 +772,15 @@ function init(){
   document.getElementById("cancelConfirm").addEventListener("click",confirmCancel);
   document.getElementById("cancelAbort").addEventListener("click",closeCancelModal);
   document.getElementById("modalOverlay").addEventListener("click",e=>{if(e.target.id==="modalOverlay")closeCancelModal();});
+  /* Vorlagen + Chip-Felder */
+  fillVorlagen(); fillChipSelects(); renderChips();
+  document.getElementById("f-vorlage").addEventListener("change",e=>{const i=e.target.value;if(i==="")return;const t=state.config.vorlagen[+i];if(!t)return;if(t.untersuchung)document.getElementById("f-untersuchung").value=t.untersuchung;if(t.zugang)document.getElementById("f-zugang").value=t.zugang;if(t.anmerkung)document.getElementById("f-anmerkung").value=t.anmerkung;toast("Vorlage „"+t.name+"“ übernommen.");});
+  document.getElementById("add-untersucher").addEventListener("change",e=>{const v=e.target.value;if(v&&!formUntersucher.includes(v))formUntersucher.push(v);e.target.value="";renderChips();});
+  document.getElementById("guest-untersucher").addEventListener("click",()=>{const n=prompt("Name des Gast-Untersuchers:");if(n&&n.trim()){formUntersucher.push(n.trim());renderChips();}});
+  document.getElementById("add-badge").addEventListener("change",e=>{const v=e.target.value;if(v&&!formBadges.includes(v))formBadges.push(v);e.target.value="";renderChips();});
+  document.getElementById("newbadge").addEventListener("click",()=>{const n=prompt("Neuer Warnhinweis:");if(n&&n.trim()){const val=n.trim();if(!state.config.badges.includes(val)){state.config.badges.push(val);fillChipSelects();persist();}if(!formBadges.includes(val))formBadges.push(val);renderChips();}});
+  /* Wartezeit-Punkte regelmäßig aktualisieren */
+  setInterval(()=>{if(ui.view==="board"&&!document.querySelector(".card.dragging")&&document.getElementById("modalOverlay").style.display!=="flex")renderBoard();},30000);
   setView(isStation()?"board":"hub");
 }
 document.addEventListener("DOMContentLoaded",init);
