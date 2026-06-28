@@ -103,6 +103,26 @@
   .lane-head{flex:0 0 150px;background:var(--panel);border-right:2px solid var(--brand);padding:12px;display:flex;flex-direction:column;justify-content:center;gap:8px}
   .lane-head .rname{font-weight:800;font-size:16px;color:var(--brand-l);line-height:1.15}
   .lane-head .badge{background:var(--brand);color:#06222a;border-radius:20px;font-size:12px;font-weight:800;padding:2px 0;text-align:center;width:44px}
+  /* Saal-Kopffeld mit Ampel + Personal */
+  .lane-head.saal{flex:0 0 200px;display:block;border-right:none;border-left:6px solid var(--amp);justify-content:flex-start}
+  .lane-head.saal .lh-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .lane-head.saal .badge{width:auto;min-width:28px;padding:2px 8px}
+  .lane-head .ampel-sel{margin-left:auto;font-family:inherit;font-size:11px;font-weight:800;border:none;border-radius:12px;padding:3px 8px;color:#fff;cursor:pointer;-webkit-appearance:none;appearance:none}
+  .lane-head .ampel-sel option{color:#1a2a30;background:#fff;font-weight:600}
+  .lane-head .pers-btn{font-family:inherit;font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:10px;padding:3px 8px;background:var(--panel-2);color:var(--ink);cursor:pointer}
+  .lane-head .lh-pers{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+  .pchip{display:inline-flex;align-items:center;gap:5px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:2px 8px;font-size:11px;font-weight:600}
+  .pchip .x{cursor:pointer;font-weight:900;opacity:.65}.pchip .x:hover{opacity:1;color:var(--crit)}
+  .pers-editor{display:flex;gap:6px;margin-top:7px}
+  .pers-editor select,.pers-editor .pers-new{font-family:inherit;font-size:11px;border:1px solid var(--line);border-radius:8px;padding:3px 6px;background:var(--input-bg);color:var(--ink);cursor:pointer}
+  .pers-editor select{flex:1;min-width:0}
+  .nf-row{display:flex;gap:6px;margin-top:7px}
+  .nf-row select,.nf-row input{font-family:inherit;font-size:11px;border:1px solid var(--line);border-radius:8px;padding:3px 6px;background:var(--input-bg);color:var(--ink)}
+  .nf-row input{flex:1;min-width:0}
+  .staffbar{margin-top:8px;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:800;color:#fff;text-align:center;letter-spacing:.3px}
+  .staffbar.unterbesetzt{background:#dc2626}.staffbar.unbesetzt{background:#991b1b}
+  .board-meta .warnchip{font-size:12px;font-weight:800;color:#fff;border-radius:8px;padding:3px 10px}
+  .board-meta .warnchip.unterbesetzt{background:#dc2626}.board-meta .warnchip.unbesetzt{background:#991b1b}
   .lane-strip{flex:1;display:flex;gap:10px;padding:10px;overflow-x:auto;align-items:stretch}
   .lane-strip.dragover{background:rgba(25,176,199,.14);outline:2px dashed var(--brand-l);outline-offset:-4px}
   .lane-empty{color:var(--muted);font-size:13px;display:flex;align-items:center;padding:0 8px;font-style:italic;white-space:nowrap}
@@ -226,6 +246,85 @@
   .crit-legend b{color:var(--crit)}
   .station-hint{background:var(--cancel-bg);border:1px solid var(--cancel);color:var(--ink);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;font-weight:600;display:none}
   body.role-station .station-hint{display:block}
+  /* Anfrage-Option im Formular */
+  .reqbox{background:var(--panel-2);border:1px dashed var(--line);border-radius:9px;padding:9px 11px}
+  .chkline{display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer}
+  .chkline input{width:16px;height:16px}
+  /* Ausgegraute Anfrage-Karte */
+  .card.requested{opacity:.96;background:repeating-linear-gradient(135deg,var(--panel-2),var(--panel-2) 10px,rgba(120,120,120,.08) 10px,rgba(120,120,120,.08) 20px);border:1px dashed #9aa7ad;filter:grayscale(.35)}
+  .card.requested .req-flag{font-size:11px;font-weight:800;color:#92600a;background:rgba(245,158,11,.18);border-radius:7px;padding:3px 8px;margin-bottom:6px;display:inline-block}
+  .card.requested .pname{font-weight:800;font-size:15px;color:var(--ink)}
+  .card.requested .req-by{font-size:11px;color:var(--muted);margin-top:5px}
+  .req-actions{display:flex;gap:7px;margin-top:9px}
+  .req-actions button{flex:1;font-family:inherit;font-size:12px;font-weight:800;border-radius:8px;padding:6px;cursor:pointer;border:1px solid var(--line)}
+  .req-actions .req-ok{background:#15803d;color:#fff;border-color:#15803d}
+  .req-actions .req-no{background:var(--panel-2);color:var(--crit);border-color:var(--crit)}
+  /* Admin-Verwaltung */
+  .admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .admin-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .admin-card.wide{grid-column:1/-1}
+  .admin-card h3{margin:0 0 10px;font-size:15px;color:var(--brand-l)}
+  .adm-items{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+  .adm-item{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel-2);border:1px solid var(--line);border-radius:7px;padding:4px 6px 4px 10px;font-size:13px}
+  .adm-x{background:none;border:none;color:var(--crit);font-weight:900;font-size:16px;cursor:pointer;line-height:1;padding:0 4px}
+  .adm-add{display:flex;gap:6px}
+  .adm-add input{flex:1;min-width:0;font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--input-bg);color:var(--ink)}
+  .adm-add-btn{font-family:inherit;font-size:12px;font-weight:700;border:1px solid var(--brand);background:var(--brand);color:#06222a;border-radius:8px;padding:6px 10px;cursor:pointer}
+  .adm-vorlagen{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+  .adm-vrow{display:grid;grid-template-columns:1.1fr 1.6fr 1.1fr 1.4fr auto;gap:7px;align-items:center}
+  .adm-vrow input{font-family:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:7px;padding:5px 7px;background:var(--input-bg);color:var(--ink);min-width:0}
+  .adm-ampel{display:flex;gap:18px;flex-wrap:wrap}
+  .adm-ampel label{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px}
+  .adm-ampel input{width:70px;font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;padding:5px 7px;background:var(--input-bg);color:var(--ink)}
+  /* Wandmonitor / Kiosk */
+  #kiosk{position:fixed;inset:0;z-index:9999;background:#0a1418;color:#e8f1f3;display:none;flex-direction:column}
+  .kiosk-bar{display:flex;align-items:center;gap:18px;padding:14px 26px;background:#06222a;border-bottom:2px solid #0e5a6b}
+  .kiosk-title{font-size:22px;font-weight:800;letter-spacing:.3px}
+  .kiosk-clock{margin-left:auto;font-size:24px;font-weight:800;color:#5fd0e0;font-variant-numeric:tabular-nums}
+  .kiosk-exit{font-family:inherit;font-size:14px;font-weight:700;background:#0e5a6b;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer}
+  .kiosk-board{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:14px;padding:18px 22px;overflow:auto}
+  .k-col{background:#0f2229;border:1px solid #1c3b45;border-radius:14px;padding:12px;display:flex;flex-direction:column;min-height:0}
+  .k-col.saal{border-top:6px solid var(--amp)}
+  .k-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .k-rn{font-size:20px;font-weight:800;color:#9fe3ee}
+  .k-cnt{background:#0e5a6b;color:#fff;border-radius:16px;font-size:15px;font-weight:800;padding:2px 12px}
+  .k-amp{font-size:13px;font-weight:800;color:#06222a;border-radius:7px;padding:4px 9px;margin-bottom:5px;text-align:center}
+  .k-staff{font-size:13px;color:#bcd6dc;margin-bottom:9px}.k-staff .k-warn{color:#fca5a5}
+  .k-cards{display:flex;flex-direction:column;gap:8px;overflow:auto}
+  .k-card{background:#13303a;border-left:6px solid #16a34a;border-radius:9px;padding:8px 10px}
+  .k-card.crit{box-shadow:0 0 0 2px rgba(220,38,38,.6) inset}
+  .k-name{font-size:17px;font-weight:800}
+  .k-wait{font-size:13px;font-weight:800;border-radius:10px;padding:0 7px;color:#fff}
+  .k-wait.ok{background:#15803d}.k-wait.warn{background:#d97706}.k-wait.crit{background:#dc2626}
+  .k-sub{font-size:13px;color:#aac4cb;margin:2px 0}
+  .k-st{font-size:14px;font-weight:800}
+  .k-empty{color:#6f8b93;font-style:italic;padding:10px;text-align:center}
+  /* Auswertung */
+  .ausw-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+  .ausw-controls label{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+  .ausw-controls input[type=date]{font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;padding:5px 8px;background:var(--input-bg);color:var(--ink)}
+  .ausw-spacer{flex:1}
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:18px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--brand);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .kpi .kv{font-size:30px;font-weight:800;color:var(--brand-l);line-height:1}
+  .kpi .kl{font-size:13px;font-weight:700;margin-top:4px}
+  .kpi .ks{font-size:11px;color:var(--muted);margin-top:3px}
+  .ausw-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:18px}
+  .ausw-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .ausw-card h3{margin:0 0 12px;font-size:14px;color:var(--brand-l)}
+  .statrow{display:flex;gap:16px;flex-wrap:wrap}
+  .statrow div{display:flex;flex-direction:column}
+  .statrow b{font-size:24px;font-weight:800;color:var(--ink);line-height:1}
+  .statrow span{font-size:11px;color:var(--muted)}
+  .awnone{color:var(--muted);font-style:italic;font-size:13px;margin:4px 0}
+  .awbar{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+  .awbl{flex:0 0 92px;font-size:12px;font-weight:600;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .awbt{flex:1;height:14px;background:var(--panel-2);border-radius:8px;overflow:hidden}
+  .awbf{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--brand-l));border-radius:8px}
+  .awbv{flex:0 0 60px;font-size:12px;font-weight:800;color:var(--brand-l)}
+  .awtable{width:100%;border-collapse:collapse;font-size:13px}
+  .awtable th,.awtable td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+  .awtable th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
 </style>
 </head>
 <body>
@@ -239,8 +338,12 @@
       <button data-view="board">Aktueller&nbsp;Plan</button>
       <button data-view="calendar" class="hide-station">Kalender</button>
       <button data-view="cancelled" class="hide-station">Absagen</button>
+      <button data-view="rejected" class="hide-station">Abgelehnt</button>
+      <button data-view="auswertung" class="hide-station">Auswertung</button>
     </nav>
     <button class="tool-btn role" id="roleBtn" title="Zwischen Labor- und Stationsansicht wechseln">Zur Stationsansicht</button>
+    <button class="tool-btn hide-station" id="kioskBtn" title="Wandmonitor / Kiosk-Modus (Escape beendet)">🖥 Wandmonitor</button>
+    <button class="tool-btn hide-station" id="adminBtn" title="Admin-Verwaltung">⚙ Admin</button>
     <button class="tool-btn hide-station" id="themeBtn" title="Hell/Dunkel umschalten">☀ Hell</button>
     <button class="tool-btn hide-station" id="toggleLabel" title="HKL/Tisch umschalten">HKL ⇄ Tisch</button>
   </div>
@@ -304,6 +407,9 @@
           <div class="field full"><label>Anmerkungen / Material <span class="hint">(z. B. IVUS, Impella, spezieller Stent)</span></label><textarea id="f-anmerkung" placeholder="Freitext für Material, Devices, Besonderheiten …"></textarea></div>
           <div class="field"><label>Raum <span class="req">*</span></label><select id="f-room"></select></div>
           <div class="field"><label>Tag <span class="req">*</span></label><input type="date" id="f-date"></div>
+          <div class="field full reqbox"><label class="chkline"><input type="checkbox" id="f-request"> Als <b>Anfrage</b> anlegen (Bestätigung durch Oberarzt nötig)</label>
+            <input id="f-reqby" placeholder="angefragt durch (z. B. Assistenzarzt Dr. …)" autocomplete="off" style="display:none;margin-top:7px">
+          </div>
         </div>
         <div class="form-actions">
           <button class="btn-primary" id="saveCase">Patient hinzufügen</button>
@@ -346,6 +452,35 @@
     <div id="cancelledList"></div>
   </section>
 
+  <!-- ABGELEHNTE ANFRAGEN -->
+  <section class="view" id="view-rejected">
+    <h2 class="section">Abgelehnte Anfragen</h2>
+    <p class="lead">Von einem Oberarzt abgelehnte Anfragen. Wiederherstellen holt den Fall als erneute Anfrage zurück in den Plan.</p>
+    <div id="rejectedList"></div>
+  </section>
+
+  <!-- ADMIN-VERWALTUNG -->
+  <section class="view" id="view-admin">
+    <h2 class="section">Admin-Verwaltung</h2>
+    <p class="lead">Pflege aller Auswahllisten. Änderungen wirken sofort. (Im Prototyp ist der Passwortschutz nur Sichtschutz – echte Absicherung erfolgt serverseitig.)</p>
+    <div class="admin-grid" id="adminGrid"></div>
+  </section>
+
+  <!-- AUSWERTUNG -->
+  <section class="view" id="view-auswertung">
+    <h2 class="section">Auswertung</h2>
+    <p class="lead">Kennzahlen aus den protokollierten Status-Zeiten, Absagen, Anfragen und Notfall-Blockierungen. Zeitraum wählbar.</p>
+    <div class="ausw-controls">
+      <label>Von <input type="date" id="aw-from"></label>
+      <label>Bis <input type="date" id="aw-to"></label>
+      <button class="tool-btn" id="aw-all">Gesamter Zeitraum</button>
+      <span class="ausw-spacer"></span>
+      <button class="tool-btn" id="aw-csv-times">Zeiten als CSV</button>
+      <button class="tool-btn" id="aw-csv-nf">Notfälle als CSV</button>
+    </div>
+    <div id="auswContent"></div>
+  </section>
+
   <div class="demo-note">
     <b>Demo-Modus.</b> Attrappe zur Veranschaulichung. Daten liegen nur in diesem Browser; der Rollen-Umschalter ist eine <b>Anschauung</b> der eingeschränkten Stationssicht – echte Rechte-Trennung erfolgt serverseitig (IT). Export/Import sichert Testdaten als Datei.
     <div class="footer-tools hide-station">
@@ -357,6 +492,12 @@
     </div>
   </div>
 </main>
+
+<!-- WANDMONITOR / KIOSK -->
+<div id="kiosk" style="display:none">
+  <div class="kiosk-bar"><div class="kiosk-title" id="kioskTitle">Katheterlabor – Tagesübersicht</div><div class="kiosk-clock" id="kioskClock">—</div><button class="kiosk-exit" id="kioskExit" title="Escape">✕ Beenden</button></div>
+  <div class="kiosk-board" id="kioskBoard"></div>
+</div>
 
 <!-- ABSAGE-MASKE -->
 <div class="modal-overlay" id="modalOverlay" style="display:none">
@@ -404,6 +545,19 @@ const WAIT_PHASES=[
   {startKey:"ruecktransport", stopKey:"ruecktransport_erfolgt"}  // Phase 2: wartet auf Rücktransport -> erfolgt
 ];
 
+/* Saal-Ampel (Kopffeld): 6 Zustände */
+const AMPEL=[
+  {key:"frei",         label:"Saal frei",           color:"#16a34a"},
+  {key:"vorbereitung", label:"Vor-/Nachbereitung",  color:"#2563eb"},
+  {key:"belegt",       label:"Saal belegt",         color:"#dc2626"},
+  {key:"reinigung",    label:"Reinigung",           color:"#ea580c"},
+  {key:"notfall",      label:"Notfallblockierung",  color:"#eab308"},
+  {key:"wartung",      label:"Wartung / Reparatur", color:"#6b7280"}
+];
+const AMPEL_MAP=Object.fromEntries(AMPEL.map(a=>[a.key,a]));
+const AMPEL_OPERATIONAL=["frei","vorbereitung","belegt","reinigung"]; // lösen Unterbesetzungs-Prüfung aus
+const SAAL_ROOMS=["1","2","3","4"]; // Ampel/Personal nur für Säle, nicht Bettenwarte
+
 /* Standard-Konfiguration (im Admin später pflegbar) */
 const DEFAULT_CONFIG={
   untersucher:["Dr. Becker","Dr. Wagner","Dr. Gradaus","Dr. Klein","Dr. Lang","Dr. Sommer"],
@@ -416,7 +570,11 @@ const DEFAULT_CONFIG={
     {name:"ICD",                 untersuchung:"ICD-Implantation",            zugang:"Pectoral links",     anmerkung:""},
     {name:"Ablation",            untersuchung:"EPU + Ablation",              zugang:"Femoral beidseitig", anmerkung:""}
   ],
-  ampel:{orangeMin:30, redMin:60}
+  ampel:{orangeMin:30, redMin:60},
+  personal:["Pfl. Schmidt","Pfl. Meyer","Pfl. Koch","Pfl. Bauer","Pfl. Wolf","Pfl. Neumann","Pfl. Fischer"],
+  notfallReasons:["Reanimation","STEMI","AV-Block III°","instabiler Patient","Sonstiges"],
+  criticalStations:["C61","C72","C73","C82","ZNA"],
+  absageReasons:["Verschoben","Krank","Verstorben","Vergessen","Nicht gekommen","Sonstiges"]
 };
 
 /* ===== DATENHALTUNG ===== */
@@ -425,8 +583,8 @@ const Store={
   load(){if(!this.ok)return null;try{return JSON.parse(localStorage.getItem("hkl_plan")||"null");}catch(e){return null;}},
   save(d){if(!this.ok)return;try{localStorage.setItem("hkl_plan",JSON.stringify(d));}catch(e){}}
 };
-let state={cases:[],settings:{roomLabel:"HKL",theme:"dark",role:"kathlab"},config:null};
-let ui={view:"hub",currentDate:isoToday(),calMonth:firstOfMonth(isoToday()),editingId:null,pendingCancelId:null};
+let state={cases:[],settings:{roomLabel:"HKL",theme:"dark",role:"kathlab"},config:null,rooms:{},notfallLog:[]};
+let ui={view:"hub",currentDate:isoToday(),calMonth:firstOfMonth(isoToday()),editingId:null,pendingCancelId:null,persOpen:new Set()};
 
 /* ===== Theme/Rolle ===== */
 let TINT_TARGET=[21,40,47], TINT_AMT=0.86;
@@ -438,7 +596,7 @@ function isStation(){return state.settings.role==="station";}
 function ensureConfig(){
   if(!state.config)state.config=JSON.parse(JSON.stringify(DEFAULT_CONFIG));
   const c=state.config;
-  ["untersucher","badges","vorlagen"].forEach(k=>{if(!Array.isArray(c[k]))c[k]=JSON.parse(JSON.stringify(DEFAULT_CONFIG[k]));});
+  ["untersucher","badges","vorlagen","personal","notfallReasons","criticalStations","absageReasons"].forEach(k=>{if(!Array.isArray(c[k]))c[k]=JSON.parse(JSON.stringify(DEFAULT_CONFIG[k]));});
   if(!c.ampel)c.ampel={orangeMin:30,redMin:60};
 }
 function anredeKurz(a){return a==="Herr"?"Hr.":a==="Frau"?"Fr.":a==="Divers"?"Dvs.":"";}
@@ -465,6 +623,56 @@ function lastChangedFor(date){
   return max;
 }
 function hhmm(isoStr){const d=new Date(isoStr);return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");}
+
+/* ===== SAAL-AMPEL / PERSONAL / UNTERBESETZUNG ===== */
+function roomKey(date,room){return date+"|"+room;}
+function getRoom(date,room){const k=roomKey(date,room);if(!state.rooms[k])state.rooms[k]={ampel:"frei",note:"",personnel:[]};const r=state.rooms[k];if(!Array.isArray(r.personnel))r.personnel=[];if(!r.ampel)r.ampel="frei";if(r.note===undefined)r.note="";return r;}
+function setRoomAmpel(date,room,key){const r=getRoom(date,room);const old=r.ampel;r.ampel=key;if(key!=="notfall")r.note="";if(key==="notfall"&&old!=="notfall")openNotfall(date,room,r.note);if(old==="notfall"&&key!=="notfall")closeNotfall(date,room);persist();}
+function openNotfall(date,room,reason){state.notfallLog=state.notfallLog||[];state.notfallLog.push({id:uid(),date:date,room:room,start:nowIso(),end:null,reason:reason||""});}
+function closeNotfall(date,room){const e=(state.notfallLog||[]).find(x=>x.date===date&&x.room===room&&!x.end);if(e)e.end=nowIso();}
+function updateNotfallReason(date,room,reason){const e=(state.notfallLog||[]).find(x=>x.date===date&&x.room===room&&!x.end);if(e)e.reason=reason;}
+/* null | "unbesetzt" | "unterbesetzt" – nur in operativen Saal-Zuständen */
+function staffState(date,room){const r=getRoom(date,room);if(!AMPEL_OPERATIONAL.includes(r.ampel))return null;const n=r.personnel.length;if(n===0)return"unbesetzt";if(n===1)return"unterbesetzt";return null;}
+function buildSaalHead(rk,count,r){
+  const opts=AMPEL.map(a=>'<option value="'+a.key+'"'+(a.key===r.ampel?' selected':'')+'>'+a.label+'</option>').join("");
+  const chips=r.personnel.map((n,i)=>'<span class="pchip">'+escapeHtml(n)+'<span class="x" data-pi="'+i+'">×</span></span>').join("");
+  const open=ui.persOpen.has(roomKey(ui.currentDate,rk));
+  let editor="";
+  if(open){
+    const addopts='<option value="">+ aus Liste …</option>'+(state.config.personal||[]).map(n=>'<option>'+escapeHtml(n)+'</option>').join("");
+    editor='<div class="pers-editor"><select class="pers-add">'+addopts+'</select><button type="button" class="pers-new">+ Name</button></div>';
+  }
+  let notfall="";
+  if(r.ampel==="notfall"){
+    const known=(state.config.notfallReasons||[]);
+    const ropts='<option value="">Grund …</option>'+known.map(n=>'<option'+(n===r.note?' selected':'')+'>'+escapeHtml(n)+'</option>').join("");
+    const freeVal=(r.note&&!known.includes(r.note))?r.note:"";
+    notfall='<div class="nf-row"><select class="nf-sel">'+ropts+'</select><input class="nf-free" placeholder="Freitext" value="'+escapeHtml(freeVal)+'"></div>';
+  }
+  const ss=staffState(ui.currentDate,rk);
+  const bar=ss?'<div class="staffbar '+ss+'">'+(ss==="unbesetzt"?"Unbesetzt":"Unterbesetzt")+'</div>':"";
+  return '<div class="lh-top"><span class="rname">'+roomName(rk)+'</span><span class="badge">'+count+'</span>'+
+         '<select class="ampel-sel" title="Saal-Status">'+opts+'</select>'+
+         '<button type="button" class="pers-btn" title="Personal verwalten">👤 '+r.personnel.length+'</button></div>'+
+         (chips?'<div class="lh-pers">'+chips+'</div>':'')+editor+notfall+bar;
+}
+function wireSaalHead(head,date,rk){
+  const r=getRoom(date,rk);
+  const sel=head.querySelector(".ampel-sel");
+  if(sel){sel.style.background=(AMPEL_MAP[r.ampel]||AMPEL[0]).color;
+    sel.addEventListener("change",e=>{setRoomAmpel(date,rk,e.target.value);renderBoard();});}
+  const pb=head.querySelector(".pers-btn");
+  if(pb)pb.addEventListener("click",()=>{const k=roomKey(date,rk);if(ui.persOpen.has(k))ui.persOpen.delete(k);else ui.persOpen.add(k);renderBoard();});
+  head.querySelectorAll(".lh-pers .x").forEach(x=>x.addEventListener("click",()=>{getRoom(date,rk).personnel.splice(+x.dataset.pi,1);persist();renderBoard();}));
+  const add=head.querySelector(".pers-add");
+  if(add)add.addEventListener("change",e=>{const v=e.target.value;if(v){const rr=getRoom(date,rk);if(!rr.personnel.includes(v))rr.personnel.push(v);persist();renderBoard();}});
+  const pn=head.querySelector(".pers-new");
+  if(pn)pn.addEventListener("click",()=>{const n=prompt("Name der Person:");if(n&&n.trim()){const val=n.trim();const rr=getRoom(date,rk);if(!rr.personnel.includes(val))rr.personnel.push(val);state.config.personal=state.config.personal||[];if(!state.config.personal.includes(val))state.config.personal.push(val);persist();renderBoard();}});
+  const nf=head.querySelector(".nf-sel");
+  if(nf)nf.addEventListener("change",e=>{getRoom(date,rk).note=e.target.value;updateNotfallReason(date,rk,e.target.value);persist();renderBoard();});
+  const nff=head.querySelector(".nf-free");
+  if(nff)nff.addEventListener("change",e=>{const v=e.target.value.trim();if(v){getRoom(date,rk).note=v;updateNotfallReason(date,rk,v);persist();}});
+}
 
 /* ===== CHIP-FELDER (Untersucher & Warnhinweise) ===== */
 let formUntersucher=[], formBadges=[];
@@ -510,13 +718,13 @@ function bigDay(s){return '<span class="wd">'+weekday(s)+'</span>'+displayDate(s
 
 /* ===== FALL-HILFEN ===== */
 function uid(){return "c"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
-function casesForRoom(date,room){return state.cases.filter(c=>c.date===date&&c.room===room&&!c.cancelled).sort((a,b)=>a.position-b.position);}
+function casesForRoom(date,room){return state.cases.filter(c=>c.date===date&&c.room===room&&!c.cancelled&&!c.rejected).sort((a,b)=>a.position-b.position);}
 function countForDate(date){return state.cases.filter(c=>c.date===date&&!c.cancelled).length;}
 function renumber(date,room){casesForRoom(date,room).forEach((c,i)=>c.position=i);}
 function roomName(rk){return rk==="bw"?"Bettenwarte":state.settings.roomLabel+" "+rk;}
 function fullName(c){return (c.nachname||"")+(c.vorname?", "+c.vorname:"");}
 function normStation(s){return String(s||"").toUpperCase().replace(/\s+/g,"");}
-function isCritical(c){return CRITICAL_STATIONS.includes(normStation(c.station))||/STEMI/i.test(c.indikation||"");}
+function isCritical(c){const cs=(state.config&&state.config.criticalStations)||CRITICAL_STATIONS;return cs.includes(normStation(c.station))||/STEMI/i.test(c.indikation||"");}
 function persist(){Store.save(state);}
 
 /* ===== NAVIGATION ===== */
@@ -531,6 +739,9 @@ function setView(v){
   if(v==="board")renderBoard();
   if(v==="calendar")renderCalendar();
   if(v==="cancelled")renderCancelled();
+  if(v==="rejected")renderRejected();
+  if(v==="admin")renderAdmin();
+  if(v==="auswertung")renderAuswertung();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -550,14 +761,16 @@ function renderHub(){document.getElementById("hubSummaryTitle").textContent="Bel
 
 /* ===== PATIENT PLANEN ===== */
 function populateRoomSelect(){const sel=document.getElementById("f-room");const cur=sel.value;sel.innerHTML="";ROOMS.forEach(rk=>{const o=document.createElement("option");o.value=rk;o.textContent=roomName(rk);sel.appendChild(o);});if(cur)sel.value=cur;}
-function resetForm(){ui.editingId=null;document.getElementById("editBanner").style.display="none";document.getElementById("cancelEdit").style.display="none";document.getElementById("saveCase").textContent="Patient hinzufügen";["f-nachname","f-vorname","f-station","f-fallnr","f-gebdat","f-indikation","f-untersuchung","f-zugang","f-anmerkung"].forEach(id=>document.getElementById(id).value="");document.getElementById("f-anrede").value="";document.getElementById("f-room").value="1";document.getElementById("f-date").value=ui.currentDate;const v=document.getElementById("f-vorlage");if(v)v.value="";formUntersucher=[];formBadges=[];renderChips();}
-function loadIntoForm(c){ui.editingId=c.id;const b=document.getElementById("editBanner");b.style.display="block";b.textContent="Bearbeitung: "+(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+fullName(c);document.getElementById("cancelEdit").style.display="inline-block";document.getElementById("saveCase").textContent="Änderungen speichern";document.getElementById("f-anrede").value=c.anrede||"";document.getElementById("f-nachname").value=c.nachname||"";document.getElementById("f-vorname").value=c.vorname||"";document.getElementById("f-station").value=c.station||"";document.getElementById("f-fallnr").value=c.fallnummer||"";document.getElementById("f-gebdat").value=c.geburtsdatum||"";document.getElementById("f-indikation").value=c.indikation||"";document.getElementById("f-untersuchung").value=c.untersuchung||"";document.getElementById("f-zugang").value=c.zugang||"";document.getElementById("f-anmerkung").value=c.anmerkung||"";document.getElementById("f-room").value=String(c.room);document.getElementById("f-date").value=c.date;formUntersucher=Array.isArray(c.untersucher)?c.untersucher.slice():(c.untersucher?[c.untersucher]:[]);formBadges=Array.isArray(c.warnBadges)?c.warnBadges.slice():[];renderChips();const v=document.getElementById("f-vorlage");if(v)v.value="";}
+function resetForm(){ui.editingId=null;document.getElementById("editBanner").style.display="none";document.getElementById("cancelEdit").style.display="none";document.getElementById("saveCase").textContent="Patient hinzufügen";["f-nachname","f-vorname","f-station","f-fallnr","f-gebdat","f-indikation","f-untersuchung","f-zugang","f-anmerkung"].forEach(id=>document.getElementById(id).value="");document.getElementById("f-anrede").value="";document.getElementById("f-room").value="1";document.getElementById("f-date").value=ui.currentDate;const v=document.getElementById("f-vorlage");if(v)v.value="";document.getElementById("f-request").checked=false;document.getElementById("f-reqby").value="";document.getElementById("f-reqby").style.display="none";formUntersucher=[];formBadges=[];renderChips();}
+function loadIntoForm(c){ui.editingId=c.id;const b=document.getElementById("editBanner");b.style.display="block";b.textContent="Bearbeitung: "+(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+fullName(c);document.getElementById("cancelEdit").style.display="inline-block";document.getElementById("saveCase").textContent="Änderungen speichern";document.getElementById("f-anrede").value=c.anrede||"";document.getElementById("f-nachname").value=c.nachname||"";document.getElementById("f-vorname").value=c.vorname||"";document.getElementById("f-station").value=c.station||"";document.getElementById("f-fallnr").value=c.fallnummer||"";document.getElementById("f-gebdat").value=c.geburtsdatum||"";document.getElementById("f-indikation").value=c.indikation||"";document.getElementById("f-untersuchung").value=c.untersuchung||"";document.getElementById("f-zugang").value=c.zugang||"";document.getElementById("f-anmerkung").value=c.anmerkung||"";document.getElementById("f-room").value=String(c.room);document.getElementById("f-date").value=c.date;const rq=!!c.requested;document.getElementById("f-request").checked=rq;document.getElementById("f-reqby").value=rq?(c.requested.by||""):"";document.getElementById("f-reqby").style.display=rq?"block":"none";formUntersucher=Array.isArray(c.untersucher)?c.untersucher.slice():(c.untersucher?[c.untersucher]:[]);formBadges=Array.isArray(c.warnBadges)?c.warnBadges.slice():[];renderChips();const v=document.getElementById("f-vorlage");if(v)v.value="";}
 function saveCase(){
   const nachname=document.getElementById("f-nachname").value.trim();
   if(!nachname){toast("Bitte einen Nachnamen eingeben.");document.getElementById("f-nachname").focus();return;}
+  const reqChecked=document.getElementById("f-request").checked;
+  const reqby=document.getElementById("f-reqby").value.trim();
   const data={anrede:document.getElementById("f-anrede").value,nachname:nachname,vorname:document.getElementById("f-vorname").value.trim(),station:document.getElementById("f-station").value.trim(),fallnummer:document.getElementById("f-fallnr").value.trim(),geburtsdatum:document.getElementById("f-gebdat").value,untersucher:formUntersucher.slice(),indikation:document.getElementById("f-indikation").value.trim(),untersuchung:document.getElementById("f-untersuchung").value.trim(),zugang:document.getElementById("f-zugang").value.trim(),anmerkung:document.getElementById("f-anmerkung").value.trim(),warnBadges:formBadges.slice(),room:document.getElementById("f-room").value,date:document.getElementById("f-date").value};
-  if(ui.editingId){const c=state.cases.find(x=>x.id===ui.editingId);const od=c.date,or=c.room;Object.assign(c,data);touchCase(c);if(od!==c.date||or!==c.room){c.position=casesForRoom(c.date,c.room).length-1;renumber(od,or);}toast("Änderungen gespeichert.");}
-  else{data.id=uid();data.status="geplant";data.done=false;data.cancelled=null;data.statusTimes={geplant:nowIso()};data.updatedAt=nowIso();data.position=casesForRoom(data.date,data.room).length;state.cases.push(data);toast("Patient hinzugefügt – "+roomName(data.room)+".");}
+  if(ui.editingId){const c=state.cases.find(x=>x.id===ui.editingId);const od=c.date,or=c.room;Object.assign(c,data);c.requested=reqChecked?{by:reqby||(c.requested&&c.requested.by)||"—",at:(c.requested&&c.requested.at)||nowIso()}:null;touchCase(c);if(od!==c.date||or!==c.room){c.position=casesForRoom(c.date,c.room).length-1;renumber(od,or);}toast("Änderungen gespeichert.");}
+  else{data.id=uid();data.status="geplant";data.done=false;data.cancelled=null;data.rejected=null;data.requested=reqChecked?{by:reqby||"—",at:nowIso()}:null;data.statusTimes={geplant:nowIso()};data.updatedAt=nowIso();data.position=casesForRoom(data.date,data.room).length;state.cases.push(data);toast(reqChecked?"Anfrage angelegt – wartet auf Bestätigung.":"Patient hinzugefügt – "+roomName(data.room)+".");}
   persist();ui.currentDate=data.date;const keepDate=data.date;resetForm();document.getElementById("f-date").value=keepDate;renderPlanSide();
 }
 function renderPlanSide(){const refDate=document.getElementById("f-date").value||ui.currentDate;document.getElementById("planDayLabel").innerHTML=bigDay(refDate);document.getElementById("planSideTitle").textContent="Belegung am "+displayDate(refDate);renderOccupancy(document.getElementById("planOcc"),refDate);}
@@ -569,22 +782,44 @@ function renderBoard(){
   document.getElementById("boardDateLabel").innerHTML=bigDay(ui.currentDate);
   const lc=lastChangedFor(ui.currentDate);
   const bm=document.getElementById("boardMeta");
-  if(bm)bm.innerHTML=lc?'<span class="lastchg">zuletzt geändert: '+hhmm(lc)+' Uhr</span>':"";
   const station=isStation();
+  if(bm){let warns=[];if(!station)SAAL_ROOMS.forEach(rk=>{const ss=staffState(ui.currentDate,rk);if(ss)warns.push('<span class="warnchip '+ss+'">'+roomName(rk)+' '+(ss==="unbesetzt"?"unbesetzt":"unterbesetzt")+'</span>');});
+    bm.innerHTML=(lc?'<span class="lastchg">zuletzt geändert: '+hhmm(lc)+' Uhr</span>':'')+warns.join("");}
   const lanes=document.getElementById("lanes"); lanes.innerHTML="";
   ROOMS.forEach(rk=>{
     const list=casesForRoom(ui.currentDate,rk);
     const lane=document.createElement("div"); lane.className="lane";
-    lane.innerHTML='<div class="lane-head"><span class="rname">'+roomName(rk)+'</span><span class="badge">'+list.length+'</span></div>';
+    const saal=!station&&SAAL_ROOMS.includes(rk);
+    const head=document.createElement("div"); head.className="lane-head"+(saal?" saal":"");
+    if(saal){const r=getRoom(ui.currentDate,rk);head.style.setProperty("--amp",(AMPEL_MAP[r.ampel]||AMPEL[0]).color);head.innerHTML=buildSaalHead(rk,list.length,r);}
+    else head.innerHTML='<span class="rname">'+roomName(rk)+'</span><span class="badge">'+list.length+'</span>';
+    lane.appendChild(head);
     const strip=document.createElement("div"); strip.className="lane-strip"; strip.dataset.room=rk;
     if(list.length===0){const e=document.createElement("div");e.className="lane-empty";e.textContent="frei";strip.appendChild(e);}
     else list.forEach(c=>strip.appendChild(makeCard(c,station)));
     if(!station){const add=document.createElement("button");add.className="addcard";add.innerHTML="＋ Patient";add.addEventListener("click",()=>{resetForm();document.getElementById("f-room").value=rk;document.getElementById("f-date").value=ui.currentDate;setView("plan");toast("Neuer Fall für "+roomName(rk));});strip.appendChild(add);}
     if(!station)attachDnD(strip);
     lane.appendChild(strip); lanes.appendChild(lane);
+    if(saal)wireSaalHead(head,ui.currentDate,rk);
   });
 }
 function makeCard(c,station){
+  if(c.requested){
+    const card=document.createElement("div");
+    card.className="card requested nodrag"; card.dataset.id=c.id;
+    const nl=(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+escapeHtml(fullName(c));
+    let m="";
+    if(c.station)m+='<span>Station: <b>'+escapeHtml(c.station)+'</b></span>';
+    if(c.indikation)m+='<span>Indikation: <b>'+escapeHtml(c.indikation)+'</b></span>';
+    if(c.untersuchung)m+='<span>Untersuchung: <b>'+escapeHtml(c.untersuchung)+'</b></span>';
+    const ctrl=station?'':'<div class="req-actions"><button class="req-ok">✓ Bestätigen</button><button class="req-no">✗ Ablehnen</button></div>';
+    card.innerHTML='<div class="req-flag">⏳ Anfrage – wartet auf Bestätigung</div><div class="inner"><div class="pname">'+nl+'</div><div class="meta">'+m+'</div><div class="req-by">angefragt durch: <b>'+escapeHtml((c.requested.by||"—"))+'</b></div>'+ctrl+'</div>';
+    if(!station){
+      card.querySelector(".req-ok").addEventListener("click",()=>confirmRequest(c.id));
+      card.querySelector(".req-no").addEventListener("click",()=>rejectRequest(c.id));
+    }
+    return card;
+  }
   const st=STATUS_MAP[c.status]||STATUSES[0];
   const crit=isCritical(c);
   const card=document.createElement("div");
@@ -624,7 +859,7 @@ function makeCard(c,station){
     const opts = station ? STATUSES.filter(s=>STATION_ALLOWED.includes(s.key)) : STATUSES;
     opts.forEach(s=>{const o=document.createElement("option");o.value=s.key;o.textContent=s.label;sel.appendChild(o);});
     sel.value=c.status;
-    sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);persist();renderBoard();});
+    sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);if(SAAL_ROOMS.includes(String(c.room))){if(c.status==="wird_aufgelegt")setRoomAmpel(c.date,c.room,"belegt");else if(c.status==="ruecktransport")setRoomAmpel(c.date,c.room,"vorbereitung");}persist();renderBoard();});
     sel.addEventListener("mousedown",e=>e.stopPropagation());
   }
   if(!station){
@@ -698,7 +933,7 @@ function renderCalendar(){
 /* ===== WERKZEUGE ===== */
 function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="HKL-Tagesplan_"+isoToday()+".json";a.click();URL.revokeObjectURL(url);toast("Plan exportiert.");}
 function importData(file){const reader=new FileReader();reader.onload=()=>{try{const obj=JSON.parse(reader.result);if(!obj||!Array.isArray(obj.cases))throw 0;state=obj;if(!state.settings)state.settings={roomLabel:"HKL",theme:"dark",role:"kathlab"};migrate();applyTheme(state.settings.theme||"dark");applyRole(state.settings.role||"kathlab");populateRoomSelect();persist();setView(isStation()?"board":"hub");toast("Plan importiert.");}catch(e){toast("Datei konnte nicht gelesen werden.");}};reader.readAsText(file);}
-function migrate(){ensureConfig();state.cases.forEach(c=>{if(c.name&&!c.nachname){const p=c.name.split(",");c.nachname=(p[0]||"").trim();c.vorname=(p[1]||"").trim();delete c.name;}if(typeof c.room==="number")c.room=String(c.room);if(!c.status)c.status="geplant";if(c.status==="freigabe")c.status="ruecktransport_erfolgt";if(c.done===undefined)c.done=false;if(c.cancelled===undefined)c.cancelled=null;if(typeof c.untersucher==="string")c.untersucher=c.untersucher?c.untersucher.split(" · ").filter(Boolean):[];if(!Array.isArray(c.untersucher))c.untersucher=[];if(!Array.isArray(c.warnBadges))c.warnBadges=[];if(c.anmerkung===undefined)c.anmerkung="";if(!c.statusTimes)c.statusTimes={};if(c.updatedAt===undefined)c.updatedAt=null;});}
+function migrate(){ensureConfig();if(!state.rooms)state.rooms={};if(!Array.isArray(state.notfallLog))state.notfallLog=[];state.cases.forEach(c=>{if(c.name&&!c.nachname){const p=c.name.split(",");c.nachname=(p[0]||"").trim();c.vorname=(p[1]||"").trim();delete c.name;}if(typeof c.room==="number")c.room=String(c.room);if(!c.status)c.status="geplant";if(c.status==="freigabe")c.status="ruecktransport_erfolgt";if(c.done===undefined)c.done=false;if(c.cancelled===undefined)c.cancelled=null;if(typeof c.untersucher==="string")c.untersucher=c.untersucher?c.untersucher.split(" · ").filter(Boolean):[];if(!Array.isArray(c.untersucher))c.untersucher=[];if(!Array.isArray(c.warnBadges))c.warnBadges=[];if(c.anmerkung===undefined)c.anmerkung="";if(!c.statusTimes)c.statusTimes={};if(c.updatedAt===undefined)c.updatedAt=null;});}
 function loadDemo(){
   const t=isoToday(),t1=addDays(t,1),t2=addDays(t,2);
   state.cases=[
@@ -725,6 +960,29 @@ function loadDemo(){
   if(state.cases[0])state.cases[0].warnBadges=["KM-Allergie"];
   if(state.cases[2]){state.cases[2].warnBadges=["Antikoagulation (Marcumar/DOAK)"];state.cases[2].anmerkung="IVUS + Impella bereitlegen";}
   if(state.cases[7])state.cases[7].warnBadges=["Niereninsuffizienz","Metformin-Pause"];
+  /* Saal-Zustände + Personal (Demo) */
+  state.rooms={};
+  state.rooms[t+"|1"]={ampel:"belegt",       note:"", personnel:["Pfl. Schmidt","Pfl. Meyer"]};
+  state.rooms[t+"|2"]={ampel:"frei",          note:"", personnel:["Pfl. Koch"]};
+  state.rooms[t+"|3"]={ampel:"vorbereitung",  note:"", personnel:["Pfl. Bauer","Pfl. Wolf"]};
+  state.rooms[t+"|4"]={ampel:"wartung",       note:"", personnel:[]};
+  /* offene Anfrage (Demo) */
+  const reqc=mk(t,"3",98,"Frau","Hahn","Eva","K2","V. a. KHK","Koronarangiographie","Radial rechts","","geplant",false);
+  reqc.requested={by:"Assistenzarzt Dr. Jung",at:nowIso()};
+  state.cases.push(reqc);
+  /* Realistische Zeiten + abgeschlossener Fall + Notfall-Protokoll (Demo) */
+  const ago=m=>new Date(Date.now()-m*60000).toISOString();
+  const byNN=nn=>state.cases.find(c=>c.nachname===nn);
+  const alb=byNN("Albrecht"); if(alb)alb.statusTimes={geplant:ago(180),im_bett:ago(95),wird_aufgelegt:ago(72),auf_tisch:ago(60),begonnen:ago(52)};
+  const leh=byNN("Lehmann"); if(leh)leh.statusTimes={geplant:ago(120),im_bett:ago(70),wird_aufgelegt:ago(50),auf_tisch:ago(40)};
+  const fin=mk(t,"2",97,"Herr","Berg","Hans","K1","NSTEMI","Koronarangiographie + PCI","Radial rechts","Dr. Becker","ruecktransport_erfolgt",true);
+  fin.statusTimes={geplant:ago(220),im_bett:ago(200),wird_aufgelegt:ago(175),auf_tisch:ago(165),begonnen:ago(160),beendet:ago(120),ruecktransport:ago(118),ruecktransport_erfolgt:ago(95)};
+  state.cases.push(fin);
+  state.notfallLog=[
+    {id:uid(),date:t,room:"2",start:ago(150),end:ago(125),reason:"Reanimation"},
+    {id:uid(),date:t,room:"1",start:ago(80), end:ago(68), reason:"STEMI"},
+    {id:uid(),date:t,room:"3",start:ago(40), end:ago(20), reason:"AV-Block III°"}
+  ];
   persist();refreshAll();toast("Demo-Daten geladen.");
 }
 function mk(date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher,status,done){const t=new Date(Date.now()-35*60000).toISOString();return {id:uid(),date,room,position,anrede,nachname,vorname,station,indikation,untersuchung,zugang,untersucher:(untersucher||"").split(" · ").filter(Boolean),warnBadges:[],anmerkung:"",status,done,cancelled:null,statusTimes:{[status]:t},updatedAt:t};}
@@ -734,7 +992,108 @@ function clearAll(){if(confirm("Wirklich ALLE Patienten/Pläne löschen? (nur lo
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 let toastTimer=null;
 function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2200);}
-function refreshAll(){if(ui.view==="hub")renderHub();if(ui.view==="plan")renderPlanSide();if(ui.view==="board")renderBoard();if(ui.view==="calendar")renderCalendar();if(ui.view==="cancelled")renderCancelled();}
+function refreshAll(){if(ui.view==="hub")renderHub();if(ui.view==="plan")renderPlanSide();if(ui.view==="board")renderBoard();if(ui.view==="calendar")renderCalendar();if(ui.view==="cancelled")renderCancelled();if(ui.view==="rejected")renderRejected();if(ui.view==="admin")renderAdmin();if(ui.view==="auswertung")renderAuswertung();}
+
+/* ===== ANFRAGEN-WORKFLOW ===== */
+function confirmRequest(id){const c=state.cases.find(x=>x.id===id);if(!c)return;const by=prompt("Bestätigung durch (Oberarzt/Name):");if(by===null)return;if(!by.trim()){toast("Name ist erforderlich – nicht bestätigt.");return;}c.requested=null;c.confirmedBy=by.trim();c.position=casesForRoom(c.date,c.room).length-1;touchCase(c);persist();renderBoard();toast("Anfrage bestätigt von "+by.trim()+".");}
+function rejectRequest(id){const c=state.cases.find(x=>x.id===id);if(!c)return;const by=prompt("Ablehnung durch (Oberarzt/Name):");if(by===null)return;if(!by.trim()){toast("Name ist erforderlich – nicht abgelehnt.");return;}const reqBy=c.requested?c.requested.by:"—";c.rejected={by:by.trim(),at:nowIso(),requestedBy:reqBy};c.requested=null;touchCase(c);persist();renderBoard();toast("Anfrage abgelehnt.");}
+function renderRejected(){const wrap=document.getElementById("rejectedList");const list=state.cases.filter(c=>c.rejected).sort((a,b)=>(b.rejected.at||"").localeCompare(a.rejected.at||""));if(list.length===0){wrap.innerHTML='<p class="lead">Keine abgelehnten Anfragen.</p>';return;}wrap.innerHTML="";list.forEach(c=>{const row=document.createElement("div");row.className="cancel-row";row.innerHTML='<div class="cr-main"><b>'+escapeHtml((anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+fullName(c))+'</b> · '+roomName(c.room)+' · '+displayDate(c.date)+'<div class="cr-meta">angefragt durch: '+escapeHtml(c.rejected.requestedBy||"—")+' · abgelehnt durch: <b>'+escapeHtml(c.rejected.by)+'</b> · '+hhmm(c.rejected.at)+' Uhr</div></div><button class="restore">Als Anfrage wiederherstellen</button>';row.querySelector(".restore").addEventListener("click",()=>{c.requested={by:c.rejected.requestedBy||"—",at:nowIso()};c.rejected=null;c.position=casesForRoom(c.date,c.room).length;touchCase(c);persist();renderRejected();toast("Anfrage wiederhergestellt.");});wrap.appendChild(row);});}
+
+/* ===== ABSAGE-GRÜNDE aus Konfiguration ===== */
+function fillAbsageReasons(){const sel=document.getElementById("c-reason");if(!sel)return;ensureConfig();sel.innerHTML='<option value="">—</option>'+state.config.absageReasons.map(r=>'<option>'+escapeHtml(r)+'</option>').join("");}
+
+/* ===== ADMIN-VERWALTUNG ===== */
+const ADMIN_PW="admin"; let adminUnlocked=false;
+function openAdmin(){if(!adminUnlocked){const p=prompt("Admin-Passwort (Standard: admin):");if(p===null)return;if(p!==ADMIN_PW){toast("Falsches Passwort.");return;}adminUnlocked=true;}setView("admin");}
+const ADMIN_LISTS=[
+  {key:"untersucher",title:"Untersucher",ph:"Name"},
+  {key:"personal",title:"Personal (Pflege)",ph:"Name"},
+  {key:"badges",title:"Warnhinweise",ph:"z. B. Schwangerschaft"},
+  {key:"criticalStations",title:"Kritische Stationen",ph:"z. B. C61"},
+  {key:"absageReasons",title:"Absage-Gründe",ph:"Grund"},
+  {key:"notfallReasons",title:"Notfall-Gründe (Saal gelb)",ph:"Grund"}
+];
+function renderAdmin(){ensureConfig();const g=document.getElementById("adminGrid");g.innerHTML="";ADMIN_LISTS.forEach(spec=>g.appendChild(adminListCard(spec)));g.appendChild(adminVorlagenCard());g.appendChild(adminAmpelCard());}
+function adminListCard(spec){const arr=state.config[spec.key];const card=document.createElement("div");card.className="admin-card";card.innerHTML='<h3>'+escapeHtml(spec.title)+'</h3><div class="adm-items">'+arr.map((v,i)=>'<div class="adm-item"><span>'+escapeHtml(v)+'</span><button class="adm-x" data-i="'+i+'" title="Entfernen">×</button></div>').join("")+'</div><div class="adm-add"><input placeholder="'+escapeHtml(spec.ph)+'"><button class="adm-add-btn">Hinzufügen</button></div>';card.querySelectorAll(".adm-x").forEach(x=>x.addEventListener("click",()=>{arr.splice(+x.dataset.i,1);adminChanged();}));const inp=card.querySelector(".adm-add input");const add=()=>{const v=inp.value.trim();if(v&&!arr.includes(v)){arr.push(v);adminChanged();}};card.querySelector(".adm-add-btn").addEventListener("click",add);inp.addEventListener("keydown",e=>{if(e.key==="Enter")add();});return card;}
+function adminVorlagenCard(){const arr=state.config.vorlagen;const card=document.createElement("div");card.className="admin-card wide";card.innerHTML='<h3>Eingriffs-Vorlagen</h3><div class="adm-vorlagen">'+arr.map((t,i)=>'<div class="adm-vrow"><input data-i="'+i+'" data-f="name" value="'+escapeHtml(t.name)+'" placeholder="Name"><input data-i="'+i+'" data-f="untersuchung" value="'+escapeHtml(t.untersuchung||"")+'" placeholder="Untersuchung"><input data-i="'+i+'" data-f="zugang" value="'+escapeHtml(t.zugang||"")+'" placeholder="Zugang"><input data-i="'+i+'" data-f="anmerkung" value="'+escapeHtml(t.anmerkung||"")+'" placeholder="Anmerkung"><button class="adm-x" data-i="'+i+'">×</button></div>').join("")+'</div><button class="adm-add-btn" id="adm-vorlage-add">+ Vorlage</button>';card.querySelectorAll(".adm-vrow input").forEach(inp=>inp.addEventListener("change",()=>{arr[+inp.dataset.i][inp.dataset.f]=inp.value;persist();fillVorlagen();}));card.querySelectorAll(".adm-x").forEach(x=>x.addEventListener("click",()=>{arr.splice(+x.dataset.i,1);adminChanged();}));card.querySelector("#adm-vorlage-add").addEventListener("click",()=>{arr.push({name:"Neue Vorlage",untersuchung:"",zugang:"",anmerkung:""});adminChanged();});return card;}
+function adminAmpelCard(){const a=state.config.ampel;const card=document.createElement("div");card.className="admin-card";card.innerHTML='<h3>Wartezeit-Ampel (Minuten)</h3><div class="adm-ampel"><label>Orange ab <input type="number" id="adm-orange" value="'+a.orangeMin+'" min="1"></label><label>Rot ab <input type="number" id="adm-red" value="'+a.redMin+'" min="1"></label></div>';card.querySelector("#adm-orange").addEventListener("change",e=>{a.orangeMin=+e.target.value||30;persist();});card.querySelector("#adm-red").addEventListener("change",e=>{a.redMin=+e.target.value||60;persist();});return card;}
+function adminChanged(){persist();fillChipSelects();fillVorlagen();fillAbsageReasons();renderAdmin();}
+
+/* ===== WANDMONITOR / KIOSK ===== */
+let kioskTimer=null;
+function openKiosk(){document.getElementById("kiosk").style.display="flex";try{if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();}catch(e){}renderKiosk();updateKioskClock();kioskTimer=setInterval(()=>{renderKiosk();updateKioskClock();},15000);document.addEventListener("keydown",kioskKey);}
+function closeKiosk(){document.getElementById("kiosk").style.display="none";if(kioskTimer){clearInterval(kioskTimer);kioskTimer=null;}document.removeEventListener("keydown",kioskKey);try{if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen();}catch(e){}}
+function kioskKey(e){if(e.key==="Escape")closeKiosk();}
+function updateKioskClock(){const d=new Date();document.getElementById("kioskClock").textContent=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")+" Uhr";}
+function renderKiosk(){
+  document.getElementById("kioskTitle").textContent=state.settings.roomLabel+"-Tagesübersicht · "+weekday(ui.currentDate)+", "+displayDate(ui.currentDate);
+  const wrap=document.getElementById("kioskBoard"); wrap.innerHTML="";
+  ROOMS.forEach(rk=>{
+    const list=casesForRoom(ui.currentDate,rk);
+    const col=document.createElement("div"); col.className="k-col"+(SAAL_ROOMS.includes(rk)?" saal":"");
+    let headExtra="";
+    if(SAAL_ROOMS.includes(rk)){const r=getRoom(ui.currentDate,rk);const amp=AMPEL_MAP[r.ampel]||AMPEL[0];const ss=staffState(ui.currentDate,rk);col.style.setProperty("--amp",amp.color);headExtra='<div class="k-amp" style="background:'+amp.color+'">'+amp.label+(r.note?' · '+escapeHtml(r.note):'')+'</div><div class="k-staff">👤 '+r.personnel.length+(ss?' · <b class="k-warn">'+(ss==="unbesetzt"?"Unbesetzt":"Unterbesetzt")+'</b>':'')+'</div>';}
+    let cards="";
+    if(list.length===0)cards='<div class="k-empty">frei</div>';
+    else list.forEach(c=>{const st=STATUS_MAP[c.status]||STATUSES[0];const wi=waitInfo(c);cards+='<div class="k-card'+(isCritical(c)?" crit":"")+'" style="border-left-color:'+st.color+'"><div class="k-name">'+(isCritical(c)?'⚠ ':'')+escapeHtml(fullName(c))+(wi?' <span class="k-wait '+wi.color+'">'+wi.mins+'′</span>':'')+'</div><div class="k-sub">'+escapeHtml(c.untersuchung||c.indikation||"")+'</div><div class="k-st" style="color:'+st.color+'">'+st.label+'</div></div>';});
+    col.innerHTML='<div class="k-head"><span class="k-rn">'+roomName(rk)+'</span><span class="k-cnt">'+list.length+'</span></div>'+headExtra+'<div class="k-cards">'+cards+'</div>';
+    wrap.appendChild(col);
+  });
+}
+
+/* ===== AUSWERTUNG ===== */
+function durMin(a,b){return Math.round((new Date(b).getTime()-new Date(a).getTime())/60000);}
+function statN(arr){if(!arr.length)return{n:0,avg:0,med:0,max:0};const s=[...arr].sort((x,y)=>x-y);const sum=s.reduce((a,b)=>a+b,0);const med=s.length%2?s[(s.length-1)/2]:Math.round((s[s.length/2-1]+s[s.length/2])/2);return{n:s.length,avg:Math.round(sum/s.length),med:med,max:s[s.length-1]};}
+function inRange(dateStr,from,to){return (!from||dateStr>=from)&&(!to||dateStr<=to);}
+function analytics(from,to){
+  const cases=state.cases.filter(c=>inRange(c.date,from,to));
+  const active=cases.filter(c=>!c.cancelled&&!c.rejected&&!c.requested);
+  const cancelled=cases.filter(c=>c.cancelled);
+  const reqOpen=cases.filter(c=>c.requested);
+  const reqRej=cases.filter(c=>c.rejected);
+  const confirmed=cases.filter(c=>c.confirmedBy&&!c.requested&&!c.rejected&&!c.cancelled);
+  const days=new Set(active.map(c=>c.date)).size||1;
+  const crit=active.filter(c=>isCritical(c));
+  const p1=[],p2=[],tisch=[],tuerTisch=[];
+  active.forEach(c=>{const t=c.statusTimes||{};
+    if(t.im_bett&&t.wird_aufgelegt)p1.push(durMin(t.im_bett,t.wird_aufgelegt));
+    if(t.ruecktransport&&t.ruecktransport_erfolgt)p2.push(durMin(t.ruecktransport,t.ruecktransport_erfolgt));
+    if(t.auf_tisch&&t.beendet)tisch.push(durMin(t.auf_tisch,t.beendet));
+    if(t.im_bett&&t.auf_tisch)tuerTisch.push(durMin(t.im_bett,t.auf_tisch));});
+  const perSaal=SAAL_ROOMS.map(rk=>{const cs=active.filter(c=>String(c.room)===rk);let tmin=0;cs.forEach(c=>{const t=c.statusTimes||{};if(t.auf_tisch&&t.beendet)tmin+=durMin(t.auf_tisch,t.beendet);});return {room:rk,count:cs.length,tisch:tmin};});
+  const reasons={};cancelled.forEach(c=>{const r=(c.cancelled.reason||"ohne Angabe");reasons[r]=(reasons[r]||0)+1;});
+  const nf=(state.notfallLog||[]).filter(e=>inRange(e.date,from,to));
+  let nfMin=0;const nfByReason={};nf.forEach(e=>{const end=e.end||nowIso();const m=durMin(e.start,end);nfMin+=m;const r=e.reason||"ohne Angabe";nfByReason[r]=(nfByReason[r]||0)+m;});
+  return {cases,active,cancelled,reqOpen,reqRej,confirmed,days,crit,p1:statN(p1),p2:statN(p2),tisch:statN(tisch),tuerTisch:statN(tuerTisch),perSaal,reasons,nf,nfMin,nfByReason};
+}
+function awBar(label,val,max,unit){const w=max>0?Math.round(val/max*100):0;return '<div class="awbar"><span class="awbl">'+escapeHtml(label)+'</span><span class="awbt"><span class="awbf" style="width:'+w+'%"></span></span><span class="awbv">'+val+(unit||"")+'</span></div>';}
+function awKpi(label,val,sub){return '<div class="kpi"><div class="kv">'+val+'</div><div class="kl">'+escapeHtml(label)+'</div>'+(sub?'<div class="ks">'+escapeHtml(sub)+'</div>':'')+'</div>';}
+function awStat(title,s){return '<div class="ausw-card"><h3>'+escapeHtml(title)+'</h3>'+(s.n===0?'<p class="awnone">keine vollständig erfassten Fälle im Zeitraum</p>':'<div class="statrow"><div><b>'+s.avg+'</b><span>Ø min</span></div><div><b>'+s.med+'</b><span>Median</span></div><div><b>'+s.max+'</b><span>Max</span></div><div><b>'+s.n+'</b><span>Fälle</span></div></div>')+'</div>';}
+function renderAuswertung(){
+  const from=document.getElementById("aw-from").value||null;
+  const to=document.getElementById("aw-to").value||null;
+  const a=analytics(from,to);
+  const denom=a.active.length+a.cancelled.length;
+  const absQuote=denom>0?Math.round(a.cancelled.length/denom*100):0;
+  const reqTotal=a.confirmed.length+a.reqRej.length+a.reqOpen.length;
+  let html='<div class="kpi-grid">'+
+    awKpi("Fälle",a.active.length,"~"+(a.active.length/a.days).toFixed(1)+" / Tag")+
+    awKpi("Absagen",a.cancelled.length,absQuote+" % Absagequote")+
+    awKpi("Anfragen",reqTotal,a.confirmed.length+" best. · "+a.reqRej.length+" abgel. · "+a.reqOpen.length+" offen")+
+    awKpi("Kritische Fälle",a.crit.length,(a.active.length?Math.round(a.crit.length/a.active.length*100):0)+" %")+
+    awKpi("Notfall-Blockierungen",a.nf.length,a.nfMin+" min gesamt")+'</div>';
+  html+='<div class="ausw-row">'+awStat("Wartezeit Phase 1 (Bettenwarte → aufgelegt)",a.p1)+awStat("Wartezeit Phase 2 (Rücktransport)",a.p2)+awStat("Tischzeit (auf Tisch → beendet)",a.tisch)+awStat("Tür-zu-Tisch (Ankunft → auf Tisch)",a.tuerTisch)+'</div>';
+  const maxCount=Math.max(1,...a.perSaal.map(s=>s.count)),maxTisch=Math.max(1,...a.perSaal.map(s=>s.tisch));
+  html+='<div class="ausw-row"><div class="ausw-card"><h3>Fälle je Saal</h3>'+a.perSaal.map(s=>awBar(roomName(s.room),s.count,maxCount,"")).join("")+'</div><div class="ausw-card"><h3>Tisch-Aktivzeit je Saal</h3>'+a.perSaal.map(s=>awBar(roomName(s.room),s.tisch,maxTisch," min")).join("")+'</div></div>';
+  const remax=Math.max(1,...Object.values(a.reasons)),nrmax=Math.max(1,...Object.values(a.nfByReason));
+  html+='<div class="ausw-row"><div class="ausw-card"><h3>Absagegründe</h3>'+(Object.keys(a.reasons).length?Object.entries(a.reasons).map(([k,v])=>awBar(k,v,remax,"")).join(""):'<p class="awnone">keine Absagen</p>')+'</div><div class="ausw-card"><h3>Notfall-Blockierung nach Grund</h3>'+(Object.keys(a.nfByReason).length?Object.entries(a.nfByReason).map(([k,v])=>awBar(k,v,nrmax," min")).join(""):'<p class="awnone">keine Notfälle</p>')+'</div></div>';
+  if(a.nf.length){html+='<div class="ausw-card"><h3>Notfall-Blockierungen (Einzelfälle)</h3><table class="awtable"><tr><th>Tag</th><th>Saal</th><th>Beginn</th><th>Ende</th><th>Dauer</th><th>Grund</th></tr>'+a.nf.slice().sort((x,y)=>(y.start||"").localeCompare(x.start||"")).map(e=>{const end=e.end;const dur=durMin(e.start,end||nowIso());return '<tr><td>'+displayDate(e.date)+'</td><td>'+roomName(e.room)+'</td><td>'+hhmm(e.start)+'</td><td>'+(end?hhmm(end):'<i>läuft</i>')+'</td><td>'+dur+' min</td><td>'+escapeHtml(e.reason||"—")+'</td></tr>';}).join("")+'</table></div>';}
+  document.getElementById("auswContent").innerHTML=html;
+}
+function downloadCsv(name,rows){const csv=rows.map(r=>r.map(v=>{v=String(v==null?"":v);return /[",;\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(";")).join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function exportTimesCsv(){const from=document.getElementById("aw-from").value||null,to=document.getElementById("aw-to").value||null;const keys=STATUSES.map(s=>s.key);const rows=[["Tag","Saal","Nachname","Vorname","Status",...keys.map(k=>"t_"+k)]];state.cases.filter(c=>inRange(c.date,from,to)&&!c.cancelled&&!c.rejected&&!c.requested).forEach(c=>{const t=c.statusTimes||{};rows.push([c.date,roomName(c.room),c.nachname,c.vorname||"",(STATUS_MAP[c.status]?STATUS_MAP[c.status].label:c.status),...keys.map(k=>t[k]?hhmm(t[k]):"")]);});downloadCsv("HKL-Zeiten.csv",rows);toast("Zeiten als CSV exportiert.");}
+function exportNotfallCsv(){const from=document.getElementById("aw-from").value||null,to=document.getElementById("aw-to").value||null;const rows=[["Tag","Saal","Beginn","Ende","Dauer_min","Grund"]];(state.notfallLog||[]).filter(e=>inRange(e.date,from,to)).forEach(e=>{const end=e.end||nowIso();rows.push([e.date,roomName(e.room),hhmm(e.start),e.end?hhmm(e.end):"laeuft",durMin(e.start,end),e.reason||""]);});downloadCsv("HKL-Notfaelle.csv",rows);toast("Notfälle als CSV exportiert.");}
+
 function init(){
   const saved=Store.load();
   if(saved&&Array.isArray(saved.cases)){state=saved;if(!state.settings)state.settings={roomLabel:"HKL",theme:"dark",role:"kathlab"};if(!state.settings.role)state.settings.role="kathlab";migrate();}
@@ -773,14 +1132,27 @@ function init(){
   document.getElementById("cancelAbort").addEventListener("click",closeCancelModal);
   document.getElementById("modalOverlay").addEventListener("click",e=>{if(e.target.id==="modalOverlay")closeCancelModal();});
   /* Vorlagen + Chip-Felder */
-  fillVorlagen(); fillChipSelects(); renderChips();
+  fillVorlagen(); fillChipSelects(); renderChips(); fillAbsageReasons();
+  document.getElementById("kioskBtn").addEventListener("click",openKiosk);
+  document.getElementById("kioskExit").addEventListener("click",closeKiosk);
+  document.getElementById("adminBtn").addEventListener("click",openAdmin);
+  document.getElementById("f-request").addEventListener("change",e=>{document.getElementById("f-reqby").style.display=e.target.checked?"block":"none";});
+  /* Auswertung */
+  const dates=state.cases.map(c=>c.date).filter(Boolean).sort();
+  document.getElementById("aw-from").value=dates[0]||isoToday();
+  document.getElementById("aw-to").value=isoToday();
+  document.getElementById("aw-from").addEventListener("change",renderAuswertung);
+  document.getElementById("aw-to").addEventListener("change",renderAuswertung);
+  document.getElementById("aw-all").addEventListener("click",()=>{document.getElementById("aw-from").value="";document.getElementById("aw-to").value="";renderAuswertung();});
+  document.getElementById("aw-csv-times").addEventListener("click",exportTimesCsv);
+  document.getElementById("aw-csv-nf").addEventListener("click",exportNotfallCsv);
   document.getElementById("f-vorlage").addEventListener("change",e=>{const i=e.target.value;if(i==="")return;const t=state.config.vorlagen[+i];if(!t)return;if(t.untersuchung)document.getElementById("f-untersuchung").value=t.untersuchung;if(t.zugang)document.getElementById("f-zugang").value=t.zugang;if(t.anmerkung)document.getElementById("f-anmerkung").value=t.anmerkung;toast("Vorlage „"+t.name+"“ übernommen.");});
   document.getElementById("add-untersucher").addEventListener("change",e=>{const v=e.target.value;if(v&&!formUntersucher.includes(v))formUntersucher.push(v);e.target.value="";renderChips();});
   document.getElementById("guest-untersucher").addEventListener("click",()=>{const n=prompt("Name des Gast-Untersuchers:");if(n&&n.trim()){formUntersucher.push(n.trim());renderChips();}});
   document.getElementById("add-badge").addEventListener("change",e=>{const v=e.target.value;if(v&&!formBadges.includes(v))formBadges.push(v);e.target.value="";renderChips();});
   document.getElementById("newbadge").addEventListener("click",()=>{const n=prompt("Neuer Warnhinweis:");if(n&&n.trim()){const val=n.trim();if(!state.config.badges.includes(val)){state.config.badges.push(val);fillChipSelects();persist();}if(!formBadges.includes(val))formBadges.push(val);renderChips();}});
   /* Wartezeit-Punkte regelmäßig aktualisieren */
-  setInterval(()=>{if(ui.view==="board"&&!document.querySelector(".card.dragging")&&document.getElementById("modalOverlay").style.display!=="flex")renderBoard();},30000);
+  setInterval(()=>{if(ui.view==="board"&&ui.persOpen.size===0&&!document.querySelector(".card.dragging")&&document.getElementById("modalOverlay").style.display!=="flex")renderBoard();},30000);
   setView(isStation()?"board":"hub");
 }
 document.addEventListener("DOMContentLoaded",init);
