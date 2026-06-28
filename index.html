@@ -325,6 +325,45 @@
   .awtable{width:100%;border-collapse:collapse;font-size:13px}
   .awtable th,.awtable td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
   .awtable th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  /* Suche */
+  .searchbar{position:sticky;top:0;z-index:50;background:var(--panel);border-bottom:1px solid var(--line);padding:8px 22px}
+  .search-inner{display:flex;align-items:center;gap:10px;max-width:1500px;margin:0 auto}
+  .search-ico{font-size:15px;opacity:.7}
+  #searchInput{flex:1;min-width:0;font-family:inherit;font-size:14px;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:var(--input-bg);color:var(--ink)}
+  .searchbar .sf{font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;white-space:nowrap;color:var(--muted)}
+  .search-clear{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;width:30px;height:30px;cursor:pointer;color:var(--muted);font-weight:800}
+  .search-results{max-width:1500px;margin:8px auto 0;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);max-height:340px;overflow:auto}
+  .sr-head{font-size:12px;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--line)}
+  .sr-none{padding:14px;color:var(--muted);font-style:italic}
+  .sr-item{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--line)}
+  .sr-item:hover{background:var(--panel-2)}
+  .sr-name{font-weight:700;min-width:160px}
+  .sr-meta{flex:1;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .stag{font-size:10px;font-weight:800;color:#fff;border-radius:9px;padding:2px 8px;white-space:nowrap}
+  .stag.cancel{background:#b45309}.stag.rej{background:#b91c1c}.stag.req{background:#6b7280}
+  .card.searchhit{outline:3px solid #f59e0b;outline-offset:1px}
+  .card.flash{animation:flashpulse 2.2s ease}
+  @keyframes flashpulse{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0)}20%,60%{box-shadow:0 0 0 5px rgba(245,158,11,.7)}}
+  .cal-cell.searchday{outline:3px solid #f59e0b;outline-offset:-2px;background:rgba(245,158,11,.12)}
+  .cal-hit{display:block;font-size:10px;font-weight:800;color:#b45309;margin-top:2px}
+  [data-theme="dark"] .cal-hit{color:#fbbf24}
+  /* Endzeit-Prognose */
+  .prognose{margin-top:7px;font-size:11px;font-weight:700;color:var(--muted);background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+  .prognose.over{color:#fff;background:#dc2626;border-color:#dc2626}
+  .board-meta .warnchip.over{background:#b45309}
+  /* Admin-Vorlagenzeile (7 Spalten) */
+  .adm-vrow{grid-template-columns:1fr 1.5fr 1fr 64px 1.1fr 1.3fr auto}
+  .adm-vrow .vd{width:100%}
+  .adm-vrow select.vk{font-family:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:7px;padding:5px 6px;background:var(--input-bg);color:var(--ink)}
+  /* Druckansicht */
+  @media print{
+    .topbar,.searchbar,#tabs,.demo-note,.daybanner .db-tools,.board-meta,.addcard,.card .acts,.tool-btn,.lane-head .ampel-sel,.lane-head .pers-btn,.pers-editor{display:none !important}
+    body{background:#fff;color:#000}
+    .view:not(.active){display:none}
+    .lanes{display:block}
+    .lane{break-inside:avoid;border:1px solid #999;margin-bottom:8px}
+    .card{background:#fff !important;border:1px solid #bbb;color:#000}
+  }
 </style>
 </head>
 <body>
@@ -348,6 +387,17 @@
     <button class="tool-btn hide-station" id="toggleLabel" title="HKL/Tisch umschalten">HKL ⇄ Tisch</button>
   </div>
 </header>
+
+<div class="searchbar hide-station" id="searchBar">
+  <div class="search-inner">
+    <span class="search-ico">🔍</span>
+    <input id="searchInput" placeholder="Patient suchen (Name, Fallnummer, Station, Indikation) – im Plan und Kalender" autocomplete="off">
+    <label class="sf"><input type="checkbox" id="sf-krit"> nur kritische</label>
+    <label class="sf"><input type="checkbox" id="sf-offen"> nur offene</label>
+    <button class="search-clear" id="searchClear" title="Suche zurücksetzen" style="display:none">✕</button>
+  </div>
+  <div class="search-results" id="searchResults" style="display:none"></div>
+</div>
 
 <main>
   <!-- HAUPTMENÜ -->
@@ -406,6 +456,7 @@
           </div>
           <div class="field full"><label>Anmerkungen / Material <span class="hint">(z. B. IVUS, Impella, spezieller Stent)</span></label><textarea id="f-anmerkung" placeholder="Freitext für Material, Devices, Besonderheiten …"></textarea></div>
           <div class="field"><label>Raum <span class="req">*</span></label><select id="f-room"></select></div>
+          <div class="field"><label>Geschätzte Dauer (min) <span class="hint">(Vorschlag aus Vorlage, anpassbar)</span></label><input type="number" id="f-dauer" min="0" step="5" placeholder="z. B. 45"></div>
           <div class="field"><label>Tag <span class="req">*</span></label><input type="date" id="f-date"></div>
           <div class="field full reqbox"><label class="chkline"><input type="checkbox" id="f-request"> Als <b>Anfrage</b> anlegen (Bestätigung durch Oberarzt nötig)</label>
             <input id="f-reqby" placeholder="angefragt durch (z. B. Assistenzarzt Dr. …)" autocomplete="off" style="display:none;margin-top:7px">
@@ -488,6 +539,7 @@
       <button id="importBtn">Plan importieren (Datei)</button>
       <input type="file" id="importFile" accept="application/json" style="display:none">
       <button id="demoBtn">Demo-Daten laden</button>
+      <button id="printBtn">🖨 Plan drucken</button>
       <button id="clearBtn" class="danger">Alle Daten löschen</button>
     </div>
   </div>
@@ -563,14 +615,16 @@ const DEFAULT_CONFIG={
   untersucher:["Dr. Becker","Dr. Wagner","Dr. Gradaus","Dr. Klein","Dr. Lang","Dr. Sommer"],
   badges:["KM-Allergie","Niereninsuffizienz","Antikoagulation (Marcumar/DOAK)","Metformin-Pause"],
   vorlagen:[
-    {name:"Koronarangiographie", untersuchung:"Koronarangiographie",        zugang:"Radial rechts",      anmerkung:""},
-    {name:"PCI",                 untersuchung:"Koronarangiographie + PCI",   zugang:"Radial rechts",      anmerkung:""},
-    {name:"TAVI",                untersuchung:"TAVI",                        zugang:"Femoral rechts",     anmerkung:"Schrittmacher-Bereitschaft"},
-    {name:"Schrittmacher (SM)",  untersuchung:"Schrittmacher-Implantation",  zugang:"Subklavia links",    anmerkung:""},
-    {name:"ICD",                 untersuchung:"ICD-Implantation",            zugang:"Pectoral links",     anmerkung:""},
-    {name:"Ablation",            untersuchung:"EPU + Ablation",              zugang:"Femoral beidseitig", anmerkung:""}
+    {name:"Koronarangiographie", untersuchung:"Koronarangiographie",        zugang:"Radial rechts",      anmerkung:"", dauer:30,  kategorie:"Koronardiagnostik",  material:"",                       personalbedarf:2, standardLink:""},
+    {name:"PCI",                 untersuchung:"Koronarangiographie + PCI",   zugang:"Radial rechts",      anmerkung:"", dauer:60,  kategorie:"PCI/Intervention",   material:"Stents, ggf. IVUS",      personalbedarf:2, standardLink:""},
+    {name:"TAVI",                untersuchung:"TAVI",                        zugang:"Femoral rechts",     anmerkung:"Schrittmacher-Bereitschaft", dauer:120, kategorie:"Strukturell/TAVI", material:"Klappe, Pacing-Draht", personalbedarf:3, standardLink:""},
+    {name:"Schrittmacher (SM)",  untersuchung:"Schrittmacher-Implantation",  zugang:"Subklavia links",    anmerkung:"", dauer:60,  kategorie:"Devices/CRM",        material:"Aggregat, Sonden",       personalbedarf:2, standardLink:""},
+    {name:"ICD",                 untersuchung:"ICD-Implantation",            zugang:"Pectoral links",     anmerkung:"", dauer:75,  kategorie:"Devices/CRM",        material:"ICD-Aggregat, Sonden",   personalbedarf:2, standardLink:""},
+    {name:"Ablation",            untersuchung:"EPU + Ablation",              zugang:"Femoral beidseitig", anmerkung:"", dauer:90,  kategorie:"EPU/Ablation",       material:"Ablationskatheter",      personalbedarf:3, standardLink:""}
   ],
+  kategorien:["Koronardiagnostik","PCI/Intervention","Strukturell/TAVI","Devices/CRM","EPU/Ablation","Sonstiges"],
   ampel:{orangeMin:30, redMin:60},
+  dienstStart:"08:00", dienstEnde:"16:00",
   personal:["Pfl. Schmidt","Pfl. Meyer","Pfl. Koch","Pfl. Bauer","Pfl. Wolf","Pfl. Neumann","Pfl. Fischer"],
   notfallReasons:["Reanimation","STEMI","AV-Block III°","instabiler Patient","Sonstiges"],
   criticalStations:["C61","C72","C73","C82","ZNA"],
@@ -584,7 +638,7 @@ const Store={
   save(d){if(!this.ok)return;try{localStorage.setItem("hkl_plan",JSON.stringify(d));}catch(e){}}
 };
 let state={cases:[],settings:{roomLabel:"HKL",theme:"dark",role:"kathlab"},config:null,rooms:{},notfallLog:[]};
-let ui={view:"hub",currentDate:isoToday(),calMonth:firstOfMonth(isoToday()),editingId:null,pendingCancelId:null,persOpen:new Set()};
+let ui={view:"hub",currentDate:isoToday(),calMonth:firstOfMonth(isoToday()),editingId:null,pendingCancelId:null,persOpen:new Set(),searchQuery:"",searchFilters:{krit:false,offen:false},searchDays:new Set(),highlightId:null};
 
 /* ===== Theme/Rolle ===== */
 let TINT_TARGET=[21,40,47], TINT_AMT=0.86;
@@ -596,8 +650,11 @@ function isStation(){return state.settings.role==="station";}
 function ensureConfig(){
   if(!state.config)state.config=JSON.parse(JSON.stringify(DEFAULT_CONFIG));
   const c=state.config;
-  ["untersucher","badges","vorlagen","personal","notfallReasons","criticalStations","absageReasons"].forEach(k=>{if(!Array.isArray(c[k]))c[k]=JSON.parse(JSON.stringify(DEFAULT_CONFIG[k]));});
+  ["untersucher","badges","vorlagen","personal","notfallReasons","criticalStations","absageReasons","kategorien"].forEach(k=>{if(!Array.isArray(c[k]))c[k]=JSON.parse(JSON.stringify(DEFAULT_CONFIG[k]));});
   if(!c.ampel)c.ampel={orangeMin:30,redMin:60};
+  if(!c.dienstStart)c.dienstStart="08:00";
+  if(!c.dienstEnde)c.dienstEnde="16:00";
+  c.vorlagen.forEach(t=>{if(t.dauer==null)t.dauer=45;if(!t.kategorie)t.kategorie="Sonstiges";if(t.material==null)t.material="";if(t.personalbedarf==null)t.personalbedarf=2;if(t.standardLink==null)t.standardLink="";});
 }
 function anredeKurz(a){return a==="Herr"?"Hr.":a==="Frau"?"Fr.":a==="Divers"?"Dvs.":"";}
 function untersucherText(c){return Array.isArray(c.untersucher)?c.untersucher.join(" · "):(c.untersucher||"");}
@@ -633,6 +690,19 @@ function closeNotfall(date,room){const e=(state.notfallLog||[]).find(x=>x.date==
 function updateNotfallReason(date,room,reason){const e=(state.notfallLog||[]).find(x=>x.date===date&&x.room===room&&!x.end);if(e)e.reason=reason;}
 /* null | "unbesetzt" | "unterbesetzt" – nur in operativen Saal-Zuständen */
 function staffState(date,room){const r=getRoom(date,room);if(!AMPEL_OPERATIONAL.includes(r.ampel))return null;const n=r.personnel.length;if(n===0)return"unbesetzt";if(n===1)return"unterbesetzt";return null;}
+/* Endzeit-Prognose je Saal (Summe Restdauer ab Dienstbeginn bzw. jetzt) */
+function parseHM(date,hm){const p=(hm||"08:00").split(":");const d=parseIso(date);d.setHours(+p[0]||0,+p[1]||0,0,0);return d;}
+function fmtHM(d){return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");}
+function saalPrognose(date,room){
+  const cs=casesForRoom(date,room).filter(c=>!c.done);
+  let rest=0;cs.forEach(c=>{rest+=(c.dauer!=null?+c.dauer:0);});
+  if(rest<=0)return null;
+  const ende=parseHM(date,state.config.dienstEnde||"16:00");
+  const start=parseHM(date,state.config.dienstStart||"08:00");
+  const base=date===isoToday()?new Date(Math.max(Date.now(),start.getTime())):start;
+  const proj=new Date(base.getTime()+rest*60000);
+  return {restMin:rest,proj:proj,over:proj.getTime()>ende.getTime()};
+}
 function buildSaalHead(rk,count,r){
   const opts=AMPEL.map(a=>'<option value="'+a.key+'"'+(a.key===r.ampel?' selected':'')+'>'+a.label+'</option>').join("");
   const chips=r.personnel.map((n,i)=>'<span class="pchip">'+escapeHtml(n)+'<span class="x" data-pi="'+i+'">×</span></span>').join("");
@@ -651,10 +721,12 @@ function buildSaalHead(rk,count,r){
   }
   const ss=staffState(ui.currentDate,rk);
   const bar=ss?'<div class="staffbar '+ss+'">'+(ss==="unbesetzt"?"Unbesetzt":"Unterbesetzt")+'</div>':"";
+  const pg=saalPrognose(ui.currentDate,rk);
+  const prog=pg?'<div class="prognose'+(pg.over?' over':'')+'" title="Summe geschätzter Dauern">⏱ verplant bis '+fmtHM(pg.proj)+(pg.over?' · überbucht':'')+'</div>':"";
   return '<div class="lh-top"><span class="rname">'+roomName(rk)+'</span><span class="badge">'+count+'</span>'+
          '<select class="ampel-sel" title="Saal-Status">'+opts+'</select>'+
          '<button type="button" class="pers-btn" title="Personal verwalten">👤 '+r.personnel.length+'</button></div>'+
-         (chips?'<div class="lh-pers">'+chips+'</div>':'')+editor+notfall+bar;
+         (chips?'<div class="lh-pers">'+chips+'</div>':'')+editor+notfall+bar+prog;
 }
 function wireSaalHead(head,date,rk){
   const r=getRoom(date,rk);
@@ -694,7 +766,12 @@ function fillChipSelects(){
 function fillVorlagen(){
   ensureConfig();
   const v=document.getElementById("f-vorlage");
-  if(v)v.innerHTML='<option value="">— keine —</option>'+state.config.vorlagen.map((t,i)=>'<option value="'+i+'">'+escapeHtml(t.name)+'</option>').join("");
+  if(!v)return;
+  const cats=state.config.kategorien&&state.config.kategorien.length?state.config.kategorien.slice():[];
+  state.config.vorlagen.forEach(t=>{const k=t.kategorie||"Sonstiges";if(!cats.includes(k))cats.push(k);});
+  let html='<option value="">— keine —</option>';
+  cats.forEach(cat=>{const items=state.config.vorlagen.map((t,i)=>({t,i})).filter(o=>(o.t.kategorie||"Sonstiges")===cat);if(!items.length)return;html+='<optgroup label="'+escapeHtml(cat)+'">'+items.map(o=>'<option value="'+o.i+'">'+escapeHtml(o.t.name)+(o.t.dauer?' ('+o.t.dauer+' min)':'')+'</option>').join("")+'</optgroup>';});
+  v.innerHTML=html;
 }
 
 function applyRole(role){
@@ -760,15 +837,15 @@ function renderOccupancy(container,date){
 function renderHub(){document.getElementById("hubSummaryTitle").textContent="Belegung am "+weekday(ui.currentDate)+", "+displayDate(ui.currentDate);renderOccupancy(document.getElementById("hubOcc"),ui.currentDate);}
 
 /* ===== PATIENT PLANEN ===== */
-function populateRoomSelect(){const sel=document.getElementById("f-room");const cur=sel.value;sel.innerHTML="";ROOMS.forEach(rk=>{const o=document.createElement("option");o.value=rk;o.textContent=roomName(rk);sel.appendChild(o);});if(cur)sel.value=cur;}
-function resetForm(){ui.editingId=null;document.getElementById("editBanner").style.display="none";document.getElementById("cancelEdit").style.display="none";document.getElementById("saveCase").textContent="Patient hinzufügen";["f-nachname","f-vorname","f-station","f-fallnr","f-gebdat","f-indikation","f-untersuchung","f-zugang","f-anmerkung"].forEach(id=>document.getElementById(id).value="");document.getElementById("f-anrede").value="";document.getElementById("f-room").value="1";document.getElementById("f-date").value=ui.currentDate;const v=document.getElementById("f-vorlage");if(v)v.value="";document.getElementById("f-request").checked=false;document.getElementById("f-reqby").value="";document.getElementById("f-reqby").style.display="none";formUntersucher=[];formBadges=[];renderChips();}
-function loadIntoForm(c){ui.editingId=c.id;const b=document.getElementById("editBanner");b.style.display="block";b.textContent="Bearbeitung: "+(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+fullName(c);document.getElementById("cancelEdit").style.display="inline-block";document.getElementById("saveCase").textContent="Änderungen speichern";document.getElementById("f-anrede").value=c.anrede||"";document.getElementById("f-nachname").value=c.nachname||"";document.getElementById("f-vorname").value=c.vorname||"";document.getElementById("f-station").value=c.station||"";document.getElementById("f-fallnr").value=c.fallnummer||"";document.getElementById("f-gebdat").value=c.geburtsdatum||"";document.getElementById("f-indikation").value=c.indikation||"";document.getElementById("f-untersuchung").value=c.untersuchung||"";document.getElementById("f-zugang").value=c.zugang||"";document.getElementById("f-anmerkung").value=c.anmerkung||"";document.getElementById("f-room").value=String(c.room);document.getElementById("f-date").value=c.date;const rq=!!c.requested;document.getElementById("f-request").checked=rq;document.getElementById("f-reqby").value=rq?(c.requested.by||""):"";document.getElementById("f-reqby").style.display=rq?"block":"none";formUntersucher=Array.isArray(c.untersucher)?c.untersucher.slice():(c.untersucher?[c.untersucher]:[]);formBadges=Array.isArray(c.warnBadges)?c.warnBadges.slice():[];renderChips();const v=document.getElementById("f-vorlage");if(v)v.value="";}
+function populateRoomSelect(){const sel=document.getElementById("f-room");const cur=sel.value;sel.innerHTML="";const order=["1","2","3","4","bw"];order.forEach(rk=>{const o=document.createElement("option");o.value=rk;o.textContent=rk==="bw"?"Bettenwarte (nach Eingriff)":roomName(rk);sel.appendChild(o);});sel.value=cur&&order.includes(cur)?cur:"1";}
+function resetForm(){ui.editingId=null;document.getElementById("editBanner").style.display="none";document.getElementById("cancelEdit").style.display="none";document.getElementById("saveCase").textContent="Patient hinzufügen";["f-nachname","f-vorname","f-station","f-fallnr","f-gebdat","f-indikation","f-untersuchung","f-zugang","f-anmerkung","f-dauer"].forEach(id=>document.getElementById(id).value="");document.getElementById("f-anrede").value="";document.getElementById("f-room").value="1";document.getElementById("f-date").value=ui.currentDate;const v=document.getElementById("f-vorlage");if(v)v.value="";document.getElementById("f-request").checked=false;document.getElementById("f-reqby").value="";document.getElementById("f-reqby").style.display="none";formUntersucher=[];formBadges=[];renderChips();}
+function loadIntoForm(c){ui.editingId=c.id;const b=document.getElementById("editBanner");b.style.display="block";b.textContent="Bearbeitung: "+(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+fullName(c);document.getElementById("cancelEdit").style.display="inline-block";document.getElementById("saveCase").textContent="Änderungen speichern";document.getElementById("f-anrede").value=c.anrede||"";document.getElementById("f-nachname").value=c.nachname||"";document.getElementById("f-vorname").value=c.vorname||"";document.getElementById("f-station").value=c.station||"";document.getElementById("f-fallnr").value=c.fallnummer||"";document.getElementById("f-gebdat").value=c.geburtsdatum||"";document.getElementById("f-indikation").value=c.indikation||"";document.getElementById("f-untersuchung").value=c.untersuchung||"";document.getElementById("f-zugang").value=c.zugang||"";document.getElementById("f-anmerkung").value=c.anmerkung||"";document.getElementById("f-dauer").value=(c.dauer!=null?c.dauer:"");document.getElementById("f-room").value=String(c.room);document.getElementById("f-date").value=c.date;const rq=!!c.requested;document.getElementById("f-request").checked=rq;document.getElementById("f-reqby").value=rq?(c.requested.by||""):"";document.getElementById("f-reqby").style.display=rq?"block":"none";formUntersucher=Array.isArray(c.untersucher)?c.untersucher.slice():(c.untersucher?[c.untersucher]:[]);formBadges=Array.isArray(c.warnBadges)?c.warnBadges.slice():[];renderChips();const v=document.getElementById("f-vorlage");if(v)v.value="";}
 function saveCase(){
   const nachname=document.getElementById("f-nachname").value.trim();
   if(!nachname){toast("Bitte einen Nachnamen eingeben.");document.getElementById("f-nachname").focus();return;}
   const reqChecked=document.getElementById("f-request").checked;
   const reqby=document.getElementById("f-reqby").value.trim();
-  const data={anrede:document.getElementById("f-anrede").value,nachname:nachname,vorname:document.getElementById("f-vorname").value.trim(),station:document.getElementById("f-station").value.trim(),fallnummer:document.getElementById("f-fallnr").value.trim(),geburtsdatum:document.getElementById("f-gebdat").value,untersucher:formUntersucher.slice(),indikation:document.getElementById("f-indikation").value.trim(),untersuchung:document.getElementById("f-untersuchung").value.trim(),zugang:document.getElementById("f-zugang").value.trim(),anmerkung:document.getElementById("f-anmerkung").value.trim(),warnBadges:formBadges.slice(),room:document.getElementById("f-room").value,date:document.getElementById("f-date").value};
+  const data={anrede:document.getElementById("f-anrede").value,nachname:nachname,vorname:document.getElementById("f-vorname").value.trim(),station:document.getElementById("f-station").value.trim(),fallnummer:document.getElementById("f-fallnr").value.trim(),geburtsdatum:document.getElementById("f-gebdat").value,untersucher:formUntersucher.slice(),indikation:document.getElementById("f-indikation").value.trim(),untersuchung:document.getElementById("f-untersuchung").value.trim(),zugang:document.getElementById("f-zugang").value.trim(),anmerkung:document.getElementById("f-anmerkung").value.trim(),dauer:(document.getElementById("f-dauer").value!==""?+document.getElementById("f-dauer").value:null),warnBadges:formBadges.slice(),room:document.getElementById("f-room").value,date:document.getElementById("f-date").value};
   if(ui.editingId){const c=state.cases.find(x=>x.id===ui.editingId);const od=c.date,or=c.room;Object.assign(c,data);c.requested=reqChecked?{by:reqby||(c.requested&&c.requested.by)||"—",at:(c.requested&&c.requested.at)||nowIso()}:null;touchCase(c);if(od!==c.date||or!==c.room){c.position=casesForRoom(c.date,c.room).length-1;renumber(od,or);}toast("Änderungen gespeichert.");}
   else{data.id=uid();data.status="geplant";data.done=false;data.cancelled=null;data.rejected=null;data.requested=reqChecked?{by:reqby||"—",at:nowIso()}:null;data.statusTimes={geplant:nowIso()};data.updatedAt=nowIso();data.position=casesForRoom(data.date,data.room).length;state.cases.push(data);toast(reqChecked?"Anfrage angelegt – wartet auf Bestätigung.":"Patient hinzugefügt – "+roomName(data.room)+".");}
   persist();ui.currentDate=data.date;const keepDate=data.date;resetForm();document.getElementById("f-date").value=keepDate;renderPlanSide();
@@ -783,7 +860,7 @@ function renderBoard(){
   const lc=lastChangedFor(ui.currentDate);
   const bm=document.getElementById("boardMeta");
   const station=isStation();
-  if(bm){let warns=[];if(!station)SAAL_ROOMS.forEach(rk=>{const ss=staffState(ui.currentDate,rk);if(ss)warns.push('<span class="warnchip '+ss+'">'+roomName(rk)+' '+(ss==="unbesetzt"?"unbesetzt":"unterbesetzt")+'</span>');});
+  if(bm){let warns=[];if(!station)SAAL_ROOMS.forEach(rk=>{const ss=staffState(ui.currentDate,rk);if(ss)warns.push('<span class="warnchip '+ss+'">'+roomName(rk)+' '+(ss==="unbesetzt"?"unbesetzt":"unterbesetzt")+'</span>');const pg=saalPrognose(ui.currentDate,rk);if(pg&&pg.over)warns.push('<span class="warnchip over">'+roomName(rk)+' überbucht (bis '+fmtHM(pg.proj)+')</span>');});
     bm.innerHTML=(lc?'<span class="lastchg">zuletzt geändert: '+hhmm(lc)+' Uhr</span>':'')+warns.join("");}
   const lanes=document.getElementById("lanes"); lanes.innerHTML="";
   ROOMS.forEach(rk=>{
@@ -823,7 +900,7 @@ function makeCard(c,station){
   const st=STATUS_MAP[c.status]||STATUSES[0];
   const crit=isCritical(c);
   const card=document.createElement("div");
-  card.className="card"+(c.done?" done":"")+(crit?" critical":"")+(station?" nodrag":"");
+  card.className="card"+(c.done?" done":"")+(crit?" critical":"")+(station?" nodrag":"")+((ui.searchQuery&&ui.searchQuery.trim()&&matchCase(c,ui.searchQuery.trim().toLowerCase()))?" searchhit":"");
   card.draggable=!station; card.dataset.id=c.id;
   card.style.background=tint(c.done?"#15803d":st.color);
   const nameLine=(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+escapeHtml(fullName(c));
@@ -837,6 +914,7 @@ function makeCard(c,station){
   if(c.fallnummer)  meta+='<span>Fallnr.: <b>'+escapeHtml(c.fallnummer)+'</b></span>';
   if(c.geburtsdatum)meta+='<span>geb.: <b>'+escapeHtml(c.geburtsdatum.split("-").reverse().join("."))+'</b></span>';
   if(c.anmerkung)   meta+='<span>Anmerkung: <b>'+escapeHtml(c.anmerkung)+'</b></span>';
+  if(c.dauer!=null&&c.dauer!=="")meta+='<span>Dauer: <b>'+c.dauer+' min</b></span>';
   const wb=(Array.isArray(c.warnBadges)&&c.warnBadges.length)?'<div class="wbadges">'+c.warnBadges.map(b=>'<span class="wbadge" title="'+escapeHtml(b)+'">⚠ '+escapeHtml(b)+'</span>').join("")+'</div>':"";
   let tags=""; const wi=waitInfo(c); if(wi)tags+='<span class="waitdot '+wi.color+'" title="Wartezeit in dieser Phase"><span class="dot"></span>'+wi.mins+' min</span>'; if(crit)tags+='<span class="crit-tag">⚠ Kritisch</span>'; if(c.done)tags+='<span class="done-tag">✓ Fertig</span>';
   let acts="";
@@ -920,9 +998,10 @@ function renderCalendar(){
   for(let i=0;i<42;i++){
     const d=new Date(gridStart);d.setDate(gridStart.getDate()+i);const dIso=iso(d),inMonth=d.getMonth()===first.getMonth();
     const dayCases=state.cases.filter(c=>c.date===dIso&&!c.cancelled),total=dayCases.length;
-    const cell=document.createElement("div");cell.className="cal-cell"+(inMonth?"":" other")+(dIso===todayIso?" today":"");cell.tabIndex=0;
+    const hit=ui.searchDays&&ui.searchDays.has(dIso);
+    const cell=document.createElement("div");cell.className="cal-cell"+(inMonth?"":" other")+(dIso===todayIso?" today":"")+(hit?" searchday":"");cell.tabIndex=0;
     let dots="";dayCases.slice(0,8).forEach(c=>{dots+='<span class="pdot'+(isCritical(c)?' crit':'')+'"></span>';});
-    cell.innerHTML='<button class="cal-plus" title="Für diesen Tag einplanen">+</button><div class="dn">'+d.getDate()+'</div>'+(total>0?'<span class="cal-total">'+total+' Pat.</span>':'<div class="cc">frei</div>')+'<div class="dots">'+dots+'</div>';
+    cell.innerHTML='<button class="cal-plus" title="Für diesen Tag einplanen">+</button><div class="dn">'+d.getDate()+'</div>'+(hit?'<span class="cal-hit">★ Treffer</span>':'')+(total>0?'<span class="cal-total">'+total+' Pat.</span>':'<div class="cc">frei</div>')+'<div class="dots">'+dots+'</div>';
     cell.addEventListener("click",()=>{ui.currentDate=dIso;setView("board");});
     cell.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();ui.currentDate=dIso;setView("board");}});
     cell.querySelector(".cal-plus").addEventListener("click",e=>{e.stopPropagation();ui.currentDate=dIso;resetForm();document.getElementById("f-date").value=dIso;setView("plan");toast("Planung für "+displayDate(dIso));});
@@ -977,7 +1056,10 @@ function loadDemo(){
   const leh=byNN("Lehmann"); if(leh)leh.statusTimes={geplant:ago(120),im_bett:ago(70),wird_aufgelegt:ago(50),auf_tisch:ago(40)};
   const fin=mk(t,"2",97,"Herr","Berg","Hans","K1","NSTEMI","Koronarangiographie + PCI","Radial rechts","Dr. Becker","ruecktransport_erfolgt",true);
   fin.statusTimes={geplant:ago(220),im_bett:ago(200),wird_aufgelegt:ago(175),auf_tisch:ago(165),begonnen:ago(160),beendet:ago(120),ruecktransport:ago(118),ruecktransport_erfolgt:ago(95)};
+  fin.dauer=60;
   state.cases.push(fin);
+  /* geschätzte Dauern für Prognose/Soll-Ist */
+  state.cases.forEach(c=>{if(c.dauer==null){const u=c.untersuchung||"";c.dauer=/TAVI/i.test(u)?120:/Ablation|EPU/i.test(u)?90:/PCI|Akut/i.test(u)?60:/Schrittmacher|ICD/i.test(u)?60:30;}});
   state.notfallLog=[
     {id:uid(),date:t,room:"2",start:ago(150),end:ago(125),reason:"Reanimation"},
     {id:uid(),date:t,room:"1",start:ago(80), end:ago(68), reason:"STEMI"},
@@ -1015,7 +1097,7 @@ const ADMIN_LISTS=[
 ];
 function renderAdmin(){ensureConfig();const g=document.getElementById("adminGrid");g.innerHTML="";ADMIN_LISTS.forEach(spec=>g.appendChild(adminListCard(spec)));g.appendChild(adminVorlagenCard());g.appendChild(adminAmpelCard());}
 function adminListCard(spec){const arr=state.config[spec.key];const card=document.createElement("div");card.className="admin-card";card.innerHTML='<h3>'+escapeHtml(spec.title)+'</h3><div class="adm-items">'+arr.map((v,i)=>'<div class="adm-item"><span>'+escapeHtml(v)+'</span><button class="adm-x" data-i="'+i+'" title="Entfernen">×</button></div>').join("")+'</div><div class="adm-add"><input placeholder="'+escapeHtml(spec.ph)+'"><button class="adm-add-btn">Hinzufügen</button></div>';card.querySelectorAll(".adm-x").forEach(x=>x.addEventListener("click",()=>{arr.splice(+x.dataset.i,1);adminChanged();}));const inp=card.querySelector(".adm-add input");const add=()=>{const v=inp.value.trim();if(v&&!arr.includes(v)){arr.push(v);adminChanged();}};card.querySelector(".adm-add-btn").addEventListener("click",add);inp.addEventListener("keydown",e=>{if(e.key==="Enter")add();});return card;}
-function adminVorlagenCard(){const arr=state.config.vorlagen;const card=document.createElement("div");card.className="admin-card wide";card.innerHTML='<h3>Eingriffs-Vorlagen</h3><div class="adm-vorlagen">'+arr.map((t,i)=>'<div class="adm-vrow"><input data-i="'+i+'" data-f="name" value="'+escapeHtml(t.name)+'" placeholder="Name"><input data-i="'+i+'" data-f="untersuchung" value="'+escapeHtml(t.untersuchung||"")+'" placeholder="Untersuchung"><input data-i="'+i+'" data-f="zugang" value="'+escapeHtml(t.zugang||"")+'" placeholder="Zugang"><input data-i="'+i+'" data-f="anmerkung" value="'+escapeHtml(t.anmerkung||"")+'" placeholder="Anmerkung"><button class="adm-x" data-i="'+i+'">×</button></div>').join("")+'</div><button class="adm-add-btn" id="adm-vorlage-add">+ Vorlage</button>';card.querySelectorAll(".adm-vrow input").forEach(inp=>inp.addEventListener("change",()=>{arr[+inp.dataset.i][inp.dataset.f]=inp.value;persist();fillVorlagen();}));card.querySelectorAll(".adm-x").forEach(x=>x.addEventListener("click",()=>{arr.splice(+x.dataset.i,1);adminChanged();}));card.querySelector("#adm-vorlage-add").addEventListener("click",()=>{arr.push({name:"Neue Vorlage",untersuchung:"",zugang:"",anmerkung:""});adminChanged();});return card;}
+function adminVorlagenCard(){const arr=state.config.vorlagen;const cats=state.config.kategorien||[];const card=document.createElement("div");card.className="admin-card wide";card.innerHTML='<h3>Eingriffs-Vorlagen <span class="hint">(Name · Untersuchung · Zugang · Dauer min · Kategorie · Material/Anmerkung)</span></h3><div class="adm-vorlagen">'+arr.map((t,i)=>'<div class="adm-vrow"><input data-i="'+i+'" data-f="name" value="'+escapeHtml(t.name)+'" placeholder="Name"><input data-i="'+i+'" data-f="untersuchung" value="'+escapeHtml(t.untersuchung||"")+'" placeholder="Untersuchung"><input data-i="'+i+'" data-f="zugang" value="'+escapeHtml(t.zugang||"")+'" placeholder="Zugang"><input class="vd" type="number" data-i="'+i+'" data-f="dauer" value="'+(t.dauer!=null?t.dauer:"")+'" placeholder="min"><select class="vk" data-i="'+i+'" data-f="kategorie">'+cats.map(k=>'<option'+(k===(t.kategorie||"Sonstiges")?' selected':'')+'>'+escapeHtml(k)+'</option>').join("")+'</select><input data-i="'+i+'" data-f="material" value="'+escapeHtml(t.material||"")+'" placeholder="Material/Anmerkung"><button class="adm-x" data-i="'+i+'">×</button></div>').join("")+'</div><button class="adm-add-btn" id="adm-vorlage-add">+ Vorlage</button>';card.querySelectorAll(".adm-vrow input, .adm-vrow select").forEach(inp=>inp.addEventListener("change",()=>{const v=inp.dataset.f==="dauer"?(inp.value!==""?+inp.value:null):inp.value;arr[+inp.dataset.i][inp.dataset.f]=v;persist();fillVorlagen();}));card.querySelectorAll(".adm-x").forEach(x=>x.addEventListener("click",()=>{arr.splice(+x.dataset.i,1);adminChanged();}));card.querySelector("#adm-vorlage-add").addEventListener("click",()=>{arr.push({name:"Neue Vorlage",untersuchung:"",zugang:"",anmerkung:"",dauer:45,kategorie:"Sonstiges",material:"",personalbedarf:2,standardLink:""});adminChanged();});return card;}
 function adminAmpelCard(){const a=state.config.ampel;const card=document.createElement("div");card.className="admin-card";card.innerHTML='<h3>Wartezeit-Ampel (Minuten)</h3><div class="adm-ampel"><label>Orange ab <input type="number" id="adm-orange" value="'+a.orangeMin+'" min="1"></label><label>Rot ab <input type="number" id="adm-red" value="'+a.redMin+'" min="1"></label></div>';card.querySelector("#adm-orange").addEventListener("change",e=>{a.orangeMin=+e.target.value||30;persist();});card.querySelector("#adm-red").addEventListener("change",e=>{a.redMin=+e.target.value||60;persist();});return card;}
 function adminChanged(){persist();fillChipSelects();fillVorlagen();fillAbsageReasons();renderAdmin();}
 
@@ -1062,9 +1144,10 @@ function analytics(from,to){
     if(t.im_bett&&t.auf_tisch)tuerTisch.push(durMin(t.im_bett,t.auf_tisch));});
   const perSaal=SAAL_ROOMS.map(rk=>{const cs=active.filter(c=>String(c.room)===rk);let tmin=0;cs.forEach(c=>{const t=c.statusTimes||{};if(t.auf_tisch&&t.beendet)tmin+=durMin(t.auf_tisch,t.beendet);});return {room:rk,count:cs.length,tisch:tmin};});
   const reasons={};cancelled.forEach(c=>{const r=(c.cancelled.reason||"ohne Angabe");reasons[r]=(reasons[r]||0)+1;});
+  const sollist=[];active.forEach(c=>{const tt=c.statusTimes||{};if(c.dauer!=null&&c.dauer!==""&&tt.auf_tisch&&tt.beendet)sollist.push({p:+c.dauer,a:durMin(tt.auf_tisch,tt.beendet)});});
   const nf=(state.notfallLog||[]).filter(e=>inRange(e.date,from,to));
   let nfMin=0;const nfByReason={};nf.forEach(e=>{const end=e.end||nowIso();const m=durMin(e.start,end);nfMin+=m;const r=e.reason||"ohne Angabe";nfByReason[r]=(nfByReason[r]||0)+m;});
-  return {cases,active,cancelled,reqOpen,reqRej,confirmed,days,crit,p1:statN(p1),p2:statN(p2),tisch:statN(tisch),tuerTisch:statN(tuerTisch),perSaal,reasons,nf,nfMin,nfByReason};
+  return {cases,active,cancelled,reqOpen,reqRej,confirmed,days,crit,p1:statN(p1),p2:statN(p2),tisch:statN(tisch),tuerTisch:statN(tuerTisch),perSaal,reasons,sollist,nf,nfMin,nfByReason};
 }
 function awBar(label,val,max,unit){const w=max>0?Math.round(val/max*100):0;return '<div class="awbar"><span class="awbl">'+escapeHtml(label)+'</span><span class="awbt"><span class="awbf" style="width:'+w+'%"></span></span><span class="awbv">'+val+(unit||"")+'</span></div>';}
 function awKpi(label,val,sub){return '<div class="kpi"><div class="kv">'+val+'</div><div class="kl">'+escapeHtml(label)+'</div>'+(sub?'<div class="ks">'+escapeHtml(sub)+'</div>':'')+'</div>';}
@@ -1085,6 +1168,8 @@ function renderAuswertung(){
   html+='<div class="ausw-row">'+awStat("Wartezeit Phase 1 (Bettenwarte → aufgelegt)",a.p1)+awStat("Wartezeit Phase 2 (Rücktransport)",a.p2)+awStat("Tischzeit (auf Tisch → beendet)",a.tisch)+awStat("Tür-zu-Tisch (Ankunft → auf Tisch)",a.tuerTisch)+'</div>';
   const maxCount=Math.max(1,...a.perSaal.map(s=>s.count)),maxTisch=Math.max(1,...a.perSaal.map(s=>s.tisch));
   html+='<div class="ausw-row"><div class="ausw-card"><h3>Fälle je Saal</h3>'+a.perSaal.map(s=>awBar(roomName(s.room),s.count,maxCount,"")).join("")+'</div><div class="ausw-card"><h3>Tisch-Aktivzeit je Saal</h3>'+a.perSaal.map(s=>awBar(roomName(s.room),s.tisch,maxTisch," min")).join("")+'</div></div>';
+  const si=a.sollist;const pAvg=si.length?Math.round(si.reduce((s,x)=>s+x.p,0)/si.length):0,aAvg=si.length?Math.round(si.reduce((s,x)=>s+x.a,0)/si.length):0,dlt=aAvg-pAvg;
+  html+='<div class="ausw-card"><h3>Soll-Ist: geplante vs. tatsächliche Tischzeit</h3>'+(si.length?'<div class="statrow"><div><b>'+pAvg+'</b><span>Ø geplant</span></div><div><b>'+aAvg+'</b><span>Ø tatsächlich</span></div><div><b style="color:'+(dlt>0?'#dc2626':'#15803d')+'">'+(dlt>=0?'+':'')+dlt+'</b><span>Δ min</span></div><div><b>'+si.length+'</b><span>Fälle</span></div></div><p class="awnone">Grundlage, um die hinterlegten Standard-Dauern datenbasiert zu schärfen.</p>':'<p class="awnone">noch keine Fälle mit geplanter Dauer und erfasster Tischzeit</p>')+'</div>';
   const remax=Math.max(1,...Object.values(a.reasons)),nrmax=Math.max(1,...Object.values(a.nfByReason));
   html+='<div class="ausw-row"><div class="ausw-card"><h3>Absagegründe</h3>'+(Object.keys(a.reasons).length?Object.entries(a.reasons).map(([k,v])=>awBar(k,v,remax,"")).join(""):'<p class="awnone">keine Absagen</p>')+'</div><div class="ausw-card"><h3>Notfall-Blockierung nach Grund</h3>'+(Object.keys(a.nfByReason).length?Object.entries(a.nfByReason).map(([k,v])=>awBar(k,v,nrmax," min")).join(""):'<p class="awnone">keine Notfälle</p>')+'</div></div>';
   if(a.nf.length){html+='<div class="ausw-card"><h3>Notfall-Blockierungen (Einzelfälle)</h3><table class="awtable"><tr><th>Tag</th><th>Saal</th><th>Beginn</th><th>Ende</th><th>Dauer</th><th>Grund</th></tr>'+a.nf.slice().sort((x,y)=>(y.start||"").localeCompare(x.start||"")).map(e=>{const end=e.end;const dur=durMin(e.start,end||nowIso());return '<tr><td>'+displayDate(e.date)+'</td><td>'+roomName(e.room)+'</td><td>'+hhmm(e.start)+'</td><td>'+(end?hhmm(end):'<i>läuft</i>')+'</td><td>'+dur+' min</td><td>'+escapeHtml(e.reason||"—")+'</td></tr>';}).join("")+'</table></div>';}
@@ -1093,6 +1178,34 @@ function renderAuswertung(){
 function downloadCsv(name,rows){const csv=rows.map(r=>r.map(v=>{v=String(v==null?"":v);return /[",;\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(";")).join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function exportTimesCsv(){const from=document.getElementById("aw-from").value||null,to=document.getElementById("aw-to").value||null;const keys=STATUSES.map(s=>s.key);const rows=[["Tag","Saal","Nachname","Vorname","Status",...keys.map(k=>"t_"+k)]];state.cases.filter(c=>inRange(c.date,from,to)&&!c.cancelled&&!c.rejected&&!c.requested).forEach(c=>{const t=c.statusTimes||{};rows.push([c.date,roomName(c.room),c.nachname,c.vorname||"",(STATUS_MAP[c.status]?STATUS_MAP[c.status].label:c.status),...keys.map(k=>t[k]?hhmm(t[k]):"")]);});downloadCsv("HKL-Zeiten.csv",rows);toast("Zeiten als CSV exportiert.");}
 function exportNotfallCsv(){const from=document.getElementById("aw-from").value||null,to=document.getElementById("aw-to").value||null;const rows=[["Tag","Saal","Beginn","Ende","Dauer_min","Grund"]];(state.notfallLog||[]).filter(e=>inRange(e.date,from,to)).forEach(e=>{const end=e.end||nowIso();rows.push([e.date,roomName(e.room),hhmm(e.start),e.end?hhmm(e.end):"laeuft",durMin(e.start,end),e.reason||""]);});downloadCsv("HKL-Notfaelle.csv",rows);toast("Notfälle als CSV exportiert.");}
+
+/* ===== PATIENTENSUCHE ===== */
+function caseOpen(c){return !c.done && c.status!=="ruecktransport_erfolgt" && c.status!=="beendet";}
+function matchCase(c,q){return [c.nachname,c.vorname,c.fallnummer,c.station,c.indikation,untersucherText(c)].join(" ").toLowerCase().includes(q);}
+function searchMatches(){const q=(ui.searchQuery||"").trim().toLowerCase();if(!q)return [];return state.cases.filter(c=>{if(!matchCase(c,q))return false;if(ui.searchFilters.krit&&!isCritical(c))return false;if(ui.searchFilters.offen&&!caseOpen(c))return false;return true;});}
+function caseTag(c){if(c.cancelled)return '<span class="stag cancel">Absage</span>';if(c.rejected)return '<span class="stag rej">Abgelehnt</span>';if(c.requested)return '<span class="stag req">Anfrage</span>';const st=STATUS_MAP[c.status]||STATUSES[0];return '<span class="stag" style="background:'+st.color+'">'+escapeHtml(st.label)+'</span>';}
+function renderSearch(){
+  const q=(ui.searchQuery||"").trim();
+  const res=document.getElementById("searchResults"), clr=document.getElementById("searchClear");
+  clr.style.display=q?"inline-flex":"none";
+  if(!q){res.style.display="none";res.innerHTML="";ui.searchDays=new Set();if(ui.view==="calendar")renderCalendar();if(ui.view==="board")renderBoard();return;}
+  const list=searchMatches();
+  ui.searchDays=new Set(list.map(c=>c.date));
+  if(ui.view==="calendar")renderCalendar();
+  if(ui.view==="board")renderBoard();
+  if(!list.length){res.style.display="block";res.innerHTML='<div class="sr-none">Kein Treffer für „'+escapeHtml(q)+'".</div>';return;}
+  const sorted=list.slice().sort((a,b)=>(a.date||"").localeCompare(b.date||"")||String(a.room).localeCompare(String(b.room)));
+  res.style.display="block";
+  res.innerHTML='<div class="sr-head">'+list.length+' Treffer · Klick öffnet den Tag bzw. die Liste</div>'+sorted.map(c=>'<div class="sr-item" data-id="'+c.id+'"><span class="sr-name">'+escapeHtml((anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+fullName(c))+'</span><span class="sr-meta">'+displayDate(c.date)+' · '+roomName(c.room)+(c.station?' · '+escapeHtml(c.station):'')+(c.indikation?' · '+escapeHtml(c.indikation):'')+'</span>'+caseTag(c)+'</div>').join("");
+  res.querySelectorAll(".sr-item").forEach(it=>it.addEventListener("click",()=>navigateToCase(it.dataset.id)));
+}
+function navigateToCase(id){const c=state.cases.find(x=>x.id===id);if(!c)return;
+  document.getElementById("searchResults").style.display="none";
+  if(c.cancelled){setView("cancelled");return;}
+  if(c.rejected){setView("rejected");return;}
+  ui.currentDate=c.date;ui.calMonth=firstOfMonth(c.date);setView("board");
+  setTimeout(()=>{const el=document.querySelector('#lanes .card[data-id="'+id+'"]');if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),2200);}},80);
+}
 
 function init(){
   const saved=Store.load();
@@ -1146,7 +1259,18 @@ function init(){
   document.getElementById("aw-all").addEventListener("click",()=>{document.getElementById("aw-from").value="";document.getElementById("aw-to").value="";renderAuswertung();});
   document.getElementById("aw-csv-times").addEventListener("click",exportTimesCsv);
   document.getElementById("aw-csv-nf").addEventListener("click",exportNotfallCsv);
-  document.getElementById("f-vorlage").addEventListener("change",e=>{const i=e.target.value;if(i==="")return;const t=state.config.vorlagen[+i];if(!t)return;if(t.untersuchung)document.getElementById("f-untersuchung").value=t.untersuchung;if(t.zugang)document.getElementById("f-zugang").value=t.zugang;if(t.anmerkung)document.getElementById("f-anmerkung").value=t.anmerkung;toast("Vorlage „"+t.name+"“ übernommen.");});
+  /* Patientensuche */
+  const si=document.getElementById("searchInput");
+  si.addEventListener("input",e=>{ui.searchQuery=e.target.value;renderSearch();});
+  document.getElementById("sf-krit").addEventListener("change",e=>{ui.searchFilters.krit=e.target.checked;renderSearch();});
+  document.getElementById("sf-offen").addEventListener("change",e=>{ui.searchFilters.offen=e.target.checked;renderSearch();});
+  document.getElementById("searchClear").addEventListener("click",()=>{si.value="";ui.searchQuery="";document.getElementById("sf-krit").checked=false;document.getElementById("sf-offen").checked=false;ui.searchFilters={krit:false,offen:false};renderSearch();});
+  /* Plan sichern / drucken */
+  const sb=document.getElementById("backupBtn"); if(sb)sb.addEventListener("click",()=>{exportData();});
+  const pb=document.getElementById("printBtn"); if(pb)pb.addEventListener("click",()=>window.print());
+  /* Auto-Sicherung bei Fehler */
+  window.addEventListener("error",()=>{try{localStorage.setItem("hkl_plan_backup_"+Date.now(),JSON.stringify(state));}catch(e){}});
+  document.getElementById("f-vorlage").addEventListener("change",e=>{const i=e.target.value;if(i==="")return;const t=state.config.vorlagen[+i];if(!t)return;if(t.untersuchung)document.getElementById("f-untersuchung").value=t.untersuchung;if(t.zugang)document.getElementById("f-zugang").value=t.zugang;const anm=[t.material,t.anmerkung].filter(Boolean).join(" · ");if(anm)document.getElementById("f-anmerkung").value=anm;if(t.dauer!=null)document.getElementById("f-dauer").value=t.dauer;toast("Vorlage „"+t.name+"“ übernommen.");});
   document.getElementById("add-untersucher").addEventListener("change",e=>{const v=e.target.value;if(v&&!formUntersucher.includes(v))formUntersucher.push(v);e.target.value="";renderChips();});
   document.getElementById("guest-untersucher").addEventListener("click",()=>{const n=prompt("Name des Gast-Untersuchers:");if(n&&n.trim()){formUntersucher.push(n.trim());renderChips();}});
   document.getElementById("add-badge").addEventListener("change",e=>{const v=e.target.value;if(v&&!formBadges.includes(v))formBadges.push(v);e.target.value="";renderChips();});
