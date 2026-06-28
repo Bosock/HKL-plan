@@ -157,7 +157,7 @@
   /* Wartezeit-Ampel-Punkt */
   .waitdot{display:inline-flex;align-items:center;gap:4px;border-radius:12px;padding:1px 8px;font-size:11px;font-weight:800;color:#fff}
   .waitdot .dot{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.35)}
-  .waitdot.ok{background:#15803d}.waitdot.warn{background:#d97706}.waitdot.crit{background:#dc2626}
+  .waitdot.ok{background:#15803d}.waitdot.warn{background:var(--wait-warn,#d97706)}.waitdot.crit{background:var(--wait-crit,#dc2626)}
   /* Chip-Felder im Formular */
   .hint{font-weight:500;color:var(--muted);font-size:11px}
   .chipfield{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:7px;background:var(--input-bg);min-height:44px}
@@ -355,6 +355,51 @@
   .adm-vrow{grid-template-columns:1fr 1.5fr 1fr 64px 1.1fr 1.3fr auto}
   .adm-vrow .vd{width:100%}
   .adm-vrow select.vk{font-family:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:7px;padding:5px 6px;background:var(--input-bg);color:var(--ink)}
+  /* Admin v2 */
+  .adm-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;border-bottom:1px solid var(--line);padding-bottom:10px}
+  .adm-nav button{font-family:inherit;font-size:13px;font-weight:700;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);border-radius:8px;padding:7px 14px;cursor:pointer}
+  .adm-nav button.active{background:var(--brand);color:#06222a;border-color:var(--brand)}
+  .admin-grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  .adm-footer{position:sticky;bottom:0;margin-top:18px;display:flex;align-items:center;gap:12px;background:var(--panel);border-top:1px solid var(--line);padding:12px 4px}
+  .adm-dirty{font-size:13px;font-weight:700;color:var(--muted);flex:1}
+  .adm-dirty.on{color:#f59e0b}
+  .adm-save{font-family:inherit;font-size:14px;font-weight:800;border:1px solid var(--brand);background:var(--brand);color:#06222a;border-radius:9px;padding:9px 22px;cursor:pointer}
+  .adm-save:disabled{opacity:.45;cursor:default}
+  .adm-discard{font-family:inherit;font-size:14px;font-weight:700;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);border-radius:9px;padding:9px 18px;cursor:pointer}
+  .adm-discard:disabled{opacity:.45;cursor:default}
+  .drag-item{cursor:grab}
+  .drag-item.dragging{opacity:.4}
+  .drag-item.dragover{outline:2px dashed var(--brand);outline-offset:1px}
+  .grip{color:var(--muted);cursor:grab;font-size:13px;letter-spacing:-2px;user-select:none}
+  .adm-item .it-txt{flex:1}
+  .adm-vrow2{display:grid;grid-template-columns:auto 1fr 1.4fr 1fr 60px 1.1fr 56px 1.3fr 1.3fr auto;gap:6px;align-items:center;margin-bottom:7px}
+  .adm-vrow2 input,.adm-vrow2 select{font-family:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:7px;padding:5px 6px;background:var(--input-bg);color:var(--ink);min-width:0}
+  .adm-stat-head,.adm-srow{display:grid;grid-template-columns:auto 1fr 56px 64px 84px 84px auto;gap:8px;align-items:center}
+  .adm-stat-head{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;padding:0 2px}
+  .adm-stat-head span{text-align:center}.adm-stat-head span:nth-child(2){text-align:left}
+  .adm-srow{margin-bottom:7px}
+  .adm-srow input[data-f=label]{font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;padding:5px 8px;background:var(--input-bg);color:var(--ink)}
+  .adm-srow input[type=color]{width:100%;height:30px;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer}
+  .adm-srow input[type=checkbox]{justify-self:center;width:17px;height:17px}
+  .adm-colors{display:flex;flex-direction:column;gap:8px}
+  .adm-color{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600}
+  .adm-color input[type=color]{width:46px;height:30px;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer}
+  .adm-gen{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  .adm-gen label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600}
+  .adm-gen label.chkline{flex-direction:row;align-items:center;gap:8px}
+  .adm-gen input,.adm-gen select{font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;padding:7px 9px;background:var(--input-bg);color:var(--ink)}
+  .adm-gen label.chkline input{width:17px;height:17px}
+  .adm-io{display:flex;gap:10px;flex-wrap:wrap}
+  .adm-saalrow{display:grid;grid-template-columns:auto 64px 1fr auto;gap:8px;align-items:center;margin-bottom:7px}
+  .adm-saalrow .sid{font-size:11px;color:var(--muted);font-weight:700}
+  .adm-saalrow input{font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;padding:6px 8px;background:var(--input-bg);color:var(--ink)}
+  .adm-rolehead,.adm-rolerow{display:grid;grid-template-columns:auto 1.4fr 1fr 70px auto;gap:8px;align-items:center}
+  .adm-rolehead{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;padding:0 2px}
+  .adm-rolerow{margin-bottom:7px}
+  .adm-rolerow input{font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;padding:6px 8px;background:var(--input-bg);color:var(--ink)}
+  .pchip{display:inline-flex;align-items:center;gap:5px}
+  .pchip .prole{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;background:var(--brand);color:#06222a;border-radius:6px;padding:1px 5px;cursor:pointer}
+  .pers-editor .pers-role{max-width:110px}
   /* Druckansicht */
   @media print{
     .topbar,.searchbar,#tabs,.demo-note,.daybanner .db-tools,.board-meta,.addcard,.card .acts,.tool-btn,.lane-head .ampel-sel,.lane-head .pers-btn,.pers-editor{display:none !important}
@@ -568,47 +613,62 @@
 <script>
 "use strict";
 /* ===== STATUS ===== */
-const STATUSES=[
-  {key:"geplant",              label:"Geplant",                       color:"#64748b"},
-  {key:"station_an",           label:"Auf Station angekommen",        color:"#0891a8"},
-  {key:"aufgenommen",          label:"Fertig aufgenommen",            color:"#0e7490"},
-  {key:"abgerufen",            label:"Patient abgerufen",             color:"#7c3aed"},
-  {key:"vorbereitet",          label:"Patient vorbereitet",           color:"#b45309"},
-  {key:"transport_vorbereitet",label:"Patient für Transport vorbereitet",color:"#9a3412"},
-  {key:"transport_abgeholt",   label:"Patient vom Transport abgeholt", color:"#c2410c"},
-  {key:"im_bett",              label:"In Bettenwarte angekommen",     color:"#ca8a04"},
-  {key:"wird_aufgelegt",       label:"Wird aufgelegt",                color:"#ea580c"},
-  {key:"auf_tisch",            label:"Auf dem Tisch",                 color:"#2563eb"},
-  {key:"begonnen",             label:"Untersuchung begonnen",         color:"#1d4ed8"},
-  {key:"beendet",              label:"Untersuchung beendet",          color:"#15803d"},
-  {key:"ueberwachung",         label:"Überwachungspflichtig",         color:"#dc2626"},
-  {key:"ruecktransport",       label:"Wartet auf Rücktransport",      color:"#16a34a"},
-  {key:"ruecktransport_erfolgt",label:"Rücktransport erfolgt",        color:"#166534"},
+const DEFAULT_STATUSES=[
+  {key:"geplant",              label:"Geplant",                       color:"#64748b", station:false, waitStart:false, waitStop:false},
+  {key:"station_an",           label:"Auf Station angekommen",        color:"#0891a8", station:true,  waitStart:false, waitStop:false},
+  {key:"aufgenommen",          label:"Fertig aufgenommen",            color:"#0e7490", station:true,  waitStart:false, waitStop:false},
+  {key:"abgerufen",            label:"Patient abgerufen",             color:"#7c3aed", station:true,  waitStart:false, waitStop:false},
+  {key:"vorbereitet",          label:"Patient vorbereitet",           color:"#b45309", station:true,  waitStart:false, waitStop:false},
+  {key:"transport_vorbereitet",label:"Patient für Transport vorbereitet",color:"#9a3412", station:true, waitStart:false, waitStop:false},
+  {key:"transport_abgeholt",   label:"Patient vom Transport abgeholt", color:"#c2410c", station:true,  waitStart:false, waitStop:false},
+  {key:"im_bett",              label:"In Bettenwarte angekommen",     color:"#ca8a04", station:false, waitStart:true,  waitStop:false},
+  {key:"wird_aufgelegt",       label:"Wird aufgelegt",                color:"#ea580c", station:false, waitStart:false, waitStop:true},
+  {key:"auf_tisch",            label:"Auf dem Tisch",                 color:"#2563eb", station:false, waitStart:false, waitStop:false},
+  {key:"begonnen",             label:"Untersuchung begonnen",         color:"#1d4ed8", station:false, waitStart:false, waitStop:false},
+  {key:"beendet",              label:"Untersuchung beendet",          color:"#15803d", station:false, waitStart:false, waitStop:false},
+  {key:"ueberwachung",         label:"Überwachungspflichtig",         color:"#dc2626", station:false, waitStart:false, waitStop:false},
+  {key:"ruecktransport",       label:"Wartet auf Rücktransport",      color:"#16a34a", station:false, waitStart:true,  waitStop:false},
+  {key:"ruecktransport_erfolgt",label:"Rücktransport erfolgt",        color:"#166534", station:false, waitStart:false, waitStop:true}
 ];
-const STATUS_MAP=Object.fromEntries(STATUSES.map(s=>[s.key,s]));
-/* Für die Stationsansicht erlaubte Status (Vor-Eingriff) */
-const STATION_ALLOWED=["station_an","aufgenommen","abgerufen","vorbereitet","transport_vorbereitet","transport_abgeholt"];
-const ROOMS=["bw","1","2","3","4"];
+const DEFAULT_AMPEL=[
+  {key:"frei",         label:"Saal frei",           color:"#16a34a", operational:true},
+  {key:"vorbereitung", label:"Vor-/Nachbereitung",  color:"#2563eb", operational:true},
+  {key:"belegt",       label:"Saal belegt",         color:"#dc2626", operational:true},
+  {key:"reinigung",    label:"Reinigung",           color:"#ea580c", operational:true},
+  {key:"notfall",      label:"Notfallblockierung",  color:"#eab308", operational:false},
+  {key:"wartung",      label:"Wartung / Reparatur", color:"#6b7280", operational:false}
+];
+/* Laufzeit-Strukturen – werden aus state.config via syncRuntime() neu aufgebaut */
+let STATUSES=DEFAULT_STATUSES.map(s=>({...s}));
+let STATUS_MAP=Object.fromEntries(STATUSES.map(s=>[s.key,s]));
+let STATION_ALLOWED=STATUSES.filter(s=>s.station).map(s=>s.key);
+let WAIT_PHASES=[{startKey:"im_bett",stopKey:"wird_aufgelegt"},{startKey:"ruecktransport",stopKey:"ruecktransport_erfolgt"}];
+let AMPEL=DEFAULT_AMPEL.map(a=>({...a}));
+let AMPEL_MAP=Object.fromEntries(AMPEL.map(a=>[a.key,a]));
+let AMPEL_OPERATIONAL=AMPEL.filter(a=>a.operational).map(a=>a.key);
+let ROOMS=["1","2","3","4","bw"];
 const CRITICAL_STATIONS=["C61","C72","C73","C82","ZNA"];
-
-/* Wartezeit-Ampel: Start-/Stopp-Status je Phase */
-const WAIT_PHASES=[
-  {startKey:"im_bett",       stopKey:"wird_aufgelegt"},          // Phase 1: in Bettenwarte -> wird aufgelegt
-  {startKey:"ruecktransport", stopKey:"ruecktransport_erfolgt"}  // Phase 2: wartet auf Rücktransport -> erfolgt
-];
-
-/* Saal-Ampel (Kopffeld): 6 Zustände */
-const AMPEL=[
-  {key:"frei",         label:"Saal frei",           color:"#16a34a"},
-  {key:"vorbereitung", label:"Vor-/Nachbereitung",  color:"#2563eb"},
-  {key:"belegt",       label:"Saal belegt",         color:"#dc2626"},
-  {key:"reinigung",    label:"Reinigung",           color:"#ea580c"},
-  {key:"notfall",      label:"Notfallblockierung",  color:"#eab308"},
-  {key:"wartung",      label:"Wartung / Reparatur", color:"#6b7280"}
-];
-const AMPEL_MAP=Object.fromEntries(AMPEL.map(a=>[a.key,a]));
-const AMPEL_OPERATIONAL=["frei","vorbereitung","belegt","reinigung"]; // lösen Unterbesetzungs-Prüfung aus
-const SAAL_ROOMS=["1","2","3","4"]; // Ampel/Personal nur für Säle, nicht Bettenwarte
+let SAAL_ROOMS=["1","2","3","4"]; // Ampel/Personal nur für Säle, nicht Bettenwarte
+function syncRuntime(){
+  const c=state.config; if(!c)return;
+  if(Array.isArray(c.statuses)&&c.statuses.length){
+    STATUSES=c.statuses;
+    STATUS_MAP=Object.fromEntries(STATUSES.map(s=>[s.key,s]));
+    STATION_ALLOWED=STATUSES.filter(s=>s.station).map(s=>s.key);
+    const ph=[];const starts=STATUSES.filter(s=>s.waitStart).map(s=>s.key);const stops=STATUSES.filter(s=>s.waitStop).map(s=>s.key);
+    starts.forEach((sk,i)=>{if(stops[i])ph.push({startKey:sk,stopKey:stops[i]});});
+    if(ph.length)WAIT_PHASES=ph;
+  }
+  if(Array.isArray(c.ampelStates)&&c.ampelStates.length){
+    AMPEL=c.ampelStates;
+    AMPEL_MAP=Object.fromEntries(AMPEL.map(a=>[a.key,a]));
+    AMPEL_OPERATIONAL=AMPEL.filter(a=>a.operational).map(a=>a.key);
+  }
+  if(Array.isArray(c.saele)&&c.saele.length){
+    SAAL_ROOMS=c.saele.map(s=>s.id);
+    ROOMS=SAAL_ROOMS.concat(c.bettenwarteOn!==false?["bw"]:[]);
+  }
+}
 
 /* Standard-Konfiguration (im Admin später pflegbar) */
 const DEFAULT_CONFIG={
@@ -643,7 +703,8 @@ let ui={view:"hub",currentDate:isoToday(),calMonth:firstOfMonth(isoToday()),edit
 /* ===== Theme/Rolle ===== */
 let TINT_TARGET=[21,40,47], TINT_AMT=0.86;
 function tint(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);const[tr,tg,tb]=TINT_TARGET;const m=(c,t)=>Math.round(c+(t-c)*TINT_AMT);return "rgb("+m(r,tr)+","+m(g,tg)+","+m(b,tb)+")";}
-function applyTheme(theme){document.documentElement.dataset.theme=theme;state.settings.theme=theme;if(theme==="dark"){TINT_TARGET=[21,40,47];TINT_AMT=0.86;document.getElementById("themeBtn").textContent="☀ Hell";}else{TINT_TARGET=[255,255,255];TINT_AMT=0.90;document.getElementById("themeBtn").textContent="☾ Dunkel";}}
+function applyConfigColors(){const col=(state.config&&state.config.colors)||{};const r=document.documentElement.style;if(col.critical)r.setProperty("--crit",col.critical);if(col.waitWarn)r.setProperty("--wait-warn",col.waitWarn);if(col.waitCrit)r.setProperty("--wait-crit",col.waitCrit);}
+function applyTheme(theme){document.documentElement.dataset.theme=theme;state.settings.theme=theme;if(theme==="dark"){TINT_TARGET=[21,40,47];TINT_AMT=0.86;document.getElementById("themeBtn").textContent="☀ Hell";}else{TINT_TARGET=[255,255,255];TINT_AMT=0.90;document.getElementById("themeBtn").textContent="☾ Dunkel";}applyConfigColors();}
 function isStation(){return state.settings.role==="station";}
 
 /* ===== KONFIG / NEUE HELFER ===== */
@@ -655,6 +716,19 @@ function ensureConfig(){
   if(!c.dienstStart)c.dienstStart="08:00";
   if(!c.dienstEnde)c.dienstEnde="16:00";
   c.vorlagen.forEach(t=>{if(t.dauer==null)t.dauer=45;if(!t.kategorie)t.kategorie="Sonstiges";if(t.material==null)t.material="";if(t.personalbedarf==null)t.personalbedarf=2;if(t.standardLink==null)t.standardLink="";});
+  if(!Array.isArray(c.statuses)||!c.statuses.length)c.statuses=DEFAULT_STATUSES.map(s=>({...s}));
+  c.statuses.forEach(s=>{if(s.station==null)s.station=false;if(s.waitStart==null)s.waitStart=false;if(s.waitStop==null)s.waitStop=false;});
+  if(!Array.isArray(c.ampelStates)||!c.ampelStates.length)c.ampelStates=DEFAULT_AMPEL.map(a=>({...a}));
+  if(!c.colors)c.colors={critical:"#dc2626",waitWarn:"#d97706",waitCrit:"#dc2626"};
+  if(!c.featureToggles)c.featureToggles={requests:true};
+  if(c.kioskInterval==null)c.kioskInterval=15;
+  if(!c.defaultTheme)c.defaultTheme="dark";
+  if(!c.adminPw)c.adminPw="admin";
+  if(!Array.isArray(c.saele)||!c.saele.length)c.saele=["1","2","3","4"].map(id=>({id:id,name:(state.settings&&state.settings.roomLabel?state.settings.roomLabel:"HKL")+" "+id}));
+  if(c.bettenwarteOn==null)c.bettenwarteOn=true;
+  if(!Array.isArray(c.roles)||!c.roles.length)c.roles=[{key:"steril",label:"Steril",min:1},{key:"springer",label:"Springer",min:1}];
+  c.roles.forEach(r=>{if(r.min==null)r.min=1;});
+  syncRuntime();
 }
 function anredeKurz(a){return a==="Herr"?"Hr.":a==="Frau"?"Fr.":a==="Divers"?"Dvs.":"";}
 function untersucherText(c){return Array.isArray(c.untersucher)?c.untersucher.join(" · "):(c.untersucher||"");}
@@ -683,13 +757,15 @@ function hhmm(isoStr){const d=new Date(isoStr);return String(d.getHours()).padSt
 
 /* ===== SAAL-AMPEL / PERSONAL / UNTERBESETZUNG ===== */
 function roomKey(date,room){return date+"|"+room;}
-function getRoom(date,room){const k=roomKey(date,room);if(!state.rooms[k])state.rooms[k]={ampel:"frei",note:"",personnel:[]};const r=state.rooms[k];if(!Array.isArray(r.personnel))r.personnel=[];if(!r.ampel)r.ampel="frei";if(r.note===undefined)r.note="";return r;}
+function getRoom(date,room){const k=roomKey(date,room);if(!state.rooms[k])state.rooms[k]={ampel:"frei",note:"",personnel:[]};const r=state.rooms[k];if(!Array.isArray(r.personnel))r.personnel=[];const defRole=(state.config&&state.config.roles&&state.config.roles[0])?state.config.roles[0].key:"steril";r.personnel=r.personnel.map(p=>typeof p==="string"?{name:p,role:defRole}:(p&&typeof p==="object"?{name:p.name,role:p.role||defRole}:null)).filter(Boolean);if(!r.ampel)r.ampel="frei";if(r.note===undefined)r.note="";return r;}
 function setRoomAmpel(date,room,key){const r=getRoom(date,room);const old=r.ampel;r.ampel=key;if(key!=="notfall")r.note="";if(key==="notfall"&&old!=="notfall")openNotfall(date,room,r.note);if(old==="notfall"&&key!=="notfall")closeNotfall(date,room);persist();}
 function openNotfall(date,room,reason){state.notfallLog=state.notfallLog||[];state.notfallLog.push({id:uid(),date:date,room:room,start:nowIso(),end:null,reason:reason||""});}
 function closeNotfall(date,room){const e=(state.notfallLog||[]).find(x=>x.date===date&&x.room===room&&!x.end);if(e)e.end=nowIso();}
 function updateNotfallReason(date,room,reason){const e=(state.notfallLog||[]).find(x=>x.date===date&&x.room===room&&!x.end);if(e)e.reason=reason;}
 /* null | "unbesetzt" | "unterbesetzt" – nur in operativen Saal-Zuständen */
-function staffState(date,room){const r=getRoom(date,room);if(!AMPEL_OPERATIONAL.includes(r.ampel))return null;const n=r.personnel.length;if(n===0)return"unbesetzt";if(n===1)return"unterbesetzt";return null;}
+function roleLabel(key){const r=(state.config.roles||[]).find(x=>x.key===key);return r?r.label:key;}
+function staffSummary(date,room){const r=getRoom(date,room);const roles=state.config.roles||[];const counts={};roles.forEach(ro=>counts[ro.key]=0);r.personnel.forEach(p=>{if(counts[p.role]!=null)counts[p.role]++;});const missing=roles.filter(ro=>counts[ro.key]<(ro.min||0));return {total:r.personnel.length,counts:counts,missing:missing,roles:roles};}
+function staffState(date,room){const r=getRoom(date,room);if(!AMPEL_OPERATIONAL.includes(r.ampel))return null;if(r.personnel.length===0)return"unbesetzt";const s=staffSummary(date,room);return s.missing.length?"unterbesetzt":null;}
 /* Endzeit-Prognose je Saal (Summe Restdauer ab Dienstbeginn bzw. jetzt) */
 function parseHM(date,hm){const p=(hm||"08:00").split(":");const d=parseIso(date);d.setHours(+p[0]||0,+p[1]||0,0,0);return d;}
 function fmtHM(d){return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");}
@@ -705,12 +781,13 @@ function saalPrognose(date,room){
 }
 function buildSaalHead(rk,count,r){
   const opts=AMPEL.map(a=>'<option value="'+a.key+'"'+(a.key===r.ampel?' selected':'')+'>'+a.label+'</option>').join("");
-  const chips=r.personnel.map((n,i)=>'<span class="pchip">'+escapeHtml(n)+'<span class="x" data-pi="'+i+'">×</span></span>').join("");
+  const chips=r.personnel.map((p,i)=>'<span class="pchip"><b>'+escapeHtml(p.name)+'</b><span class="prole" data-pi="'+i+'" title="Rolle wechseln">'+escapeHtml(roleLabel(p.role))+'</span><span class="x" data-pi="'+i+'">×</span></span>').join("");
   const open=ui.persOpen.has(roomKey(ui.currentDate,rk));
   let editor="";
   if(open){
+    const roleOpts=(state.config.roles||[]).map(ro=>'<option value="'+ro.key+'">'+escapeHtml(ro.label)+'</option>').join("");
     const addopts='<option value="">+ aus Liste …</option>'+(state.config.personal||[]).map(n=>'<option>'+escapeHtml(n)+'</option>').join("");
-    editor='<div class="pers-editor"><select class="pers-add">'+addopts+'</select><button type="button" class="pers-new">+ Name</button></div>';
+    editor='<div class="pers-editor"><select class="pers-role" title="Rolle">'+roleOpts+'</select><select class="pers-add">'+addopts+'</select><button type="button" class="pers-new">+ Name</button></div>';
   }
   let notfall="";
   if(r.ampel==="notfall"){
@@ -720,7 +797,10 @@ function buildSaalHead(rk,count,r){
     notfall='<div class="nf-row"><select class="nf-sel">'+ropts+'</select><input class="nf-free" placeholder="Freitext" value="'+escapeHtml(freeVal)+'"></div>';
   }
   const ss=staffState(ui.currentDate,rk);
-  const bar=ss?'<div class="staffbar '+ss+'">'+(ss==="unbesetzt"?"Unbesetzt":"Unterbesetzt")+'</div>':"";
+  let barTxt="";
+  if(ss==="unbesetzt")barTxt="Unbesetzt";
+  else if(ss==="unterbesetzt"){const sm=staffSummary(ui.currentDate,rk);barTxt="Unterbesetzt – fehlt: "+sm.missing.map(m=>m.label).join(", ");}
+  const bar=ss?'<div class="staffbar '+ss+'">'+barTxt+'</div>':"";
   const pg=saalPrognose(ui.currentDate,rk);
   const prog=pg?'<div class="prognose'+(pg.over?' over':'')+'" title="Summe geschätzter Dauern">⏱ verplant bis '+fmtHM(pg.proj)+(pg.over?' · überbucht':'')+'</div>':"";
   return '<div class="lh-top"><span class="rname">'+roomName(rk)+'</span><span class="badge">'+count+'</span>'+
@@ -736,10 +816,13 @@ function wireSaalHead(head,date,rk){
   const pb=head.querySelector(".pers-btn");
   if(pb)pb.addEventListener("click",()=>{const k=roomKey(date,rk);if(ui.persOpen.has(k))ui.persOpen.delete(k);else ui.persOpen.add(k);renderBoard();});
   head.querySelectorAll(".lh-pers .x").forEach(x=>x.addEventListener("click",()=>{getRoom(date,rk).personnel.splice(+x.dataset.pi,1);persist();renderBoard();}));
+  head.querySelectorAll(".lh-pers .prole").forEach(rl=>rl.addEventListener("click",()=>{const rr=getRoom(date,rk);const p=rr.personnel[+rl.dataset.pi];const roles=state.config.roles||[];if(!roles.length)return;let idx=roles.findIndex(x=>x.key===p.role);p.role=roles[(idx+1)%roles.length].key;persist();renderBoard();}));
+  const roleSel=head.querySelector(".pers-role");
+  const curRole=()=>roleSel?roleSel.value:((state.config.roles[0]||{}).key||"steril");
   const add=head.querySelector(".pers-add");
-  if(add)add.addEventListener("change",e=>{const v=e.target.value;if(v){const rr=getRoom(date,rk);if(!rr.personnel.includes(v))rr.personnel.push(v);persist();renderBoard();}});
+  if(add)add.addEventListener("change",e=>{const v=e.target.value;if(v){const rr=getRoom(date,rk);rr.personnel.push({name:v,role:curRole()});persist();renderBoard();}});
   const pn=head.querySelector(".pers-new");
-  if(pn)pn.addEventListener("click",()=>{const n=prompt("Name der Person:");if(n&&n.trim()){const val=n.trim();const rr=getRoom(date,rk);if(!rr.personnel.includes(val))rr.personnel.push(val);state.config.personal=state.config.personal||[];if(!state.config.personal.includes(val))state.config.personal.push(val);persist();renderBoard();}});
+  if(pn)pn.addEventListener("click",()=>{const n=prompt("Name der Person:");if(n&&n.trim()){const val=n.trim();const rr=getRoom(date,rk);rr.personnel.push({name:val,role:curRole()});state.config.personal=state.config.personal||[];if(!state.config.personal.includes(val))state.config.personal.push(val);persist();renderBoard();}});
   const nf=head.querySelector(".nf-sel");
   if(nf)nf.addEventListener("change",e=>{getRoom(date,rk).note=e.target.value;updateNotfallReason(date,rk,e.target.value);persist();renderBoard();});
   const nff=head.querySelector(".nf-free");
@@ -798,7 +881,7 @@ function uid(){return "c"+Date.now().toString(36)+Math.random().toString(36).sli
 function casesForRoom(date,room){return state.cases.filter(c=>c.date===date&&c.room===room&&!c.cancelled&&!c.rejected).sort((a,b)=>a.position-b.position);}
 function countForDate(date){return state.cases.filter(c=>c.date===date&&!c.cancelled).length;}
 function renumber(date,room){casesForRoom(date,room).forEach((c,i)=>c.position=i);}
-function roomName(rk){return rk==="bw"?"Bettenwarte":state.settings.roomLabel+" "+rk;}
+function roomName(rk){if(rk==="bw")return "Bettenwarte";const s=(state.config&&state.config.saele||[]).find(x=>x.id===rk);return s?s.name:(state.settings.roomLabel+" "+rk);}
 function fullName(c){return (c.nachname||"")+(c.vorname?", "+c.vorname:"");}
 function normStation(s){return String(s||"").toUpperCase().replace(/\s+/g,"");}
 function isCritical(c){const cs=(state.config&&state.config.criticalStations)||CRITICAL_STATIONS;return cs.includes(normStation(c.station))||/STEMI/i.test(c.indikation||"");}
@@ -819,6 +902,7 @@ function setView(v){
   if(v==="rejected")renderRejected();
   if(v==="admin")renderAdmin();
   if(v==="auswertung")renderAuswertung();
+  if((ui.searchQuery||"").trim())renderSearch();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -837,7 +921,7 @@ function renderOccupancy(container,date){
 function renderHub(){document.getElementById("hubSummaryTitle").textContent="Belegung am "+weekday(ui.currentDate)+", "+displayDate(ui.currentDate);renderOccupancy(document.getElementById("hubOcc"),ui.currentDate);}
 
 /* ===== PATIENT PLANEN ===== */
-function populateRoomSelect(){const sel=document.getElementById("f-room");const cur=sel.value;sel.innerHTML="";const order=["1","2","3","4","bw"];order.forEach(rk=>{const o=document.createElement("option");o.value=rk;o.textContent=rk==="bw"?"Bettenwarte (nach Eingriff)":roomName(rk);sel.appendChild(o);});sel.value=cur&&order.includes(cur)?cur:"1";}
+function populateRoomSelect(){const sel=document.getElementById("f-room");const cur=sel.value;sel.innerHTML="";const order=SAAL_ROOMS.concat((state.config&&state.config.bettenwarteOn!==false)?["bw"]:[]);order.forEach(rk=>{const o=document.createElement("option");o.value=rk;o.textContent=rk==="bw"?"Bettenwarte (nach Eingriff)":roomName(rk);sel.appendChild(o);});sel.value=cur&&order.includes(cur)?cur:(SAAL_ROOMS[0]||"1");}
 function resetForm(){ui.editingId=null;document.getElementById("editBanner").style.display="none";document.getElementById("cancelEdit").style.display="none";document.getElementById("saveCase").textContent="Patient hinzufügen";["f-nachname","f-vorname","f-station","f-fallnr","f-gebdat","f-indikation","f-untersuchung","f-zugang","f-anmerkung","f-dauer"].forEach(id=>document.getElementById(id).value="");document.getElementById("f-anrede").value="";document.getElementById("f-room").value="1";document.getElementById("f-date").value=ui.currentDate;const v=document.getElementById("f-vorlage");if(v)v.value="";document.getElementById("f-request").checked=false;document.getElementById("f-reqby").value="";document.getElementById("f-reqby").style.display="none";formUntersucher=[];formBadges=[];renderChips();}
 function loadIntoForm(c){ui.editingId=c.id;const b=document.getElementById("editBanner");b.style.display="block";b.textContent="Bearbeitung: "+(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+fullName(c);document.getElementById("cancelEdit").style.display="inline-block";document.getElementById("saveCase").textContent="Änderungen speichern";document.getElementById("f-anrede").value=c.anrede||"";document.getElementById("f-nachname").value=c.nachname||"";document.getElementById("f-vorname").value=c.vorname||"";document.getElementById("f-station").value=c.station||"";document.getElementById("f-fallnr").value=c.fallnummer||"";document.getElementById("f-gebdat").value=c.geburtsdatum||"";document.getElementById("f-indikation").value=c.indikation||"";document.getElementById("f-untersuchung").value=c.untersuchung||"";document.getElementById("f-zugang").value=c.zugang||"";document.getElementById("f-anmerkung").value=c.anmerkung||"";document.getElementById("f-dauer").value=(c.dauer!=null?c.dauer:"");document.getElementById("f-room").value=String(c.room);document.getElementById("f-date").value=c.date;const rq=!!c.requested;document.getElementById("f-request").checked=rq;document.getElementById("f-reqby").value=rq?(c.requested.by||""):"";document.getElementById("f-reqby").style.display=rq?"block":"none";formUntersucher=Array.isArray(c.untersucher)?c.untersucher.slice():(c.untersucher?[c.untersucher]:[]);formBadges=Array.isArray(c.warnBadges)?c.warnBadges.slice():[];renderChips();const v=document.getElementById("f-vorlage");if(v)v.value="";}
 function saveCase(){
@@ -1041,9 +1125,9 @@ function loadDemo(){
   if(state.cases[7])state.cases[7].warnBadges=["Niereninsuffizienz","Metformin-Pause"];
   /* Saal-Zustände + Personal (Demo) */
   state.rooms={};
-  state.rooms[t+"|1"]={ampel:"belegt",       note:"", personnel:["Pfl. Schmidt","Pfl. Meyer"]};
-  state.rooms[t+"|2"]={ampel:"frei",          note:"", personnel:["Pfl. Koch"]};
-  state.rooms[t+"|3"]={ampel:"vorbereitung",  note:"", personnel:["Pfl. Bauer","Pfl. Wolf"]};
+  state.rooms[t+"|1"]={ampel:"belegt",       note:"", personnel:[{name:"Pfl. Schmidt",role:"steril"},{name:"Pfl. Meyer",role:"springer"}]};
+  state.rooms[t+"|2"]={ampel:"frei",          note:"", personnel:[{name:"Pfl. Koch",role:"steril"}]};
+  state.rooms[t+"|3"]={ampel:"vorbereitung",  note:"", personnel:[{name:"Pfl. Bauer",role:"steril"},{name:"Pfl. Wolf",role:"springer"}]};
   state.rooms[t+"|4"]={ampel:"wartung",       note:"", personnel:[]};
   /* offene Anfrage (Demo) */
   const reqc=mk(t,"3",98,"Frau","Hahn","Eva","K2","V. a. KHK","Koronarangiographie","Radial rechts","","geplant",false);
@@ -1085,25 +1169,204 @@ function renderRejected(){const wrap=document.getElementById("rejectedList");con
 function fillAbsageReasons(){const sel=document.getElementById("c-reason");if(!sel)return;ensureConfig();sel.innerHTML='<option value="">—</option>'+state.config.absageReasons.map(r=>'<option>'+escapeHtml(r)+'</option>').join("");}
 
 /* ===== ADMIN-VERWALTUNG ===== */
-const ADMIN_PW="admin"; let adminUnlocked=false;
-function openAdmin(){if(!adminUnlocked){const p=prompt("Admin-Passwort (Standard: admin):");if(p===null)return;if(p!==ADMIN_PW){toast("Falsches Passwort.");return;}adminUnlocked=true;}setView("admin");}
+let adminUnlocked=false, adminDraft=null, adminSection="listen", dragIdx=null;
+function dclone(o){return JSON.parse(JSON.stringify(o));}
+function openAdmin(){const pw=(state.config&&state.config.adminPw)||"admin";if(!adminUnlocked){const p=prompt("Admin-Passwort (Standard: admin):");if(p===null)return;if(p!==pw){toast("Falsches Passwort.");return;}adminUnlocked=true;}startAdmin();setView("admin");}
+function startAdmin(){ensureConfig();adminDraft=dclone(state.config);adminDraft._roomLabel=state.settings.roomLabel;}
+function adminDirty(){if(!adminDraft)return false;const a=dclone(adminDraft);delete a._roomLabel;return JSON.stringify(a)!==JSON.stringify(state.config)||adminDraft._roomLabel!==state.settings.roomLabel;}
+function saveAdmin(){const lbl=adminDraft._roomLabel;const d=dclone(adminDraft);delete d._roomLabel;state.config=d;state.settings.roomLabel=lbl;ensureConfig();syncRuntime();persist();applyConfigColors();populateRoomSelect();fillChipSelects();fillVorlagen();fillAbsageReasons();applyFeatureToggles();applyTheme(state.config.defaultTheme||state.settings.theme);startAdmin();renderAdmin();toast("Konfiguration gespeichert.");}
+function applyFeatureToggles(){const on=!state.config||!state.config.featureToggles||state.config.featureToggles.requests!==false;const box=document.querySelector(".reqbox");if(box)box.style.display=on?"":"none";}
+function discardAdmin(){startAdmin();renderAdmin();toast("Änderungen verworfen.");}
+function arrMove(arr,from,to){if(from===to||from<0||to<0||from>=arr.length||to>=arr.length)return;const[m]=arr.splice(from,1);arr.splice(to,0,m);}
+function wireDrag(el,i,arr,after){el.draggable=true;el.classList.add("drag-item");
+  el.addEventListener("dragstart",e=>{dragIdx=i;if(e.dataTransfer)e.dataTransfer.effectAllowed="move";el.classList.add("dragging");});
+  el.addEventListener("dragend",()=>{el.classList.remove("dragging");dragIdx=null;});
+  el.addEventListener("dragover",e=>{e.preventDefault();el.classList.add("dragover");});
+  el.addEventListener("dragleave",()=>el.classList.remove("dragover"));
+  el.addEventListener("drop",e=>{e.preventDefault();el.classList.remove("dragover");if(dragIdx===null||dragIdx===i)return;arrMove(arr,dragIdx,i);dragIdx=null;after();});}
+
+const ADMIN_SECTIONS=[["listen","Listen"],["vorlagen","Vorlagen"],["status","Status"],["saele","Säle"],["personal","Personal"],["farben","Farben"],["allgemein","Allgemein"],["sichern","Sichern"]];
 const ADMIN_LISTS=[
   {key:"untersucher",title:"Untersucher",ph:"Name"},
   {key:"personal",title:"Personal (Pflege)",ph:"Name"},
   {key:"badges",title:"Warnhinweise",ph:"z. B. Schwangerschaft"},
   {key:"criticalStations",title:"Kritische Stationen",ph:"z. B. C61"},
   {key:"absageReasons",title:"Absage-Gründe",ph:"Grund"},
-  {key:"notfallReasons",title:"Notfall-Gründe (Saal gelb)",ph:"Grund"}
+  {key:"notfallReasons",title:"Notfall-Gründe (Saal gelb)",ph:"Grund"},
+  {key:"kategorien",title:"Eingriffs-Kategorien",ph:"z. B. Strukturell/TAVI"}
 ];
-function renderAdmin(){ensureConfig();const g=document.getElementById("adminGrid");g.innerHTML="";ADMIN_LISTS.forEach(spec=>g.appendChild(adminListCard(spec)));g.appendChild(adminVorlagenCard());g.appendChild(adminAmpelCard());}
-function adminListCard(spec){const arr=state.config[spec.key];const card=document.createElement("div");card.className="admin-card";card.innerHTML='<h3>'+escapeHtml(spec.title)+'</h3><div class="adm-items">'+arr.map((v,i)=>'<div class="adm-item"><span>'+escapeHtml(v)+'</span><button class="adm-x" data-i="'+i+'" title="Entfernen">×</button></div>').join("")+'</div><div class="adm-add"><input placeholder="'+escapeHtml(spec.ph)+'"><button class="adm-add-btn">Hinzufügen</button></div>';card.querySelectorAll(".adm-x").forEach(x=>x.addEventListener("click",()=>{arr.splice(+x.dataset.i,1);adminChanged();}));const inp=card.querySelector(".adm-add input");const add=()=>{const v=inp.value.trim();if(v&&!arr.includes(v)){arr.push(v);adminChanged();}};card.querySelector(".adm-add-btn").addEventListener("click",add);inp.addEventListener("keydown",e=>{if(e.key==="Enter")add();});return card;}
-function adminVorlagenCard(){const arr=state.config.vorlagen;const cats=state.config.kategorien||[];const card=document.createElement("div");card.className="admin-card wide";card.innerHTML='<h3>Eingriffs-Vorlagen <span class="hint">(Name · Untersuchung · Zugang · Dauer min · Kategorie · Material/Anmerkung)</span></h3><div class="adm-vorlagen">'+arr.map((t,i)=>'<div class="adm-vrow"><input data-i="'+i+'" data-f="name" value="'+escapeHtml(t.name)+'" placeholder="Name"><input data-i="'+i+'" data-f="untersuchung" value="'+escapeHtml(t.untersuchung||"")+'" placeholder="Untersuchung"><input data-i="'+i+'" data-f="zugang" value="'+escapeHtml(t.zugang||"")+'" placeholder="Zugang"><input class="vd" type="number" data-i="'+i+'" data-f="dauer" value="'+(t.dauer!=null?t.dauer:"")+'" placeholder="min"><select class="vk" data-i="'+i+'" data-f="kategorie">'+cats.map(k=>'<option'+(k===(t.kategorie||"Sonstiges")?' selected':'')+'>'+escapeHtml(k)+'</option>').join("")+'</select><input data-i="'+i+'" data-f="material" value="'+escapeHtml(t.material||"")+'" placeholder="Material/Anmerkung"><button class="adm-x" data-i="'+i+'">×</button></div>').join("")+'</div><button class="adm-add-btn" id="adm-vorlage-add">+ Vorlage</button>';card.querySelectorAll(".adm-vrow input, .adm-vrow select").forEach(inp=>inp.addEventListener("change",()=>{const v=inp.dataset.f==="dauer"?(inp.value!==""?+inp.value:null):inp.value;arr[+inp.dataset.i][inp.dataset.f]=v;persist();fillVorlagen();}));card.querySelectorAll(".adm-x").forEach(x=>x.addEventListener("click",()=>{arr.splice(+x.dataset.i,1);adminChanged();}));card.querySelector("#adm-vorlage-add").addEventListener("click",()=>{arr.push({name:"Neue Vorlage",untersuchung:"",zugang:"",anmerkung:"",dauer:45,kategorie:"Sonstiges",material:"",personalbedarf:2,standardLink:""});adminChanged();});return card;}
-function adminAmpelCard(){const a=state.config.ampel;const card=document.createElement("div");card.className="admin-card";card.innerHTML='<h3>Wartezeit-Ampel (Minuten)</h3><div class="adm-ampel"><label>Orange ab <input type="number" id="adm-orange" value="'+a.orangeMin+'" min="1"></label><label>Rot ab <input type="number" id="adm-red" value="'+a.redMin+'" min="1"></label></div>';card.querySelector("#adm-orange").addEventListener("change",e=>{a.orangeMin=+e.target.value||30;persist();});card.querySelector("#adm-red").addEventListener("change",e=>{a.redMin=+e.target.value||60;persist();});return card;}
-function adminChanged(){persist();fillChipSelects();fillVorlagen();fillAbsageReasons();renderAdmin();}
+function renderAdmin(){
+  ensureConfig();if(!adminDraft)startAdmin();
+  const g=document.getElementById("adminGrid");
+  const nav='<div class="adm-nav">'+ADMIN_SECTIONS.map(s=>'<button class="'+(adminSection===s[0]?"active":"")+'" data-sec="'+s[0]+'">'+s[1]+'</button>').join("")+'</div>';
+  const dirty=adminDirty();
+  const footer='<div class="adm-footer"><span class="adm-dirty'+(dirty?" on":"")+'">'+(dirty?"● ungespeicherte Änderungen":"alles gespeichert")+'</span><button class="adm-save" id="adm-save"'+(dirty?"":" disabled")+'>Speichern</button><button class="adm-discard" id="adm-discard"'+(dirty?"":" disabled")+'>Verwerfen</button></div>';
+  g.innerHTML=nav+'<div class="adm-body" id="admBody"></div>'+footer;
+  g.querySelectorAll(".adm-nav button").forEach(b=>b.addEventListener("click",()=>{adminSection=b.dataset.sec;renderAdmin();}));
+  const save=g.querySelector("#adm-save"),disc=g.querySelector("#adm-discard");
+  if(save&&!save.disabled)save.addEventListener("click",saveAdmin);
+  if(disc&&!disc.disabled)disc.addEventListener("click",discardAdmin);
+  const body=g.querySelector("#admBody");
+  if(adminSection==="listen")renderAdminListen(body);
+  else if(adminSection==="vorlagen")renderAdminVorlagen(body);
+  else if(adminSection==="status")renderAdminStatus(body);
+  else if(adminSection==="saele")renderAdminSaele(body);
+  else if(adminSection==="personal")renderAdminPersonal(body);
+  else if(adminSection==="farben")renderAdminFarben(body);
+  else if(adminSection==="allgemein")renderAdminAllgemein(body);
+  else if(adminSection==="sichern")renderAdminSichern(body);
+}
+function renderAdminListen(body){
+  body.innerHTML='<div class="admin-grid2"></div>';const grid=body.querySelector(".admin-grid2");
+  ADMIN_LISTS.forEach(spec=>{
+    const arr=adminDraft[spec.key]||(adminDraft[spec.key]=[]);
+    const card=document.createElement("div");card.className="admin-card";
+    card.innerHTML='<h3>'+escapeHtml(spec.title)+'</h3><p class="hint">Ziehen zum Sortieren · × entfernt</p><div class="adm-items"></div><div class="adm-add"><input placeholder="'+escapeHtml(spec.ph)+'"><button class="adm-add-btn">Hinzufügen</button></div>';
+    const wrap=card.querySelector(".adm-items");
+    arr.forEach((v,i)=>{const row=document.createElement("div");row.className="adm-item";row.innerHTML='<span class="grip">⋮⋮</span><span class="it-txt">'+escapeHtml(v)+'</span><button class="adm-x" title="Entfernen">×</button>';row.querySelector(".adm-x").addEventListener("click",()=>{arr.splice(i,1);renderAdmin();});wireDrag(row,i,arr,renderAdmin);wrap.appendChild(row);});
+    const inp=card.querySelector(".adm-add input");const add=()=>{const v=inp.value.trim();if(v&&!arr.includes(v)){arr.push(v);renderAdmin();}};
+    card.querySelector(".adm-add-btn").addEventListener("click",add);inp.addEventListener("keydown",e=>{if(e.key==="Enter")add();});
+    grid.appendChild(card);
+  });
+}
+function renderAdminVorlagen(body){
+  const arr=adminDraft.vorlagen;const cats=adminDraft.kategorien||[];
+  const card=document.createElement("div");card.className="admin-card wide";
+  card.innerHTML='<h3>Eingriffs-Vorlagen</h3><p class="hint">Ziehen zum Sortieren · Name · Untersuchung · Zugang · Dauer (min) · Kategorie · Personalbedarf · Material/Anmerkung · Standard-Link</p><div class="adm-vorlagen"></div><button class="adm-add-btn" id="adm-vorlage-add">+ Vorlage</button>';
+  const wrap=card.querySelector(".adm-vorlagen");
+  arr.forEach((t,i)=>{
+    const row=document.createElement("div");row.className="adm-vrow2";
+    row.innerHTML='<span class="grip">⋮⋮</span>'+
+      '<input data-f="name" value="'+escapeHtml(t.name)+'" placeholder="Name">'+
+      '<input data-f="untersuchung" value="'+escapeHtml(t.untersuchung||"")+'" placeholder="Untersuchung">'+
+      '<input data-f="zugang" value="'+escapeHtml(t.zugang||"")+'" placeholder="Zugang">'+
+      '<input class="vd" type="number" data-f="dauer" value="'+(t.dauer!=null?t.dauer:"")+'" placeholder="min">'+
+      '<select class="vk" data-f="kategorie">'+cats.map(k=>'<option'+(k===(t.kategorie||"Sonstiges")?" selected":"")+'>'+escapeHtml(k)+'</option>').join("")+'</select>'+
+      '<input class="vp" type="number" data-f="personalbedarf" value="'+(t.personalbedarf!=null?t.personalbedarf:2)+'" placeholder="Pers.">'+
+      '<input data-f="material" value="'+escapeHtml(t.material||"")+'" placeholder="Material/Anmerkung">'+
+      '<input data-f="standardLink" value="'+escapeHtml(t.standardLink||"")+'" placeholder="Standard-Link/Pfad">'+
+      '<button class="adm-x" title="Entfernen">×</button>';
+    row.querySelectorAll("input,select").forEach(inp=>inp.addEventListener("change",()=>{const f=inp.dataset.f;t[f]=(f==="dauer"||f==="personalbedarf")?(inp.value!==""?+inp.value:(f==="dauer"?null:2)):inp.value;markAdminDirty();}));
+    row.querySelector(".adm-x").addEventListener("click",()=>{arr.splice(i,1);renderAdmin();});
+    wireDrag(row,i,arr,renderAdmin);wrap.appendChild(row);
+  });
+  card.querySelector("#adm-vorlage-add").addEventListener("click",()=>{arr.push({name:"Neue Vorlage",untersuchung:"",zugang:"",anmerkung:"",dauer:45,kategorie:(cats[0]||"Sonstiges"),material:"",personalbedarf:2,standardLink:""});renderAdmin();});
+  body.appendChild(card);
+}
+function markAdminDirty(){const g=document.getElementById("adminGrid");const d=g.querySelector(".adm-dirty");const sv=g.querySelector("#adm-save"),di=g.querySelector("#adm-discard");if(adminDirty()){if(d){d.classList.add("on");d.textContent="● ungespeicherte Änderungen";}if(sv){sv.disabled=false;sv.onclick=saveAdmin;}if(di){di.disabled=false;di.onclick=discardAdmin;}}}
+function renderAdminStatus(body){
+  const arr=adminDraft.statuses;
+  const card=document.createElement("div");card.className="admin-card wide";
+  card.innerHTML='<h3>Status-Liste</h3><p class="hint">Ziehen ändert die Reihenfolge (= Arbeitsablauf). „Station" = in Stationsansicht erlaubt. „Phase-Start/Stopp" definieren die Wartezeit-Messung. Status mit Patienten lassen sich nicht löschen.</p><div class="adm-stat-head"><span></span><span>Bezeichnung</span><span>Farbe</span><span>Station</span><span>Phase-Start</span><span>Phase-Stopp</span><span></span></div><div class="adm-status"></div><button class="adm-add-btn" id="adm-status-add">+ Status</button>';
+  const wrap=card.querySelector(".adm-status");
+  arr.forEach((s,i)=>{
+    const used=state.cases.some(c=>c.status===s.key);
+    const row=document.createElement("div");row.className="adm-srow";
+    row.innerHTML='<span class="grip">⋮⋮</span>'+
+      '<input data-f="label" value="'+escapeHtml(s.label)+'">'+
+      '<input type="color" data-f="color" value="'+escapeHtml(s.color)+'">'+
+      '<input type="checkbox" data-f="station"'+(s.station?" checked":"")+'>'+
+      '<input type="checkbox" data-f="waitStart"'+(s.waitStart?" checked":"")+'>'+
+      '<input type="checkbox" data-f="waitStop"'+(s.waitStop?" checked":"")+'>'+
+      '<button class="adm-x" title="'+(used?"in Verwendung – nicht löschbar":"Entfernen")+'"'+(used?" disabled":"")+'>×</button>';
+    row.querySelectorAll("input").forEach(inp=>inp.addEventListener("change",()=>{const f=inp.dataset.f;s[f]=inp.type==="checkbox"?inp.checked:inp.value;markAdminDirty();}));
+    const x=row.querySelector(".adm-x");if(!used)x.addEventListener("click",()=>{arr.splice(i,1);renderAdmin();});
+    wireDrag(row,i,arr,renderAdmin);wrap.appendChild(row);
+  });
+  card.querySelector("#adm-status-add").addEventListener("click",()=>{const key="status_"+Date.now().toString(36);arr.push({key:key,label:"Neuer Status",color:"#64748b",station:false,waitStart:false,waitStop:false});renderAdmin();});
+  body.appendChild(card);
+}
+function renderAdminFarben(body){
+  body.innerHTML='<div class="admin-grid2"></div>';const grid=body.querySelector(".admin-grid2");
+  const amp=adminDraft.ampelStates;
+  const c1=document.createElement("div");c1.className="admin-card";
+  c1.innerHTML='<h3>Saal-Ampel-Farben</h3><div class="adm-colors"></div>';
+  const w1=c1.querySelector(".adm-colors");
+  amp.forEach(a=>{const r=document.createElement("label");r.className="adm-color";r.innerHTML='<input type="color" value="'+escapeHtml(a.color)+'"><span>'+escapeHtml(a.label)+'</span>';r.querySelector("input").addEventListener("change",e=>{a.color=e.target.value;markAdminDirty();});w1.appendChild(r);});
+  grid.appendChild(c1);
+  const col=adminDraft.colors||(adminDraft.colors={});
+  const a2=adminDraft.ampel;
+  const c2=document.createElement("div");c2.className="admin-card";
+  c2.innerHTML='<h3>Markierungen & Wartezeit</h3><div class="adm-colors">'+
+    '<label class="adm-color"><input type="color" id="col-crit" value="'+escapeHtml(col.critical||"#dc2626")+'"><span>Kritisch-Markierung</span></label>'+
+    '<label class="adm-color"><input type="color" id="col-warn" value="'+escapeHtml(col.waitWarn||"#d97706")+'"><span>Wartezeit Orange</span></label>'+
+    '<label class="adm-color"><input type="color" id="col-wcrit" value="'+escapeHtml(col.waitCrit||"#dc2626")+'"><span>Wartezeit Rot</span></label></div>'+
+    '<h3 style="margin-top:14px">Wartezeit-Schwellen (Minuten)</h3><div class="adm-ampel"><label>Orange ab <input type="number" id="col-omin" min="1" value="'+a2.orangeMin+'"></label><label>Rot ab <input type="number" id="col-rmin" min="1" value="'+a2.redMin+'"></label></div>';
+  c2.querySelector("#col-crit").addEventListener("change",e=>{col.critical=e.target.value;markAdminDirty();});
+  c2.querySelector("#col-warn").addEventListener("change",e=>{col.waitWarn=e.target.value;markAdminDirty();});
+  c2.querySelector("#col-wcrit").addEventListener("change",e=>{col.waitCrit=e.target.value;markAdminDirty();});
+  c2.querySelector("#col-omin").addEventListener("change",e=>{a2.orangeMin=+e.target.value||30;markAdminDirty();});
+  c2.querySelector("#col-rmin").addEventListener("change",e=>{a2.redMin=+e.target.value||60;markAdminDirty();});
+  grid.appendChild(c2);
+}
+function renderAdminAllgemein(body){
+  const D=adminDraft;
+  const card=document.createElement("div");card.className="admin-card wide";
+  card.innerHTML='<h3>Allgemeine Einstellungen</h3>'+
+    '<div class="adm-gen">'+
+    '<label>Dienstbeginn (Prognose) <input type="time" id="g-start" value="'+escapeHtml(D.dienstStart||"08:00")+'"></label>'+
+    '<label>Dienstende (Prognose/Überbuchung) <input type="time" id="g-ende" value="'+escapeHtml(D.dienstEnde||"16:00")+'"></label>'+
+    '<label>Wandmonitor-Intervall (Sek.) <input type="number" id="g-kiosk" min="5" value="'+(D.kioskInterval||15)+'"></label>'+
+    '<label>Standard-Design <select id="g-theme"><option value="dark"'+(D.defaultTheme==="dark"?" selected":"")+'>Dunkel</option><option value="light"'+(D.defaultTheme==="light"?" selected":"")+'>Hell</option></select></label>'+
+    '<label>Saal-Beschriftung <select id="g-label"><option value="HKL"'+(D._roomLabel==="HKL"?" selected":"")+'>HKL</option><option value="Tisch"'+(D._roomLabel==="Tisch"?" selected":"")+'>Tisch</option></select></label>'+
+    '<label class="chkline"><input type="checkbox" id="g-req"'+((D.featureToggles&&D.featureToggles.requests)?" checked":"")+'> Anfragen-Workflow aktiv</label>'+
+    '<label>Admin-Passwort ändern <input type="text" id="g-pw" value="'+escapeHtml(D.adminPw||"admin")+'"></label>'+
+    '</div>';
+  card.querySelector("#g-start").addEventListener("change",e=>{D.dienstStart=e.target.value;markAdminDirty();});
+  card.querySelector("#g-ende").addEventListener("change",e=>{D.dienstEnde=e.target.value;markAdminDirty();});
+  card.querySelector("#g-kiosk").addEventListener("change",e=>{D.kioskInterval=+e.target.value||15;markAdminDirty();});
+  card.querySelector("#g-theme").addEventListener("change",e=>{D.defaultTheme=e.target.value;markAdminDirty();});
+  card.querySelector("#g-label").addEventListener("change",e=>{D._roomLabel=e.target.value;markAdminDirty();});
+  card.querySelector("#g-req").addEventListener("change",e=>{D.featureToggles=D.featureToggles||{};D.featureToggles.requests=e.target.checked;markAdminDirty();});
+  card.querySelector("#g-pw").addEventListener("change",e=>{D.adminPw=e.target.value||"admin";markAdminDirty();});
+  body.appendChild(card);
+}
+function renderAdminSaele(body){
+  const arr=adminDraft.saele||(adminDraft.saele=[]);
+  const card=document.createElement("div");card.className="admin-card wide";
+  card.innerHTML='<h3>Säle verwalten</h3><p class="hint">Ziehen zum Sortieren (= Reihenfolge im Board). Bezeichnung frei wählbar. Säle mit geplanten Patienten lassen sich nicht entfernen.</p><div class="adm-saele"></div><button class="adm-add-btn" id="adm-saal-add">+ Saal</button>'+
+    '<label class="chkline" style="margin-top:12px"><input type="checkbox" id="bw-on"'+(adminDraft.bettenwarteOn!==false?" checked":"")+'> Bettenwarte anzeigen (als „nach Eingriff")</label>';
+  const wrap=card.querySelector(".adm-saele");
+  arr.forEach((s,i)=>{
+    const used=state.cases.some(c=>String(c.room)===String(s.id));
+    const row=document.createElement("div");row.className="adm-saalrow";
+    row.innerHTML='<span class="grip">⋮⋮</span><span class="sid">ID '+escapeHtml(s.id)+'</span><input data-f="name" value="'+escapeHtml(s.name)+'" placeholder="Bezeichnung"><button class="adm-x" title="'+(used?"hat Patienten – nicht löschbar":"Entfernen")+'"'+(used?" disabled":"")+'>×</button>';
+    row.querySelector('input').addEventListener("change",e=>{s.name=e.target.value;markAdminDirty();});
+    const x=row.querySelector(".adm-x");if(!used)x.addEventListener("click",()=>{arr.splice(i,1);renderAdmin();});
+    wireDrag(row,i,arr,renderAdmin);wrap.appendChild(row);
+  });
+  card.querySelector("#adm-saal-add").addEventListener("click",()=>{let n=1;const ids=arr.map(s=>s.id);while(ids.includes(String(n)))n++;arr.push({id:String(n),name:(adminDraft._roomLabel||"HKL")+" "+n});renderAdmin();});
+  card.querySelector("#bw-on").addEventListener("change",e=>{adminDraft.bettenwarteOn=e.target.checked;markAdminDirty();});
+  body.appendChild(card);
+}
+function renderAdminPersonal(body){
+  const arr=adminDraft.roles||(adminDraft.roles=[]);
+  const card=document.createElement("div");card.className="admin-card wide";
+  card.innerHTML='<h3>Personal-Rollen & Mindestbesetzung</h3><p class="hint">Rollen (z. B. Steril = sterile Assistenz, Springer = unsterile Assistenz). „Min" = erforderliche Anzahl je Rolle, damit ein aktiver Saal als vollständig besetzt gilt; sonst erscheint „Unterbesetzt".</p><div class="adm-rolehead"><span></span><span>Bezeichnung</span><span>Schlüssel</span><span>Min</span><span></span></div><div class="adm-roles"></div><button class="adm-add-btn" id="adm-role-add">+ Rolle</button>';
+  const wrap=card.querySelector(".adm-roles");
+  arr.forEach((ro,i)=>{
+    const row=document.createElement("div");row.className="adm-rolerow";
+    row.innerHTML='<span class="grip">⋮⋮</span><input data-f="label" value="'+escapeHtml(ro.label)+'" placeholder="Bezeichnung"><input data-f="key" value="'+escapeHtml(ro.key)+'" placeholder="schluessel"><input class="rmin" type="number" min="0" data-f="min" value="'+(ro.min!=null?ro.min:1)+'"><button class="adm-x" title="Entfernen">×</button>';
+    row.querySelectorAll("input").forEach(inp=>inp.addEventListener("change",()=>{const f=inp.dataset.f;ro[f]=f==="min"?(+inp.value||0):inp.value;markAdminDirty();}));
+    row.querySelector(".adm-x").addEventListener("click",()=>{arr.splice(i,1);renderAdmin();});
+    wireDrag(row,i,arr,renderAdmin);wrap.appendChild(row);
+  });
+  card.querySelector("#adm-role-add").addEventListener("click",()=>{arr.push({key:"rolle_"+Date.now().toString(36),label:"Neue Rolle",min:1});renderAdmin();});
+  body.appendChild(card);
+}
+function renderAdminSichern(body){
+  const card=document.createElement("div");card.className="admin-card wide";
+  card.innerHTML='<h3>Konfiguration sichern</h3><p class="hint">Exportiert die gesamte Konfiguration als Datei (Backup oder Übertrag in die echte Server-Installation). Import ersetzt die aktuelle Bearbeitung; erst „Speichern" macht sie wirksam.</p><div class="adm-io"><button class="tool-btn" id="cfg-export">Konfiguration exportieren</button><button class="tool-btn" id="cfg-import">Konfiguration importieren</button><input type="file" id="cfg-file" accept="application/json" style="display:none"></div>';
+  card.querySelector("#cfg-export").addEventListener("click",()=>{const d=dclone(adminDraft);delete d._roomLabel;downloadCsvRaw("HKL-Konfiguration.json",JSON.stringify(d,null,2),"application/json");toast("Konfiguration exportiert.");});
+  card.querySelector("#cfg-import").addEventListener("click",()=>card.querySelector("#cfg-file").click());
+  card.querySelector("#cfg-file").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const obj=JSON.parse(r.result);if(!obj||!Array.isArray(obj.vorlagen))throw 0;obj._roomLabel=adminDraft._roomLabel;adminDraft=obj;renderAdmin();toast("Konfiguration importiert – noch nicht gespeichert.");}catch(err){toast("Datei konnte nicht gelesen werden.");}};r.readAsText(f);});
+  body.appendChild(card);
+}
+function downloadCsvRaw(name,text,mime){const blob=new Blob([text],{type:(mime||"text/plain")+";charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 
 /* ===== WANDMONITOR / KIOSK ===== */
 let kioskTimer=null;
-function openKiosk(){document.getElementById("kiosk").style.display="flex";try{if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();}catch(e){}renderKiosk();updateKioskClock();kioskTimer=setInterval(()=>{renderKiosk();updateKioskClock();},15000);document.addEventListener("keydown",kioskKey);}
+function openKiosk(){document.getElementById("kiosk").style.display="flex";try{if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();}catch(e){}renderKiosk();updateKioskClock();const iv=Math.max(5,(state.config&&state.config.kioskInterval)||15)*1000;kioskTimer=setInterval(()=>{renderKiosk();updateKioskClock();},iv);document.addEventListener("keydown",kioskKey);}
 function closeKiosk(){document.getElementById("kiosk").style.display="none";if(kioskTimer){clearInterval(kioskTimer);kioskTimer=null;}document.removeEventListener("keydown",kioskKey);try{if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen();}catch(e){}}
 function kioskKey(e){if(e.key==="Escape")closeKiosk();}
 function updateKioskClock(){const d=new Date();document.getElementById("kioskClock").textContent=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")+" Uhr";}
@@ -1182,7 +1445,7 @@ function exportNotfallCsv(){const from=document.getElementById("aw-from").value|
 /* ===== PATIENTENSUCHE ===== */
 function caseOpen(c){return !c.done && c.status!=="ruecktransport_erfolgt" && c.status!=="beendet";}
 function matchCase(c,q){return [c.nachname,c.vorname,c.fallnummer,c.station,c.indikation,untersucherText(c)].join(" ").toLowerCase().includes(q);}
-function searchMatches(){const q=(ui.searchQuery||"").trim().toLowerCase();if(!q)return [];return state.cases.filter(c=>{if(!matchCase(c,q))return false;if(ui.searchFilters.krit&&!isCritical(c))return false;if(ui.searchFilters.offen&&!caseOpen(c))return false;return true;});}
+function searchMatches(){const q=(ui.searchQuery||"").trim().toLowerCase();if(!q)return [];const boardScope=(ui.view==="board");return state.cases.filter(c=>{if(boardScope&&c.date!==ui.currentDate)return false;if(!matchCase(c,q))return false;if(ui.searchFilters.krit&&!isCritical(c))return false;if(ui.searchFilters.offen&&!caseOpen(c))return false;return true;});}
 function caseTag(c){if(c.cancelled)return '<span class="stag cancel">Absage</span>';if(c.rejected)return '<span class="stag rej">Abgelehnt</span>';if(c.requested)return '<span class="stag req">Anfrage</span>';const st=STATUS_MAP[c.status]||STATUSES[0];return '<span class="stag" style="background:'+st.color+'">'+escapeHtml(st.label)+'</span>';}
 function renderSearch(){
   const q=(ui.searchQuery||"").trim();
@@ -1196,7 +1459,8 @@ function renderSearch(){
   if(!list.length){res.style.display="block";res.innerHTML='<div class="sr-none">Kein Treffer für „'+escapeHtml(q)+'".</div>';return;}
   const sorted=list.slice().sort((a,b)=>(a.date||"").localeCompare(b.date||"")||String(a.room).localeCompare(String(b.room)));
   res.style.display="block";
-  res.innerHTML='<div class="sr-head">'+list.length+' Treffer · Klick öffnet den Tag bzw. die Liste</div>'+sorted.map(c=>'<div class="sr-item" data-id="'+c.id+'"><span class="sr-name">'+escapeHtml((anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+fullName(c))+'</span><span class="sr-meta">'+displayDate(c.date)+' · '+roomName(c.room)+(c.station?' · '+escapeHtml(c.station):'')+(c.indikation?' · '+escapeHtml(c.indikation):'')+'</span>'+caseTag(c)+'</div>').join("");
+  const scope=ui.view==="board"?"nur aktueller Tag ("+displayDate(ui.currentDate)+")":"alle Tage";
+  res.innerHTML='<div class="sr-head">'+list.length+' Treffer · '+scope+' · Klick öffnet den Tag bzw. die Liste</div>'+sorted.map(c=>'<div class="sr-item" data-id="'+c.id+'"><span class="sr-name">'+escapeHtml((anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+fullName(c))+'</span><span class="sr-meta">'+displayDate(c.date)+' · '+roomName(c.room)+(c.station?' · '+escapeHtml(c.station):'')+(c.indikation?' · '+escapeHtml(c.indikation):'')+'</span>'+caseTag(c)+'</div>').join("");
   res.querySelectorAll(".sr-item").forEach(it=>it.addEventListener("click",()=>navigateToCase(it.dataset.id)));
 }
 function navigateToCase(id){const c=state.cases.find(x=>x.id===id);if(!c)return;
@@ -1213,6 +1477,7 @@ function init(){
   else {ensureConfig();loadDemo();}
   ensureConfig();
   applyTheme(state.settings.theme||"dark");
+  applyConfigColors();applyFeatureToggles();
   applyRole(state.settings.role||"kathlab");
   populateRoomSelect();
   document.getElementById("f-date").value=ui.currentDate;
@@ -1220,7 +1485,7 @@ function init(){
   document.querySelectorAll(".hub-card").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.goto)));
   document.getElementById("roleBtn").addEventListener("click",()=>{applyRole(isStation()?"kathlab":"station");persist();setView(isStation()?"board":"board");toast(isStation()?"Stationsansicht (eingeschränkt)":"Laboransicht (voll)");});
   document.getElementById("themeBtn").addEventListener("click",()=>{applyTheme(state.settings.theme==="dark"?"light":"dark");persist();refreshAll();});
-  document.getElementById("toggleLabel").addEventListener("click",()=>{state.settings.roomLabel=state.settings.roomLabel==="HKL"?"Tisch":"HKL";persist();populateRoomSelect();refreshAll();toast("Beschriftung: "+state.settings.roomLabel+" 1–4");});
+  document.getElementById("toggleLabel").addEventListener("click",()=>{state.settings.roomLabel=state.settings.roomLabel==="HKL"?"Tisch":"HKL";(state.config.saele||[]).forEach(s=>{s.name=state.settings.roomLabel+" "+s.id;});persist();populateRoomSelect();refreshAll();toast("Beschriftung: "+state.settings.roomLabel+" 1–4");});
   document.getElementById("saveCase").addEventListener("click",saveCase);
   document.getElementById("cancelEdit").addEventListener("click",()=>{resetForm();renderPlanSide();});
   document.getElementById("f-date").addEventListener("change",()=>{ui.currentDate=document.getElementById("f-date").value||ui.currentDate;renderPlanSide();});
