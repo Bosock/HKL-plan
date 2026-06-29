@@ -260,10 +260,11 @@
   .req-actions .req-ok{background:#15803d;color:#fff;border-color:#15803d}
   .req-actions .req-no{background:var(--panel-2);color:var(--crit);border-color:var(--crit)}
   /* Admin-Verwaltung */
-  .admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-  .admin-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .admin-grid{display:block}
+  .admin-card{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:14px 16px}
   .admin-card.wide{grid-column:1/-1}
-  .admin-card h3{margin:0 0 10px;font-size:15px;color:var(--brand-l)}
+  .admin-card h3{margin:0 0 4px;font-size:13px;font-weight:800;letter-spacing:.2px;color:var(--brand-l)}
+  .admin-card h3+.hint,.admin-card .hint{margin:0 0 11px;font-size:11.5px;color:var(--muted)}
   .adm-items{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
   .adm-item{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel-2);border:1px solid var(--line);border-radius:7px;padding:4px 6px 4px 10px;font-size:13px}
   .adm-x{background:none;border:none;color:var(--crit);font-weight:900;font-size:16px;cursor:pointer;line-height:1;padding:0 4px}
@@ -355,18 +356,36 @@
   .adm-vrow{grid-template-columns:1fr 1.5fr 1fr 64px 1.1fr 1.3fr auto}
   .adm-vrow .vd{width:100%}
   .adm-vrow select.vk{font-family:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:7px;padding:5px 6px;background:var(--input-bg);color:var(--ink)}
-  /* Admin v2 */
-  .adm-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;border-bottom:1px solid var(--line);padding-bottom:10px}
-  .adm-nav button{font-family:inherit;font-size:13px;font-weight:700;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);border-radius:8px;padding:7px 14px;cursor:pointer}
-  .adm-nav button.active{background:var(--brand);color:#06222a;border-color:var(--brand)}
-  .admin-grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-  .adm-footer{position:sticky;bottom:0;margin-top:18px;display:flex;align-items:center;gap:12px;background:var(--panel);border-top:1px solid var(--line);padding:12px 4px}
+  /* Admin v3 – Shell-Layout */
+  .adm-shell{display:grid;grid-template-columns:208px 1fr;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow)}
+  .adm-nav{display:flex;flex-direction:column;gap:2px;padding:10px;background:var(--panel-2);border-right:1px solid var(--line)}
+  .adm-nav button{display:flex;align-items:center;gap:11px;font-family:inherit;font-size:13.5px;font-weight:600;border:none;background:none;color:var(--ink);border-radius:9px;padding:9px 11px;cursor:pointer;text-align:left;transition:background .12s}
+  .adm-nav button .ico{font-size:15px;width:20px;text-align:center;flex:none;opacity:.9}
+  .adm-nav button .lbl{flex:1;min-width:0}
+  .adm-nav button:hover{background:rgba(127,127,127,.12)}
+  .adm-nav button.active{background:var(--panel);color:var(--brand-l);font-weight:800;box-shadow:inset 3px 0 0 var(--brand)}
+  .adm-main{display:flex;flex-direction:column;min-width:0}
+  .adm-head{padding:17px 20px 13px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(127,127,127,.05),transparent)}
+  .adm-head h2{margin:0;font-size:17px;font-weight:800;display:flex;align-items:center;gap:9px}
+  .adm-head h2 .ico{font-size:17px}
+  .adm-head p{margin:5px 0 0;font-size:12.5px;color:var(--muted);max-width:62ch;line-height:1.45}
+  .adm-body{padding:18px 20px}
+  .admin-grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+  .adm-footer{position:sticky;bottom:0;z-index:5;margin-top:14px;display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 16px;box-shadow:0 -4px 16px rgba(0,0,0,.18)}
+  .adm-footer.dirty{border-color:#f59e0b;background:linear-gradient(180deg,rgba(245,158,11,.08),var(--panel))}
   .adm-dirty{font-size:13px;font-weight:700;color:var(--muted);flex:1}
   .adm-dirty.on{color:#f59e0b}
   .adm-save{font-family:inherit;font-size:14px;font-weight:800;border:1px solid var(--brand);background:var(--brand);color:#06222a;border-radius:9px;padding:9px 22px;cursor:pointer}
-  .adm-save:disabled{opacity:.45;cursor:default}
+  .adm-save:disabled{opacity:.4;cursor:default}
   .adm-discard{font-family:inherit;font-size:14px;font-weight:700;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);border-radius:9px;padding:9px 18px;cursor:pointer}
-  .adm-discard:disabled{opacity:.45;cursor:default}
+  .adm-discard:disabled{opacity:.4;cursor:default}
+  @media(max-width:760px){
+    .adm-shell{grid-template-columns:1fr}
+    .adm-nav{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line);padding:8px;gap:4px}
+    .adm-nav button{flex:none;white-space:nowrap;padding:8px 12px}
+    .adm-nav button.active{box-shadow:inset 0 -3px 0 var(--brand)}
+    .adm-nav button .lbl{flex:none}
+  }
   .drag-item{cursor:grab}
   .drag-item.dragging{opacity:.4}
   .drag-item.dragover{outline:2px dashed var(--brand);outline-offset:1px}
@@ -400,6 +419,9 @@
   .pchip{display:inline-flex;align-items:center;gap:5px}
   .pchip .prole{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;background:var(--brand);color:#06222a;border-radius:6px;padding:1px 5px;cursor:pointer}
   .pers-editor .pers-role{max-width:110px}
+  .adm-toggles{display:flex;flex-direction:column;gap:8px}
+  .adm-toggle{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;cursor:pointer;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+  .adm-toggle input{width:17px;height:17px}
   /* Druckansicht */
   @media print{
     .topbar,.searchbar,#tabs,.demo-note,.daybanner .db-tools,.board-meta,.addcard,.card .acts,.tool-btn,.lane-head .ampel-sel,.lane-head .pers-btn,.pers-editor{display:none !important}
@@ -671,18 +693,78 @@ function syncRuntime(){
 }
 
 /* Standard-Konfiguration (im Admin später pflegbar) */
+/* Vollständiger HKL-Eingriffskatalog – [name, untersuchung, zugang, dauer(min), kategorie, material/device, personalbedarf] */
+const HKL_CATALOG=[
+  // SHP – Strukturelle Herzprozeduren
+  ["TAVI TF – Medtronic Evolut FX+","TAVI transfemoral","Femoral",90,"SHP – Strukturell","Evolut FX+ (Medtronic)",3],
+  ["TAVI TF – Abbott Navitor","TAVI transfemoral","Femoral",90,"SHP – Strukturell","Navitor (Abbott)",3],
+  ["TAVI TF – Edwards Sapien 3","TAVI transfemoral","Femoral",90,"SHP – Strukturell","Sapien 3 (Edwards)",3],
+  ["TAVI transapikal – Edwards","TAVI transapikal","Transapikal",120,"SHP – Strukturell","Sapien 3 (Edwards)",3],
+  ["TAVI transaxillär – Edwards","TAVI transaxillär","Axillär",120,"SHP – Strukturell","Sapien 3 (Edwards)",3],
+  ["Okkluder PFO/ASD – Abbott","Okkluder-Implantation PFO/ASD","Femoral venös",60,"SHP – Strukturell","Amplatzer (Abbott)",2],
+  ["Okkluder PFO/ASD – Gore","Okkluder-Implantation PFO/ASD","Femoral venös",60,"SHP – Strukturell","Cardioform (Gore)",2],
+  ["Okkluder LAA – Abbott","LAA-Verschluss","Femoral venös",75,"SHP – Strukturell","Amplatzer Amulet (Abbott)",3],
+  ["TTKE – Edwards Evoque","Transkatheter-Trikuspidalklappenersatz","Femoral venös",150,"SHP – Strukturell","Evoque (Edwards)",3],
+  ["TriClip – Abbott","Trikuspidalklappen-Clip","Femoral venös",120,"SHP – Strukturell","TriClip (Abbott)",3],
+  ["MitraClip – Abbott","Mitralklappen-Clip","Femoral venös",120,"SHP – Strukturell","MitraClip (Abbott)",3],
+  // EPU – konventionell
+  ["Cryo-PVI","Pulmonalvenenisolation (Cryo)","Femoral venös",90,"EPU","Cryo-Ballon",3],
+  ["PFA-PVI","Pulmonalvenenisolation (Pulsed Field)","Femoral venös",90,"EPU","PFA-Katheter",3],
+  ["AV-Knoten-Ablation","AV-Knoten-Ablation","Femoral venös",60,"EPU","",2],
+  ["CTI-Ablation","CTI-Ablation (Vorhofflattern)","Femoral venös",60,"EPU","",2],
+  ["SVT – AVNRT","AVNRT-Ablation","Femoral venös",75,"EPU","",2],
+  ["EPU Diagnostik","Elektrophysiologische Untersuchung","Femoral venös",45,"EPU","",2],
+  // EPU – 3D-Mapping (Rhythmia / Opal)
+  ["Atriale Tachykardie (Mapping)","Ablation atriale Tachykardie","Femoral venös",120,"EPU","3D-Mapping (Rhythmia/Opal)",3],
+  ["Atypisches Flattern (Mapping)","Ablation atypisches Flattern","Femoral venös",120,"EPU","3D-Mapping (Rhythmia/Opal)",3],
+  ["Re-CTI","Re-Ablation CTI","Femoral venös",75,"EPU","",2],
+  ["Re-PVI","Re-Pulmonalvenenisolation","Femoral venös",120,"EPU","3D-Mapping (Rhythmia/Opal)",3],
+  ["VT – RVOT","VT-Ablation RVOT","Femoral venös",120,"EPU","3D-Mapping (Rhythmia/Opal)",3],
+  ["VT – VES","VES-Ablation","Femoral venös",120,"EPU","3D-Mapping (Rhythmia/Opal)",3],
+  // CRM
+  ["Sondenextraktion","Sondenextraktion","Subklavia/Femoral",120,"CRM","Laser-/Evolution-Schleuse",3],
+  ["Sondenrevision","Sondenrevision","Subklavia",75,"CRM","",2],
+  ["MICRA transfemoral","MICRA-Implantation (transfemoral)","Femoral venös",60,"CRM","Micra (Medtronic)",2],
+  ["MICRA transjugulär","MICRA-Implantation (transjugulär)","Jugulär",75,"CRM","Micra (Medtronic)",2],
+  ["Aggregatexplantation","Aggregatexplantation","Pectoral",45,"CRM","",2],
+  ["Aggregatwechsel","Aggregatwechsel","Pectoral",45,"CRM","Aggregat",2],
+  ["Aufrüstung (Upgrade)","Device-Aufrüstung","Pectoral",90,"CRM","Zusatzsonde(n)",2],
+  ["Event-Recorder Implantation","Loop-Recorder-Implantation","Parasternal",20,"CRM","Loop-Recorder",2],
+  ["Event-Recorder Explantation","Loop-Recorder-Explantation","Parasternal",20,"CRM","",2],
+  ["CRT-D","CRT-D-Implantation","Pectoral",120,"CRM","CRT-D, 3 Sonden",3],
+  ["CRT-P","CRT-P-Implantation","Pectoral",105,"CRM","CRT-P, 3 Sonden",3],
+  ["VVI-ICD","VVI-ICD-Implantation","Pectoral",75,"CRM","ICD-Aggregat, 1 Sonde",2],
+  ["LBBAP","Linksschenkel-Stimulation (LBBAP)","Pectoral",90,"CRM","LBBAP-Sonde",2],
+  ["AAI / VVI","AAI-/VVI-Schrittmacher","Pectoral",60,"CRM","Aggregat, 1 Sonde",2],
+  ["DDD","DDD-Schrittmacher","Pectoral",75,"CRM","Aggregat, 2 Sonden",2],
+  // Diagnostik
+  ["Myokardbiopsie","Myokardbiopsie","Femoral/Jugulär",45,"Diagnostik","Bioptom",2],
+  ["FFR","FFR-Messung","Radial",45,"Diagnostik","Druckdraht",2],
+  ["IVUS","Intravaskulärer Ultraschall","Radial",45,"Diagnostik","IVUS-Katheter",2],
+  ["Coro / LHK","Koronarangiographie / Linksherzkatheter","Radial",30,"Diagnostik","",2],
+  ["OCT","Optische Kohärenztomographie","Radial",45,"Diagnostik","OCT-Katheter",2],
+  ["RHK / LHK – Aortenklappen-Screening","Rechts-/Linksherzkatheter (Klappen-Screening)","Femoral",45,"Diagnostik","",2],
+  ["Rechtsherzkatheter","Rechtsherzkatheter","Femoral/Jugulär venös",30,"Diagnostik","Swan-Ganz",2],
+  // PCI
+  ["PCI","Perkutane Koronarintervention","Radial",60,"PCI","Stents",2],
+  ["Shockwave (Lithotripsie)","Intravaskuläre Lithotripsie","Radial",75,"PCI","Shockwave-Ballon",2],
+  ["CTO-PCI","CTO-Rekanalisation","Femoral/Radial",120,"PCI","CTO-Material",3],
+  ["Protected PCI","Protected PCI (mechanische Unterstützung)","Femoral",120,"PCI","Impella CP",3],
+  ["Rotablation","Rotablation","Radial/Femoral",90,"PCI","Rotablator",3],
+  // Notfall
+  ["Impella CP","Impella-CP-Implantation","Femoral",45,"Notfall","Impella CP",3],
+  ["VSD-Verschluss","Ventrikelseptumdefekt-Verschluss","Femoral",120,"Notfall","Okkluder",3],
+  ["Perikardpunktion","Perikardpunktion","Subxiphoidal",30,"Notfall","Pigtail/Drainage",2],
+  ["FlowTriever","Thrombektomie Lungenembolie (FlowTriever)","Femoral venös",90,"Notfall","FlowTriever",3],
+  ["Passagerer Schrittmacher","Passagere Schrittmacher-Anlage","Femoral/Jugulär venös",30,"Notfall","Passagere Sonde",2]
+].map(r=>({name:r[0],untersuchung:r[1],zugang:r[2],anmerkung:"",dauer:r[3],kategorie:r[4],material:r[5],personalbedarf:r[6],standardLink:""}));
+const HKL_KATEGORIEN=["SHP – Strukturell","EPU","CRM","Diagnostik","PCI","Notfall","Sonstiges"];
+
 const DEFAULT_CONFIG={
   untersucher:["Dr. Becker","Dr. Wagner","Dr. Gradaus","Dr. Klein","Dr. Lang","Dr. Sommer"],
   badges:["KM-Allergie","Niereninsuffizienz","Antikoagulation (Marcumar/DOAK)","Metformin-Pause"],
-  vorlagen:[
-    {name:"Koronarangiographie", untersuchung:"Koronarangiographie",        zugang:"Radial rechts",      anmerkung:"", dauer:30,  kategorie:"Koronardiagnostik",  material:"",                       personalbedarf:2, standardLink:""},
-    {name:"PCI",                 untersuchung:"Koronarangiographie + PCI",   zugang:"Radial rechts",      anmerkung:"", dauer:60,  kategorie:"PCI/Intervention",   material:"Stents, ggf. IVUS",      personalbedarf:2, standardLink:""},
-    {name:"TAVI",                untersuchung:"TAVI",                        zugang:"Femoral rechts",     anmerkung:"Schrittmacher-Bereitschaft", dauer:120, kategorie:"Strukturell/TAVI", material:"Klappe, Pacing-Draht", personalbedarf:3, standardLink:""},
-    {name:"Schrittmacher (SM)",  untersuchung:"Schrittmacher-Implantation",  zugang:"Subklavia links",    anmerkung:"", dauer:60,  kategorie:"Devices/CRM",        material:"Aggregat, Sonden",       personalbedarf:2, standardLink:""},
-    {name:"ICD",                 untersuchung:"ICD-Implantation",            zugang:"Pectoral links",     anmerkung:"", dauer:75,  kategorie:"Devices/CRM",        material:"ICD-Aggregat, Sonden",   personalbedarf:2, standardLink:""},
-    {name:"Ablation",            untersuchung:"EPU + Ablation",              zugang:"Femoral beidseitig", anmerkung:"", dauer:90,  kategorie:"EPU/Ablation",       material:"Ablationskatheter",      personalbedarf:3, standardLink:""}
-  ],
-  kategorien:["Koronardiagnostik","PCI/Intervention","Strukturell/TAVI","Devices/CRM","EPU/Ablation","Sonstiges"],
+  vorlagen:HKL_CATALOG.map(t=>({...t})),
+  kategorien:HKL_KATEGORIEN.slice(),
   ampel:{orangeMin:30, redMin:60},
   dienstStart:"08:00", dienstEnde:"16:00",
   personal:["Pfl. Schmidt","Pfl. Meyer","Pfl. Koch","Pfl. Bauer","Pfl. Wolf","Pfl. Neumann","Pfl. Fischer"],
@@ -704,6 +786,8 @@ let ui={view:"hub",currentDate:isoToday(),calMonth:firstOfMonth(isoToday()),edit
 let TINT_TARGET=[21,40,47], TINT_AMT=0.86;
 function tint(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);const[tr,tg,tb]=TINT_TARGET;const m=(c,t)=>Math.round(c+(t-c)*TINT_AMT);return "rgb("+m(r,tr)+","+m(g,tg)+","+m(b,tb)+")";}
 function applyConfigColors(){const col=(state.config&&state.config.colors)||{};const r=document.documentElement.style;if(col.critical)r.setProperty("--crit",col.critical);if(col.waitWarn)r.setProperty("--wait-warn",col.waitWarn);if(col.waitCrit)r.setProperty("--wait-crit",col.waitCrit);}
+function vis(key){const dsp=state.config&&state.config.display;return !dsp||dsp[key]!==false;}
+function applyDisplay(){const sb=document.getElementById("searchBar");if(sb)sb.style.display=vis("searchBar")?"":"none";const kb=document.getElementById("kioskBtn");if(kb)kb.style.display=vis("kioskBtn")?"":"none";}
 function applyTheme(theme){document.documentElement.dataset.theme=theme;state.settings.theme=theme;if(theme==="dark"){TINT_TARGET=[21,40,47];TINT_AMT=0.86;document.getElementById("themeBtn").textContent="☀ Hell";}else{TINT_TARGET=[255,255,255];TINT_AMT=0.90;document.getElementById("themeBtn").textContent="☾ Dunkel";}applyConfigColors();}
 function isStation(){return state.settings.role==="station";}
 
@@ -728,6 +812,7 @@ function ensureConfig(){
   if(c.bettenwarteOn==null)c.bettenwarteOn=true;
   if(!Array.isArray(c.roles)||!c.roles.length)c.roles=[{key:"steril",label:"Steril",min:1},{key:"springer",label:"Springer",min:1}];
   c.roles.forEach(r=>{if(r.min==null)r.min=1;});
+  if(!c.display)c.display={};
   syncRuntime();
 }
 function anredeKurz(a){return a==="Herr"?"Hr.":a==="Frau"?"Fr.":a==="Divers"?"Dvs.":"";}
@@ -781,7 +866,7 @@ function saalPrognose(date,room){
 }
 function buildSaalHead(rk,count,r){
   const opts=AMPEL.map(a=>'<option value="'+a.key+'"'+(a.key===r.ampel?' selected':'')+'>'+a.label+'</option>').join("");
-  const chips=r.personnel.map((p,i)=>'<span class="pchip"><b>'+escapeHtml(p.name)+'</b><span class="prole" data-pi="'+i+'" title="Rolle wechseln">'+escapeHtml(roleLabel(p.role))+'</span><span class="x" data-pi="'+i+'">×</span></span>').join("");
+  const chips=r.personnel.map((p,i)=>'<span class="pchip"><b>'+escapeHtml(p.name)+'</b>'+(vis("roleBadge")?'<span class="prole" data-pi="'+i+'" title="Rolle wechseln">'+escapeHtml(roleLabel(p.role))+'</span>':'')+'<span class="x" data-pi="'+i+'">×</span></span>').join("");
   const open=ui.persOpen.has(roomKey(ui.currentDate,rk));
   let editor="";
   if(open){
@@ -800,12 +885,12 @@ function buildSaalHead(rk,count,r){
   let barTxt="";
   if(ss==="unbesetzt")barTxt="Unbesetzt";
   else if(ss==="unterbesetzt"){const sm=staffSummary(ui.currentDate,rk);barTxt="Unterbesetzt – fehlt: "+sm.missing.map(m=>m.label).join(", ");}
-  const bar=ss?'<div class="staffbar '+ss+'">'+barTxt+'</div>':"";
+  const bar=(ss&&vis("understaffing"))?'<div class="staffbar '+ss+'">'+barTxt+'</div>':"";
   const pg=saalPrognose(ui.currentDate,rk);
-  const prog=pg?'<div class="prognose'+(pg.over?' over':'')+'" title="Summe geschätzter Dauern">⏱ verplant bis '+fmtHM(pg.proj)+(pg.over?' · überbucht':'')+'</div>':"";
+  const prog=(pg&&vis("prognose"))?'<div class="prognose'+(pg.over?' over':'')+'" title="Summe geschätzter Dauern">⏱ verplant bis '+fmtHM(pg.proj)+(pg.over?' · überbucht':'')+'</div>':"";
   return '<div class="lh-top"><span class="rname">'+roomName(rk)+'</span><span class="badge">'+count+'</span>'+
          '<select class="ampel-sel" title="Saal-Status">'+opts+'</select>'+
-         '<button type="button" class="pers-btn" title="Personal verwalten">👤 '+r.personnel.length+'</button></div>'+
+         (vis("personalBtn")?'<button type="button" class="pers-btn" title="Personal verwalten">👤 '+r.personnel.length+'</button>':'')+'</div>'+
          (chips?'<div class="lh-pers">'+chips+'</div>':'')+editor+notfall+bar+prog;
 }
 function wireSaalHead(head,date,rk){
@@ -944,8 +1029,8 @@ function renderBoard(){
   const lc=lastChangedFor(ui.currentDate);
   const bm=document.getElementById("boardMeta");
   const station=isStation();
-  if(bm){let warns=[];if(!station)SAAL_ROOMS.forEach(rk=>{const ss=staffState(ui.currentDate,rk);if(ss)warns.push('<span class="warnchip '+ss+'">'+roomName(rk)+' '+(ss==="unbesetzt"?"unbesetzt":"unterbesetzt")+'</span>');const pg=saalPrognose(ui.currentDate,rk);if(pg&&pg.over)warns.push('<span class="warnchip over">'+roomName(rk)+' überbucht (bis '+fmtHM(pg.proj)+')</span>');});
-    bm.innerHTML=(lc?'<span class="lastchg">zuletzt geändert: '+hhmm(lc)+' Uhr</span>':'')+warns.join("");}
+  if(bm){let warns=[];if(!station)SAAL_ROOMS.forEach(rk=>{const ss=staffState(ui.currentDate,rk);if(ss&&vis("understaffing"))warns.push('<span class="warnchip '+ss+'">'+roomName(rk)+' '+(ss==="unbesetzt"?"unbesetzt":"unterbesetzt")+'</span>');const pg=saalPrognose(ui.currentDate,rk);if(pg&&pg.over&&vis("overbooking"))warns.push('<span class="warnchip over">'+roomName(rk)+' überbucht (bis '+fmtHM(pg.proj)+')</span>');});
+    bm.innerHTML=((lc&&vis("lastChanged"))?'<span class="lastchg">zuletzt geändert: '+hhmm(lc)+' Uhr</span>':'')+warns.join("");}
   const lanes=document.getElementById("lanes"); lanes.innerHTML="";
   ROOMS.forEach(rk=>{
     const list=casesForRoom(ui.currentDate,rk);
@@ -984,25 +1069,25 @@ function makeCard(c,station){
   const st=STATUS_MAP[c.status]||STATUSES[0];
   const crit=isCritical(c);
   const card=document.createElement("div");
-  card.className="card"+(c.done?" done":"")+(crit?" critical":"")+(station?" nodrag":"")+((ui.searchQuery&&ui.searchQuery.trim()&&matchCase(c,ui.searchQuery.trim().toLowerCase()))?" searchhit":"");
+  card.className="card"+(c.done?" done":"")+(crit&&vis("criticalHighlight")?" critical":"")+(station?" nodrag":"")+((ui.searchQuery&&ui.searchQuery.trim()&&matchCase(c,ui.searchQuery.trim().toLowerCase()))?" searchhit":"");
   card.draggable=!station; card.dataset.id=c.id;
   card.style.background=tint(c.done?"#15803d":st.color);
   const nameLine=(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+escapeHtml(fullName(c));
   const stationCrit=CRITICAL_STATIONS.includes(normStation(c.station));
   let meta="";
-  if(c.station)     meta+='<span'+(stationCrit?' class="stcrit"':'')+'>Station: <b>'+escapeHtml(c.station)+'</b></span>';
+  if(c.station&&vis("cardStation"))meta+='<span'+(stationCrit?' class="stcrit"':'')+'>Station: <b>'+escapeHtml(c.station)+'</b></span>';
   if(c.indikation)  meta+='<span'+(/STEMI/i.test(c.indikation)?' class="stcrit"':'')+'>Indikation: <b>'+escapeHtml(c.indikation)+'</b></span>';
   if(c.untersuchung)meta+='<span>Untersuchung: <b>'+escapeHtml(c.untersuchung)+'</b></span>';
   if(c.zugang)      meta+='<span>Zugang: <b>'+escapeHtml(c.zugang)+'</b></span>';
-  const utext=untersucherText(c); if(utext) meta+='<span>Untersucher: <b>'+escapeHtml(utext)+'</b></span>';
+  const utext=untersucherText(c); if(utext&&vis("cardUntersucher")) meta+='<span>Untersucher: <b>'+escapeHtml(utext)+'</b></span>';
   if(c.fallnummer)  meta+='<span>Fallnr.: <b>'+escapeHtml(c.fallnummer)+'</b></span>';
   if(c.geburtsdatum)meta+='<span>geb.: <b>'+escapeHtml(c.geburtsdatum.split("-").reverse().join("."))+'</b></span>';
   if(c.anmerkung)   meta+='<span>Anmerkung: <b>'+escapeHtml(c.anmerkung)+'</b></span>';
-  if(c.dauer!=null&&c.dauer!=="")meta+='<span>Dauer: <b>'+c.dauer+' min</b></span>';
-  const wb=(Array.isArray(c.warnBadges)&&c.warnBadges.length)?'<div class="wbadges">'+c.warnBadges.map(b=>'<span class="wbadge" title="'+escapeHtml(b)+'">⚠ '+escapeHtml(b)+'</span>').join("")+'</div>':"";
-  let tags=""; const wi=waitInfo(c); if(wi)tags+='<span class="waitdot '+wi.color+'" title="Wartezeit in dieser Phase"><span class="dot"></span>'+wi.mins+' min</span>'; if(crit)tags+='<span class="crit-tag">⚠ Kritisch</span>'; if(c.done)tags+='<span class="done-tag">✓ Fertig</span>';
+  if(c.dauer!=null&&c.dauer!==""&&vis("cardDauer"))meta+='<span>Dauer: <b>'+c.dauer+' min</b></span>';
+  const wb=(vis("cardBadges")&&Array.isArray(c.warnBadges)&&c.warnBadges.length)?'<div class="wbadges">'+c.warnBadges.map(b=>'<span class="wbadge" title="'+escapeHtml(b)+'">⚠ '+escapeHtml(b)+'</span>').join("")+'</div>':"";
+  let tags=""; const wi=waitInfo(c); if(wi&&vis("waitDot"))tags+='<span class="waitdot '+wi.color+'" title="Wartezeit in dieser Phase"><span class="dot"></span>'+wi.mins+' min</span>'; if(crit&&vis("criticalHighlight"))tags+='<span class="crit-tag">⚠ Kritisch</span>'; if(c.done)tags+='<span class="done-tag">✓ Fertig</span>';
   let acts="";
-  if(!station)acts='<button class="actbtn edit" title="Bearbeiten"><span class="ico">✎</span><span class="lbl">Bearbeiten</span></button>'+
+  if(!station&&vis("cardActions"))acts='<button class="actbtn edit" title="Bearbeiten"><span class="ico">✎</span><span class="lbl">Bearbeiten</span></button>'+
     '<button class="actbtn cancel" title="Patient absagen"><span class="ico">⊘</span><span class="lbl">Absagen</span></button>'+
     '<button class="actbtn del" title="Entfernen"><span class="ico">✕</span><span class="lbl">Löschen</span></button>';
   /* Footer: Status-Steuerung je nach Rolle */
@@ -1011,7 +1096,7 @@ function makeCard(c,station){
     if(STATION_ALLOWED.includes(c.status)){footer='<select class="status" title="Status setzen"></select>';}
     else{footer='<span class="statictstatus">Status: '+escapeHtml(st.label)+'</span>';}
   }else{
-    footer='<select class="status" title="Status ändern"></select><label class="donebox"><input type="checkbox" '+(c.done?"checked":"")+'> Fertig</label>';
+    footer='<select class="status" title="Status ändern"></select>'+(vis("doneCheck")?'<label class="donebox"><input type="checkbox" '+(c.done?"checked":"")+'> Fertig</label>':'');
   }
   card.innerHTML='<div class="banner" style="background:'+st.color+'"><span>'+escapeHtml(st.label)+'</span><span class="tags">'+tags+'</span></div>'+
     '<div class="inner"><div class="row1"><div class="pname">'+nameLine+'</div><div class="acts">'+acts+'</div></div><div class="meta">'+meta+'</div>'+wb+'</div>'+
@@ -1025,11 +1110,10 @@ function makeCard(c,station){
     sel.addEventListener("mousedown",e=>e.stopPropagation());
   }
   if(!station){
-    card.querySelector(".donebox input").addEventListener("change",e=>{c.done=e.target.checked;touchCase(c);persist();renderBoard();});
-    card.querySelector(".donebox").addEventListener("mousedown",e=>e.stopPropagation());
-    card.querySelector(".edit").addEventListener("click",e=>{e.stopPropagation();loadIntoForm(c);setView("plan");});
-    card.querySelector(".cancel").addEventListener("click",e=>{e.stopPropagation();openCancelModal(c.id);});
-    card.querySelector(".del").addEventListener("click",e=>{e.stopPropagation();if(confirm("Diesen Patienten endgültig aus dem Plan entfernen? (Für Absagen bitte den ⊘-Knopf nutzen)")){const d=c.date,r=c.room;state.cases=state.cases.filter(x=>x.id!==c.id);renumber(d,r);persist();renderBoard();toast("Patient entfernt.");}});
+    const dbx=card.querySelector(".donebox input");if(dbx){dbx.addEventListener("change",e=>{c.done=e.target.checked;touchCase(c);persist();renderBoard();});card.querySelector(".donebox").addEventListener("mousedown",e=>e.stopPropagation());}
+    const eb=card.querySelector(".edit");if(eb)eb.addEventListener("click",e=>{e.stopPropagation();loadIntoForm(c);setView("plan");});
+    const cb=card.querySelector(".cancel");if(cb)cb.addEventListener("click",e=>{e.stopPropagation();openCancelModal(c.id);});
+    const xb=card.querySelector(".del");if(xb)xb.addEventListener("click",e=>{e.stopPropagation();if(confirm("Diesen Patienten endgültig aus dem Plan entfernen? (Für Absagen bitte den ⊘-Knopf nutzen)")){const d=c.date,r=c.room;state.cases=state.cases.filter(x=>x.id!==c.id);renumber(d,r);persist();renderBoard();toast("Patient entfernt.");}});
     card.addEventListener("dragstart",e=>{card.classList.add("dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",c.id);});
     card.addEventListener("dragend",()=>{card.classList.remove("dragging");document.querySelectorAll(".lane-strip").forEach(s=>s.classList.remove("dragover"));renderBoard();});
   }
@@ -1174,7 +1258,7 @@ function dclone(o){return JSON.parse(JSON.stringify(o));}
 function openAdmin(){const pw=(state.config&&state.config.adminPw)||"admin";if(!adminUnlocked){const p=prompt("Admin-Passwort (Standard: admin):");if(p===null)return;if(p!==pw){toast("Falsches Passwort.");return;}adminUnlocked=true;}startAdmin();setView("admin");}
 function startAdmin(){ensureConfig();adminDraft=dclone(state.config);adminDraft._roomLabel=state.settings.roomLabel;}
 function adminDirty(){if(!adminDraft)return false;const a=dclone(adminDraft);delete a._roomLabel;return JSON.stringify(a)!==JSON.stringify(state.config)||adminDraft._roomLabel!==state.settings.roomLabel;}
-function saveAdmin(){const lbl=adminDraft._roomLabel;const d=dclone(adminDraft);delete d._roomLabel;state.config=d;state.settings.roomLabel=lbl;ensureConfig();syncRuntime();persist();applyConfigColors();populateRoomSelect();fillChipSelects();fillVorlagen();fillAbsageReasons();applyFeatureToggles();applyTheme(state.config.defaultTheme||state.settings.theme);startAdmin();renderAdmin();toast("Konfiguration gespeichert.");}
+function saveAdmin(){const lbl=adminDraft._roomLabel;const d=dclone(adminDraft);delete d._roomLabel;state.config=d;state.settings.roomLabel=lbl;ensureConfig();syncRuntime();persist();applyConfigColors();populateRoomSelect();fillChipSelects();fillVorlagen();fillAbsageReasons();applyFeatureToggles();applyDisplay();applyTheme(state.config.defaultTheme||state.settings.theme);startAdmin();renderAdmin();toast("Konfiguration gespeichert.");}
 function applyFeatureToggles(){const on=!state.config||!state.config.featureToggles||state.config.featureToggles.requests!==false;const box=document.querySelector(".reqbox");if(box)box.style.display=on?"":"none";}
 function discardAdmin(){startAdmin();renderAdmin();toast("Änderungen verworfen.");}
 function arrMove(arr,from,to){if(from===to||from<0||to<0||from>=arr.length||to>=arr.length)return;const[m]=arr.splice(from,1);arr.splice(to,0,m);}
@@ -1185,7 +1269,12 @@ function wireDrag(el,i,arr,after){el.draggable=true;el.classList.add("drag-item"
   el.addEventListener("dragleave",()=>el.classList.remove("dragover"));
   el.addEventListener("drop",e=>{e.preventDefault();el.classList.remove("dragover");if(dragIdx===null||dragIdx===i)return;arrMove(arr,dragIdx,i);dragIdx=null;after();});}
 
-const ADMIN_SECTIONS=[["listen","Listen"],["vorlagen","Vorlagen"],["status","Status"],["saele","Säle"],["personal","Personal"],["farben","Farben"],["allgemein","Allgemein"],["sichern","Sichern"]];
+const ADMIN_SECTIONS=[["listen","Listen"],["vorlagen","Vorlagen"],["status","Status"],["saele","Säle"],["personal","Personal"],["farben","Farben"],["anzeige","Anzeige"],["allgemein","Allgemein"],["sichern","Sichern"]];
+const DISPLAY_GROUPS=[
+  {title:"Patientenkarte",items:[["waitDot","Wartezeit-Ampel (Punkt + Minuten)"],["cardDauer","Geschätzte Dauer"],["cardBadges","Warnhinweise (Badges)"],["cardUntersucher","Untersucher"],["cardStation","Station"],["criticalHighlight","Kritisch-Hervorhebung"],["cardActions","Aktions-Knöpfe (Bearbeiten/Absagen/Löschen)"],["doneCheck","Fertig-Häkchen"]]},
+  {title:"Saal-Kopf & Board-Leiste",items:[["roleBadge","Personal-Rolle (Steril/Springer)"],["understaffing","Unterbesetzungs-Hinweis"],["personalBtn","Personal-Knopf (👤)"],["prognose","Endzeit-Prognose je Saal"],["overbooking","Überbuchungs-Warnung"],["lastChanged","„Zuletzt geändert"]]},
+  {title:"Allgemein",items:[["searchBar","Suchleiste"],["kioskBtn","Wandmonitor-Knopf"]]}
+];
 const ADMIN_LISTS=[
   {key:"untersucher",title:"Untersucher",ph:"Name"},
   {key:"personal",title:"Personal (Pflege)",ph:"Name"},
@@ -1195,13 +1284,27 @@ const ADMIN_LISTS=[
   {key:"notfallReasons",title:"Notfall-Gründe (Saal gelb)",ph:"Grund"},
   {key:"kategorien",title:"Eingriffs-Kategorien",ph:"z. B. Strukturell/TAVI"}
 ];
+const SECTION_META={
+  listen:{icon:"📋",desc:"Auswahllisten für die Formulare: Untersucher, Personal, Warnhinweise, kritische Stationen, Absage- und Notfall-Gründe, Kategorien."},
+  vorlagen:{icon:"🗂️",desc:"Eingriffs-Vorlagen mit Untersuchung, Zugang, geschätzter Dauer, Kategorie, Personalbedarf und Material."},
+  status:{icon:"🚦",desc:"Status-Schritte: Reihenfolge (Arbeitsablauf), Farben, Stationsrechte und die Wartezeit-Phasen."},
+  saele:{icon:"🏥",desc:"Säle anlegen, benennen, sortieren und entfernen. Bettenwarte ein- oder ausblenden."},
+  personal:{icon:"👥",desc:"Rollen (z. B. Steril, Springer) und die Mindestbesetzung je Rolle."},
+  farben:{icon:"🎨",desc:"Farben der Saal-Ampel, der Kritisch-Markierung und der Wartezeit-Ampel."},
+  anzeige:{icon:"👁️",desc:"Sichtbarkeit einzelner Badges, Knöpfe und Hinweise im Plan steuern."},
+  allgemein:{icon:"⚙️",desc:"Dienstzeiten, Wandmonitor-Intervall, Design, Beschriftung, Anfragen-Workflow und Admin-Passwort."},
+  sichern:{icon:"💾",desc:"Gesamte Konfiguration als Datei exportieren oder importieren."}
+};
 function renderAdmin(){
   ensureConfig();if(!adminDraft)startAdmin();
   const g=document.getElementById("adminGrid");
-  const nav='<div class="adm-nav">'+ADMIN_SECTIONS.map(s=>'<button class="'+(adminSection===s[0]?"active":"")+'" data-sec="'+s[0]+'">'+s[1]+'</button>').join("")+'</div>';
+  const meta=SECTION_META[adminSection]||{icon:"",desc:""};
+  const curLabel=(ADMIN_SECTIONS.find(s=>s[0]===adminSection)||["",""])[1];
+  const nav='<nav class="adm-nav">'+ADMIN_SECTIONS.map(s=>{const m=SECTION_META[s[0]]||{};return '<button class="'+(adminSection===s[0]?"active":"")+'" data-sec="'+s[0]+'"><span class="ico">'+(m.icon||"•")+'</span><span class="lbl">'+escapeHtml(s[1])+'</span></button>';}).join("")+'</nav>';
   const dirty=adminDirty();
-  const footer='<div class="adm-footer"><span class="adm-dirty'+(dirty?" on":"")+'">'+(dirty?"● ungespeicherte Änderungen":"alles gespeichert")+'</span><button class="adm-save" id="adm-save"'+(dirty?"":" disabled")+'>Speichern</button><button class="adm-discard" id="adm-discard"'+(dirty?"":" disabled")+'>Verwerfen</button></div>';
-  g.innerHTML=nav+'<div class="adm-body" id="admBody"></div>'+footer;
+  const header='<header class="adm-head"><h2><span class="ico">'+(meta.icon||"")+'</span>'+escapeHtml(curLabel)+'</h2><p>'+escapeHtml(meta.desc||"")+'</p></header>';
+  const footer='<div class="adm-footer'+(dirty?" dirty":"")+'"><span class="adm-dirty'+(dirty?" on":"")+'">'+(dirty?"● Nicht gespeicherte Änderungen":"✓ Alle Änderungen gespeichert")+'</span><button class="adm-discard" id="adm-discard"'+(dirty?"":" disabled")+'>Verwerfen</button><button class="adm-save" id="adm-save"'+(dirty?"":" disabled")+'>Speichern</button></div>';
+  g.innerHTML='<div class="adm-shell">'+nav+'<section class="adm-main">'+header+'<div class="adm-body" id="admBody"></div></section></div>'+footer;
   g.querySelectorAll(".adm-nav button").forEach(b=>b.addEventListener("click",()=>{adminSection=b.dataset.sec;renderAdmin();}));
   const save=g.querySelector("#adm-save"),disc=g.querySelector("#adm-discard");
   if(save&&!save.disabled)save.addEventListener("click",saveAdmin);
@@ -1213,6 +1316,7 @@ function renderAdmin(){
   else if(adminSection==="saele")renderAdminSaele(body);
   else if(adminSection==="personal")renderAdminPersonal(body);
   else if(adminSection==="farben")renderAdminFarben(body);
+  else if(adminSection==="anzeige")renderAdminAnzeige(body);
   else if(adminSection==="allgemein")renderAdminAllgemein(body);
   else if(adminSection==="sichern")renderAdminSichern(body);
 }
@@ -1232,7 +1336,7 @@ function renderAdminListen(body){
 function renderAdminVorlagen(body){
   const arr=adminDraft.vorlagen;const cats=adminDraft.kategorien||[];
   const card=document.createElement("div");card.className="admin-card wide";
-  card.innerHTML='<h3>Eingriffs-Vorlagen</h3><p class="hint">Ziehen zum Sortieren · Name · Untersuchung · Zugang · Dauer (min) · Kategorie · Personalbedarf · Material/Anmerkung · Standard-Link</p><div class="adm-vorlagen"></div><button class="adm-add-btn" id="adm-vorlage-add">+ Vorlage</button>';
+  card.innerHTML='<h3>Eingriffs-Vorlagen</h3><p class="hint">Ziehen zum Sortieren · Name · Untersuchung · Zugang · Dauer (min) · Kategorie · Personalbedarf · Material/Anmerkung · Standard-Link</p><div class="adm-vorlagen"></div><div class="adm-io"><button class="adm-add-btn" id="adm-vorlage-add">+ Vorlage</button><button class="tool-btn" id="adm-katalog">HKL-Eingriffskatalog laden ('+HKL_CATALOG.length+')</button></div>';
   const wrap=card.querySelector(".adm-vorlagen");
   arr.forEach((t,i)=>{
     const row=document.createElement("div");row.className="adm-vrow2";
@@ -1251,9 +1355,10 @@ function renderAdminVorlagen(body){
     wireDrag(row,i,arr,renderAdmin);wrap.appendChild(row);
   });
   card.querySelector("#adm-vorlage-add").addEventListener("click",()=>{arr.push({name:"Neue Vorlage",untersuchung:"",zugang:"",anmerkung:"",dauer:45,kategorie:(cats[0]||"Sonstiges"),material:"",personalbedarf:2,standardLink:""});renderAdmin();});
+  card.querySelector("#adm-katalog").addEventListener("click",()=>{if(!confirm("Alle Vorlagen durch den vollständigen HKL-Eingriffskatalog ("+HKL_CATALOG.length+" Eingriffe) ersetzen? Die bisherigen Vorlagen werden überschrieben – erst Speichern macht es wirksam."))return;adminDraft.vorlagen=HKL_CATALOG.map(t=>({...t}));const have=adminDraft.kategorien||[];HKL_KATEGORIEN.forEach(k=>{if(!have.includes(k))have.push(k);});adminDraft.kategorien=have;renderAdmin();toast(HKL_CATALOG.length+" Eingriffe geladen – bitte prüfen und speichern.");});
   body.appendChild(card);
 }
-function markAdminDirty(){const g=document.getElementById("adminGrid");const d=g.querySelector(".adm-dirty");const sv=g.querySelector("#adm-save"),di=g.querySelector("#adm-discard");if(adminDirty()){if(d){d.classList.add("on");d.textContent="● ungespeicherte Änderungen";}if(sv){sv.disabled=false;sv.onclick=saveAdmin;}if(di){di.disabled=false;di.onclick=discardAdmin;}}}
+function markAdminDirty(){const g=document.getElementById("adminGrid");const d=g.querySelector(".adm-dirty");const ft=g.querySelector(".adm-footer");const sv=g.querySelector("#adm-save"),di=g.querySelector("#adm-discard");if(adminDirty()){if(d){d.classList.add("on");d.textContent="● Nicht gespeicherte Änderungen";}if(ft)ft.classList.add("dirty");if(sv){sv.disabled=false;sv.onclick=saveAdmin;}if(di){di.disabled=false;di.onclick=discardAdmin;}}}
 function renderAdminStatus(body){
   const arr=adminDraft.statuses;
   const card=document.createElement("div");card.className="admin-card wide";
@@ -1353,6 +1458,23 @@ function renderAdminPersonal(body){
   });
   card.querySelector("#adm-role-add").addEventListener("click",()=>{arr.push({key:"rolle_"+Date.now().toString(36),label:"Neue Rolle",min:1});renderAdmin();});
   body.appendChild(card);
+}
+function renderAdminAnzeige(body){
+  const dsp=adminDraft.display||(adminDraft.display={});
+  body.innerHTML='<div class="admin-grid2"></div>';const grid=body.querySelector(".admin-grid2");
+  DISPLAY_GROUPS.forEach(g=>{
+    const card=document.createElement("div");card.className="admin-card";
+    card.innerHTML='<h3>'+escapeHtml(g.title)+'</h3><p class="hint">Aktiviert = wird angezeigt.</p><div class="adm-toggles"></div>';
+    const wrap=card.querySelector(".adm-toggles");
+    g.items.forEach(it=>{
+      const on=dsp[it[0]]!==false;
+      const row=document.createElement("label");row.className="adm-toggle";
+      row.innerHTML='<input type="checkbox"'+(on?" checked":"")+'><span>'+escapeHtml(it[1])+'</span>';
+      row.querySelector("input").addEventListener("change",e=>{dsp[it[0]]=e.target.checked;markAdminDirty();});
+      wrap.appendChild(row);
+    });
+    grid.appendChild(card);
+  });
 }
 function renderAdminSichern(body){
   const card=document.createElement("div");card.className="admin-card wide";
@@ -1477,7 +1599,7 @@ function init(){
   else {ensureConfig();loadDemo();}
   ensureConfig();
   applyTheme(state.settings.theme||"dark");
-  applyConfigColors();applyFeatureToggles();
+  applyConfigColors();applyFeatureToggles();applyDisplay();
   applyRole(state.settings.role||"kathlab");
   populateRoomSelect();
   document.getElementById("f-date").value=ui.currentDate;
