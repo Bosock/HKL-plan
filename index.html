@@ -876,6 +876,9 @@ function ensureConfig(){
   if(!c.staffing.mode)c.staffing.mode="count";
   if(c.staffing.minCount==null)c.staffing.minCount=2;
   if(!c.display)c.display={};
+  if(c.display.prognose===undefined)c.display.prognose=false;
+  if(c.display.overbooking===undefined)c.display.overbooking=false;
+  if(c.overbookTolerance==null)c.overbookTolerance=0;
   if(!Array.isArray(c.customFields))c.customFields=[];
   c.customFields.forEach(f=>{if(!f.type)f.type="text";if(!Array.isArray(f.options))f.options=[];if(f.required==null)f.required=false;if(f.showOnCard==null)f.showOnCard=true;});
   if(!Array.isArray(c.customButtons))c.customButtons=[];
@@ -933,7 +936,8 @@ function saalPrognose(date,room){
   const start=parseHM(date,state.config.dienstStart||"08:00");
   const base=date===isoToday()?new Date(Math.max(Date.now(),start.getTime())):start;
   const proj=new Date(base.getTime()+rest*60000);
-  return {restMin:rest,proj:proj,over:proj.getTime()>ende.getTime()};
+  const tol=(state.config&&state.config.overbookTolerance!=null)?+state.config.overbookTolerance:0;
+  return {restMin:rest,proj:proj,over:proj.getTime()>(ende.getTime()+tol*60000)};
 }
 function buildSaalHead(rk,count,r){
   const rolesOn=staffMode()==="roles";
@@ -1441,7 +1445,7 @@ function wireDrag(el,i,arr,after){el.draggable=true;el.classList.add("drag-item"
 const ADMIN_SECTIONS=[["listen","Listen"],["vorlagen","Vorlagen"],["felder","Felder"],["status","Status"],["saele","Säle"],["personal","Personal"],["knoepfe","Knöpfe"],["regeln","Regeln"],["darstellung","Darstellung"],["farben","Farben"],["anzeige","Anzeige"],["allgemein","Allgemein"],["sichern","Sichern"]];
 const DISPLAY_GROUPS=[
   {title:"Patientenkarte",items:[["waitDot","Wartezeit-Ampel (Punkt + Minuten)"],["cardDauer","Geschätzte Dauer"],["cardBadges","Warnhinweise (Badges)"],["cardUntersucher","Untersucher"],["cardStation","Station"],["criticalHighlight","Kritisch-Hervorhebung"],["cardActions","Aktions-Knöpfe (Bearbeiten/Absagen/Löschen)"],["doneCheck","Fertig-Häkchen"]]},
-  {title:"Saal-Kopf & Board-Leiste",items:[["roleBadge","Personal-Rolle (Steril/Springer)"],["understaffing","Unterbesetzungs-Hinweis"],["personalBtn","Personal-Knopf (👤)"],["prognose","Endzeit-Prognose je Saal"],["overbooking","Überbuchungs-Warnung"],["lastChanged","„Zuletzt geändert"]]},
+  {title:"Saal-Kopf & Board-Leiste",items:[["roleBadge","Personal-Rolle (Steril/Springer)"],["understaffing","Unterbesetzungs-Hinweis"],["personalBtn","Personal-Knopf (👤)"],["lastChanged","„Zuletzt geändert"]]},
   {title:"Allgemein",items:[["searchBar","Suchleiste"],["kioskBtn","Wandmonitor-Knopf"]]}
 ];
 const ADMIN_LISTS=[
@@ -1805,6 +1809,20 @@ function renderAdminDarstellung(body){
     tw.appendChild(row);
   });
   grid.appendChild(c4);
+  // Endzeit-Prognose & Überbuchung
+  if(!dr.display)dr.display={};
+  const c5=document.createElement("div");c5.className="admin-card";
+  c5.innerHTML='<h3>Endzeit-Prognose & Überbuchung</h3><p class="hint">Die Prognose rechnet aus den Restdauern das voraussichtliche Tagesende je Saal hoch. Die Überbuchungs-Warnung meldet, wenn dieses Ende nach dem Dienstende liegt.</p><div class="adm-toggles"></div><div class="adm-mincount" style="margin-top:10px">Überbuchung erst ab <input type="number" min="0" id="adm-overtol" value="'+(dr.overbookTolerance!=null?dr.overbookTolerance:0)+'" style="width:70px"> Minuten nach Dienstende</div>';
+  const tw2=c5.querySelector(".adm-toggles");
+  [["prognose","Endzeit-Prognose anzeigen"],["overbooking","Überbuchungs-Warnung anzeigen"]].forEach(it=>{
+    const on=dr.display[it[0]]!==false;
+    const row=document.createElement("label");row.className="adm-toggle";
+    row.innerHTML='<input type="checkbox"'+(on?" checked":"")+'><span>'+escapeHtml(it[1])+'</span>';
+    row.querySelector("input").addEventListener("change",e=>{dr.display[it[0]]=e.target.checked;markAdminDirty();});
+    tw2.appendChild(row);
+  });
+  c5.querySelector("#adm-overtol").addEventListener("change",e=>{dr.overbookTolerance=Math.max(0,+e.target.value||0);markAdminDirty();});
+  grid.appendChild(c5);
 }
 function renderAdminSichern(body){
   const card=document.createElement("div");card.className="admin-card wide";
