@@ -164,8 +164,46 @@
   .card.calm.critical{outline:2px solid var(--crit);border-left-color:var(--crit)}
   /* ===== KOMPAKTMODUS (compact) ===== */
   .card .expander{background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0 4px 0 0;line-height:1.2;flex-shrink:0}
-  .card.compact .meta,.card.compact .wbadges,.card.compact .acts{display:none}
+  .card.compact .wbadges,.card.compact .acts{display:none}
   .card.compact.expanded .meta,.card.compact.expanded .wbadges,.card.compact.expanded .acts{display:flex}
+  .card.compact .meta{display:flex}
+  /* ===== TABELLEN-LAYOUT ===== */
+  #lanes[data-layout="table"]{display:block;overflow-x:visible}
+  .tablelane{margin-bottom:18px}
+  .tablelane .lane-head{border-radius:10px 10px 0 0;margin-bottom:0}
+  .ptable{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-top:none;font-size:13px}
+  .ptable thead th{text-align:left;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);padding:7px 10px;border-bottom:1px solid var(--line);background:var(--panel-2);white-space:nowrap}
+  .ptable th.c-act{width:1%}
+  .ptable td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:middle;color:var(--ink)}
+  .ptable tr.prow{cursor:default}
+  .ptable tr.prow.drag{cursor:grab}
+  .ptable tr.prow.dragging{opacity:.4}
+  .ptable tr.prow:hover{background:rgba(127,127,127,.06)}
+  .ptable tr.prow td.c-st{border-left:4px solid var(--phase,#64748b);padding-left:9px}
+  .ptable tr.prow.critical td.c-st{border-left-color:var(--crit)}
+  .ptable tr.prow.dim{opacity:.55}
+  .ptable tr.prow.dim:hover{opacity:1}
+  .ptable tr.prow.searchhit{outline:2px solid #f59e0b;outline-offset:-2px}
+  .ptable td.c-name b{font-weight:700;font-size:14px}
+  .ptable td.stcrit{color:var(--crit);font-weight:700}
+  .ptable .rmuted{color:var(--muted);opacity:.5}
+  .ptable .st-cell{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .ptable select.status{font-family:inherit;font-size:12px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--input-bg);color:var(--ink);max-width:190px}
+  .ptable .row-tags{display:flex;gap:4px;align-items:center}
+  .ptable .row-tags .waitdot{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:800;padding:1px 6px;border-radius:9px}
+  .ptable .row-tags .waitdot.warn{background:rgba(245,158,11,.18);color:#b45309}.ptable .row-tags .waitdot.crit{background:rgba(220,38,38,.16);color:#dc2626}
+  .ptable .row-tags .waitdot .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .ptable .row-tags .crit-tag{color:var(--crit);font-weight:900}
+  .ptable .statictstatus{font-size:12px;color:var(--muted);font-style:italic}
+  .ptable .c-act{white-space:nowrap;text-align:right}
+  .ricon{background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--muted);cursor:pointer;font-size:13px;line-height:1;padding:4px 7px;margin-left:3px}
+  .ricon.edit:hover{background:var(--brand);color:#06222a;border-color:var(--brand)}
+  .ricon.del:hover{background:var(--crit);color:#fff;border-color:var(--crit)}
+  .ricon.cancel:hover{background:var(--cancel);color:#fff;border-color:var(--cancel)}
+  .ricon.cbtn:hover{background:var(--brand);color:#06222a;border-color:var(--brand)}
+  .rdone{display:inline-flex;align-items:center;margin-left:5px}.rdone input{width:16px;height:16px}
+  .tableadd{margin-top:8px}
+  @media(max-width:900px){.ptable{display:block;overflow-x:auto;white-space:nowrap}}
   .card.compact:hover .acts{display:flex}
   .card.compact.expanded .acts{display:flex}
   @media(hover:none){.card.compact:hover .acts{display:none}.card.compact.expanded .acts{display:flex}}
@@ -860,6 +898,8 @@ function ensureConfig(){
   PHASE_ORDER.forEach(k=>{if(!c.phases[k])c.phases[k]=Object.assign({},DEFAULT_PHASES[k]);});
   if(!c.cardStyle)c.cardStyle="calm";
   if(!c.cardDensity)c.cardDensity="compact";
+  if(!c.boardLayout)c.boardLayout="columns";
+  if(!Array.isArray(c.alwaysFields))c.alwaysFields=["station","indikation","untersuchung","zugang","untersucher"];
   if(c.attnBar==null)c.attnBar=true;
   if(c.dimDone==null)c.dimDone=true;
   if(!Array.isArray(c.ampelStates)||!c.ampelStates.length)c.ampelStates=DEFAULT_AMPEL.map(a=>({...a}));
@@ -1180,6 +1220,8 @@ function renderBoard(){
     bm.className="board-meta"+(warns.length?" has-attn":"");
     bm.innerHTML=(warns.length?'<span class="attn-lead">Achtung</span>':'')+warns.join("")+((lc&&vis("lastChanged"))?'<span class="lastchg">zuletzt geändert: '+hhmm(lc)+' Uhr</span>':'');}
   const lanes=document.getElementById("lanes"); lanes.innerHTML="";
+  lanes.dataset.layout=boardLayout();lanes.dataset.cstyle=cardStyle();lanes.dataset.density=cardDensity();
+  if(boardLayout()==="table"){renderBoardTable(lanes,station);return;}
   ROOMS.forEach(rk=>{
     const list=casesForRoom(ui.currentDate,rk);
     const lane=document.createElement("div"); lane.className="lane";
@@ -1205,6 +1247,37 @@ function runCustomButton(b,c){
   else if(b.action==="toggleCritical"){c.forceCritical=!c.forceCritical;touchCase(c);persist();renderBoard();}
   else if(b.action==="addBadge"){if(p.badge){c.warnBadges=Array.isArray(c.warnBadges)?c.warnBadges:[];const i=c.warnBadges.indexOf(p.badge);if(i>=0)c.warnBadges.splice(i,1);else c.warnBadges.push(p.badge);touchCase(c);persist();renderBoard();}}
   else if(b.action==="openLink"){const url=fillTemplate(p.urlTemplate||"",c);if(url){try{window.open(url,"_blank");}catch(e){}}}
+}
+function fieldCatalog(){
+  const base=[["station","Station"],["indikation","Indikation"],["untersuchung","Untersuchung"],["zugang","Zugang"],["untersucher","Untersucher"],["fallnummer","Fallnummer"],["geburtsdatum","Geburtsdatum"],["dauer","Dauer"],["anmerkung","Anmerkung"]];
+  const cf=((state.config&&state.config.customFields)||[]).map(f=>[f.key,f.label]);
+  return base.concat(cf);
+}
+function fieldLabel(key){const f=fieldCatalog().find(x=>x[0]===key);return f?f[1]:key;}
+function alwaysSet(){return new Set((state.config&&state.config.alwaysFields)||[]);}
+function boardLayout(){return (state.config&&state.config.boardLayout)||"columns";}
+function fieldVisible(key){
+  if(key==="station")return vis("cardStation");
+  if(key==="untersucher")return vis("cardUntersucher");
+  if(key==="dauer")return vis("cardDauer");
+  const cf=((state.config&&state.config.customFields)||[]).find(x=>x.key===key);
+  if(cf)return cf.showOnCard!==false;
+  return true;
+}
+function fieldCrit(c,key){if(key==="station")return CRITICAL_STATIONS.includes(normStation(c.station));if(key==="indikation")return /STEMI/i.test(c.indikation||"");return false;}
+function caseFieldValue(c,key){
+  switch(key){
+    case "station":return c.station||"";
+    case "indikation":return c.indikation||"";
+    case "untersuchung":return c.untersuchung||"";
+    case "zugang":return c.zugang||"";
+    case "untersucher":return untersucherText(c)||"";
+    case "fallnummer":return c.fallnummer||"";
+    case "geburtsdatum":return c.geburtsdatum?c.geburtsdatum.split("-").reverse().join("."):"";
+    case "dauer":return (c.dauer!=null&&c.dauer!=="")?(c.dauer+" min"):"";
+    case "anmerkung":return c.anmerkung||"";
+    default: if(c.custom&&c.custom[key]!=null){const f=((state.config&&state.config.customFields)||[]).find(x=>x.key===key);if(f&&f.type==="bool")return c.custom[key]?"ja":"nein";const v=c.custom[key];return v===""?"":String(v);} return "";
+  }
 }
 function makeCard(c,station){
   if(c.requested){
@@ -1236,18 +1309,15 @@ function makeCard(c,station){
   card.style.setProperty("--phase",pc);
   if(calm)card.style.background="";else card.style.background=tint(c.done?"#15803d":st.color);
   const nameLine=(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+escapeHtml(fullName(c));
-  const stationCrit=CRITICAL_STATIONS.includes(normStation(c.station));
+  const showAll=!compact||expanded;
+  const always=alwaysSet();
   let meta="";
-  if(c.station&&vis("cardStation"))meta+='<span'+(stationCrit?' class="stcrit"':'')+'>Station: <b>'+escapeHtml(c.station)+'</b></span>';
-  if(c.indikation)  meta+='<span'+(/STEMI/i.test(c.indikation)?' class="stcrit"':'')+'>Indikation: <b>'+escapeHtml(c.indikation)+'</b></span>';
-  if(c.untersuchung)meta+='<span>Untersuchung: <b>'+escapeHtml(c.untersuchung)+'</b></span>';
-  if(c.zugang)      meta+='<span>Zugang: <b>'+escapeHtml(c.zugang)+'</b></span>';
-  const utext=untersucherText(c); if(utext&&vis("cardUntersucher")) meta+='<span>Untersucher: <b>'+escapeHtml(utext)+'</b></span>';
-  if(c.fallnummer)  meta+='<span>Fallnr.: <b>'+escapeHtml(c.fallnummer)+'</b></span>';
-  if(c.geburtsdatum)meta+='<span>geb.: <b>'+escapeHtml(c.geburtsdatum.split("-").reverse().join("."))+'</b></span>';
-  if(c.anmerkung)   meta+='<span>Anmerkung: <b>'+escapeHtml(c.anmerkung)+'</b></span>';
-  if(c.dauer!=null&&c.dauer!==""&&vis("cardDauer"))meta+='<span>Dauer: <b>'+c.dauer+' min</b></span>';
-  if(c.custom&&Array.isArray(state.config.customFields)){state.config.customFields.forEach(f=>{if(f.showOnCard===false)return;let val=c.custom[f.key];if(val==null||val==="")return;if(f.type==="bool")val=val?"ja":"nein";meta+='<span>'+escapeHtml(f.label)+': <b>'+escapeHtml(String(val))+'</b></span>';});}
+  fieldCatalog().forEach(function(f){const key=f[0],label=f[1];
+    if(!fieldVisible(key))return;
+    const val=caseFieldValue(c,key);if(val==="")return;
+    if(!showAll&&!always.has(key))return;
+    meta+='<span'+(fieldCrit(c,key)?' class="stcrit"':'')+'>'+escapeHtml(label)+': <b>'+escapeHtml(val)+'</b></span>';
+  });
   const wb=(vis("cardBadges")&&Array.isArray(c.warnBadges)&&c.warnBadges.length)?'<div class="wbadges">'+c.warnBadges.map(b=>'<span class="wbadge" title="'+escapeHtml(b)+'">⚠ '+escapeHtml(b)+'</span>').join("")+'</div>':"";
   let tags=""; const wi=waitInfo(c); if(wi&&vis("waitDot"))tags+='<span class="waitdot '+wi.color+'" title="Wartezeit in dieser Phase"><span class="dot"></span>'+wi.mins+' min</span>'; if(crit&&vis("criticalHighlight"))tags+='<span class="crit-tag">⚠ Kritisch</span>'; if(c.done)tags+='<span class="done-tag">✓ Fertig</span>';
   let acts="";
@@ -1287,10 +1357,80 @@ function makeCard(c,station){
     card.addEventListener("dragend",()=>{card.classList.remove("dragging");document.querySelectorAll(".lane-strip").forEach(s=>s.classList.remove("dragover"));renderBoard();});
   }
   const expBtn=card.querySelector(".expander");
-  function toggleExp(e){if(e){e.stopPropagation();}ui.expanded=ui.expanded||new Set();if(ui.expanded.has(c.id))ui.expanded.delete(c.id);else ui.expanded.add(c.id);const on=card.classList.toggle("expanded");const cr=card.querySelector(".expander");if(cr)cr.textContent=on?"▾":"▸";}
+  function toggleExp(e){if(e){e.stopPropagation();}ui.expanded=ui.expanded||new Set();if(ui.expanded.has(c.id))ui.expanded.delete(c.id);else ui.expanded.add(c.id);renderBoard();}
   if(expBtn)expBtn.addEventListener("click",toggleExp);
   if(compact){const pn=card.querySelector(".pname");if(pn){pn.style.cursor="pointer";pn.addEventListener("click",e=>{e.stopPropagation();toggleExp();});pn.addEventListener("mousedown",e=>e.stopPropagation());}}
   return card;
+}
+function statusSelectEl(c,station){
+  const sel=document.createElement("select");sel.className="status";
+  const opts=station?STATUSES.filter(s=>STATION_ALLOWED.includes(s.key)):STATUSES;
+  opts.forEach(s=>{const o=document.createElement("option");o.value=s.key;o.textContent=s.label;sel.appendChild(o);});
+  sel.value=c.status;
+  sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);if(SAAL_ROOMS.includes(String(c.room))){if(c.status==="wird_aufgelegt")setRoomAmpel(c.date,c.room,"belegt");else if(c.status==="ruecktransport")setRoomAmpel(c.date,c.room,"vorbereitung");}persist();renderBoard();});
+  sel.addEventListener("mousedown",e=>e.stopPropagation());
+  return sel;
+}
+function tableColumns(){let cols=((state.config&&state.config.alwaysFields)||[]).filter(k=>fieldVisible(k));if(!cols.length)cols=["station","indikation","untersuchung"];return cols;}
+function renderBoardTable(lanes,station){
+  const cols=tableColumns();
+  ROOMS.forEach(rk=>{
+    const list=casesForRoom(ui.currentDate,rk);
+    const saal=!station&&SAAL_ROOMS.includes(rk);
+    const lane=document.createElement("div");lane.className="lane tablelane";
+    const head=document.createElement("div");head.className="lane-head"+(saal?" saal":"");
+    if(saal){const r=getRoom(ui.currentDate,rk);head.style.setProperty("--amp",(AMPEL_MAP[r.ampel]||AMPEL[0]).color);head.innerHTML=buildSaalHead(rk,list.length,r);}
+    else head.innerHTML='<span class="rname">'+roomName(rk)+'</span><span class="badge">'+list.length+'</span>';
+    lane.appendChild(head);
+    const table=document.createElement("table");table.className="ptable";
+    const thead=document.createElement("thead");
+    thead.innerHTML='<tr><th class="c-st">Status</th><th class="c-name">Name</th>'+cols.map(k=>'<th>'+escapeHtml(fieldLabel(k))+'</th>').join("")+(station?'':'<th class="c-act"></th>')+'</tr>';
+    table.appendChild(thead);
+    const tbody=document.createElement("tbody");tbody.dataset.room=rk;
+    if(list.length===0){const tr=document.createElement("tr");tr.className="empty-row";tr.innerHTML='<td colspan="'+(cols.length+(station?2:3))+'">frei</td>';tbody.appendChild(tr);}
+    else list.forEach(c=>tbody.appendChild(makeRow(c,station,cols)));
+    table.appendChild(tbody);lane.appendChild(table);
+    if(!station){const add=document.createElement("button");add.className="addcard tableadd";add.innerHTML="＋ Patient";add.addEventListener("click",()=>{resetForm();document.getElementById("f-room").value=rk;document.getElementById("f-date").value=ui.currentDate;setView("plan");toast("Neuer Fall für "+roomName(rk));});lane.appendChild(add);}
+    if(!station)attachRowDnD(tbody);
+    lanes.appendChild(lane);
+    if(saal)wireSaalHead(head,ui.currentDate,rk);
+  });
+}
+function makeRow(c,station,cols){
+  const st=STATUS_MAP[c.status]||STATUSES[0];const crit=isCritical(c);const ph=phaseOf(c);const pc=phaseColor(ph);
+  const tr=document.createElement("tr");
+  tr.className="prow"+(c.done?" done":"")+(c.done&&state.config.dimDone!==false?" dim":"")+(crit&&vis("criticalHighlight")?" critical":"")+(station?"":" drag")+((ui.searchQuery&&ui.searchQuery.trim()&&matchCase(c,ui.searchQuery.trim().toLowerCase()))?" searchhit":"");
+  tr.dataset.id=c.id;tr.draggable=!station;tr.style.setProperty("--phase",pc);
+  const tdSt=document.createElement("td");tdSt.className="c-st";
+  const stWrap=document.createElement("div");stWrap.className="st-cell";
+  if(station&&!STATION_ALLOWED.includes(c.status))stWrap.innerHTML='<span class="statictstatus">'+escapeHtml(st.label)+'</span>';
+  else stWrap.appendChild(statusSelectEl(c,station));
+  let tg="";const wi=waitInfo(c);if(wi&&vis("waitDot"))tg+='<span class="waitdot '+wi.color+'" title="Wartezeit"><span class="dot"></span>'+wi.mins+'</span>';if(crit&&vis("criticalHighlight"))tg+='<span class="crit-tag" title="Kritisch">⚠</span>';if(c.done)tg+='<span class="done-tag">✓</span>';
+  if(tg){const tge=document.createElement("div");tge.className="row-tags";tge.innerHTML=tg;stWrap.appendChild(tge);}
+  tdSt.appendChild(stWrap);tr.appendChild(tdSt);
+  const tdName=document.createElement("td");tdName.className="c-name";tdName.innerHTML='<b>'+(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+escapeHtml(fullName(c))+'</b>';tr.appendChild(tdName);
+  cols.forEach(k=>{const td=document.createElement("td");const val=caseFieldValue(c,k);if(val&&fieldCrit(c,k))td.className="stcrit";td.innerHTML=val?escapeHtml(val):'<span class="rmuted">–</span>';tr.appendChild(td);});
+  if(!station){
+    const tdAct=document.createElement("td");tdAct.className="c-act";
+    let html="";
+    if(vis("cardActions"))html+='<button class="ricon edit" title="Bearbeiten">✎</button><button class="ricon cancel" title="Absagen">⊘</button><button class="ricon del" title="Löschen">✕</button>';
+    (state.config.customButtons||[]).forEach((b,i)=>{html+='<button class="ricon cbtn" data-cb="'+i+'" title="'+escapeHtml(b.label||"Aktion")+'">'+escapeHtml(b.icon||"●")+'</button>';});
+    if(vis("doneCheck"))html+='<label class="rdone" title="Fertig"><input type="checkbox" '+(c.done?"checked":"")+'></label>';
+    tdAct.innerHTML=html;tr.appendChild(tdAct);
+    const eb=tdAct.querySelector(".edit");if(eb)eb.addEventListener("click",()=>{loadIntoForm(c);setView("plan");});
+    const cb=tdAct.querySelector(".cancel");if(cb)cb.addEventListener("click",()=>openCancelModal(c.id));
+    const xb=tdAct.querySelector(".del");if(xb)xb.addEventListener("click",()=>{if(confirm("Diesen Patienten endgültig aus dem Plan entfernen? (Für Absagen bitte den ⊘-Knopf nutzen)")){const d=c.date,r=c.room;state.cases=state.cases.filter(x=>x.id!==c.id);renumber(d,r);persist();renderBoard();toast("Patient entfernt.");}});
+    tdAct.querySelectorAll(".cbtn").forEach(btn=>btn.addEventListener("click",()=>runCustomButton((state.config.customButtons||[])[+btn.dataset.cb],c)));
+    const db=tdAct.querySelector(".rdone input");if(db)db.addEventListener("change",e=>{c.done=e.target.checked;touchCase(c);persist();renderBoard();});
+    tr.addEventListener("dragstart",e=>{tr.classList.add("dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",c.id);});
+    tr.addEventListener("dragend",()=>{tr.classList.remove("dragging");renderBoard();});
+  }
+  return tr;
+}
+function getRowAfter(tbody,y){const els=[...tbody.querySelectorAll("tr.prow:not(.dragging)")];return els.reduce((closest,el)=>{const box=el.getBoundingClientRect();const offset=y-box.top-box.height/2;if(offset<0&&offset>closest.offset)return{offset:offset,element:el};return closest;},{offset:-Infinity,element:null}).element;}
+function attachRowDnD(tbody){
+  tbody.addEventListener("dragover",e=>{e.preventDefault();const dragging=document.querySelector("tr.dragging");if(!dragging)return;const after=getRowAfter(tbody,e.clientY);if(after==null)tbody.appendChild(dragging);else tbody.insertBefore(dragging,after);});
+  tbody.addEventListener("drop",e=>{e.preventDefault();const id=e.dataTransfer.getData("text/plain");const c=state.cases.find(x=>x.id===id);if(!c)return;const od=c.date,or=c.room,nr=tbody.dataset.room;const order=[...tbody.querySelectorAll("tr.prow")].map(el=>el.dataset.id);order.forEach((cid,i)=>{const cc=state.cases.find(x=>x.id===cid);if(cc){cc.room=nr;cc.date=ui.currentDate;cc.position=i;}});if(or!==nr||od!==ui.currentDate)renumber(od,or);persist();renderBoard();});
 }
 function attachDnD(strip){
   strip.addEventListener("dragover",e=>{e.preventDefault();strip.classList.add("dragover");const dragging=document.querySelector(".card.dragging");if(!dragging)return;const empty=strip.querySelector(".lane-empty");if(empty)empty.remove();const after=getDragAfterElementX(strip,e.clientX);const addtile=strip.querySelector(".addcard");if(after==null){if(addtile)strip.insertBefore(dragging,addtile);else strip.appendChild(dragging);}else strip.insertBefore(dragging,after);});
@@ -1766,7 +1906,30 @@ function renderAdminRegeln(body){
 function renderAdminDarstellung(body){
   const dr=adminDraft;
   if(!dr.phases)dr.phases=JSON.parse(JSON.stringify(DEFAULT_PHASES));
+  if(!Array.isArray(dr.alwaysFields))dr.alwaysFields=["station","indikation","untersuchung","zugang","untersucher"];
   body.innerHTML='<div class="admin-grid2"></div>';const grid=body.querySelector(".admin-grid2");
+  // Layout
+  const cl=document.createElement("div");cl.className="admin-card";
+  cl.innerHTML='<h3>Board-Layout</h3><p class="hint">„Spalten" = Säle nebeneinander mit Karten. „Tabelle" = Säle untereinander, Patienten als Zeilen mit festen Spalten (maximaler Überblick).</p>'+
+    '<div class="adm-radios">'+
+    '<label class="adm-radio"><input type="radio" name="blay" value="columns"'+((dr.boardLayout||"columns")==="columns"?" checked":"")+'><span><b>Spalten (Karten)</b> – Säle nebeneinander.</span></label>'+
+    '<label class="adm-radio"><input type="radio" name="blay" value="table"'+((dr.boardLayout||"columns")==="table"?" checked":"")+'><span><b>Tabelle (Zeilen)</b> – Säle untereinander, Spalten je Feld.</span></label>'+
+    '</div>';
+  cl.querySelectorAll('input[name="blay"]').forEach(r=>r.addEventListener("change",e=>{dr.boardLayout=e.target.value;markAdminDirty();}));
+  grid.appendChild(cl);
+  // Immer sichtbare Felder
+  const cf=document.createElement("div");cf.className="admin-card";
+  cf.innerHTML='<h3>Immer sichtbare Felder</h3><p class="hint">Diese Felder erscheinen sofort auf der Karte (auch kompakt, ohne Aufklappen) und bilden die Spalten der Tabelle. Übrige Felder erscheinen beim Aufklappen.</p><div class="adm-toggles" id="alwaysList"></div>';
+  const al=cf.querySelector("#alwaysList");
+  const cat=[["station","Station"],["indikation","Indikation"],["untersuchung","Untersuchung"],["zugang","Zugang"],["untersucher","Untersucher"],["fallnummer","Fallnummer"],["geburtsdatum","Geburtsdatum"],["dauer","Dauer"],["anmerkung","Anmerkung"]].concat(((adminDraft.customFields||[]).map(f=>[f.key,f.label+" (Zusatzfeld)"])));
+  cat.forEach(it=>{
+    const on=(dr.alwaysFields||[]).includes(it[0]);
+    const row=document.createElement("label");row.className="adm-toggle";
+    row.innerHTML='<input type="checkbox"'+(on?" checked":"")+'><span>'+escapeHtml(it[1])+'</span>';
+    row.querySelector("input").addEventListener("change",e=>{const arr=dr.alwaysFields||(dr.alwaysFields=[]);const i=arr.indexOf(it[0]);if(e.target.checked){if(i<0)arr.push(it[0]);}else{if(i>=0)arr.splice(i,1);}markAdminDirty();});
+    al.appendChild(row);
+  });
+  grid.appendChild(cf);
   // Kartenstil
   const c1=document.createElement("div");c1.className="admin-card";
   c1.innerHTML='<h3>Kartenstil</h3><p class="hint">„Ruhig" = neutrale Karten mit schmalem Phasen-Akzent (empfohlen). „Klassisch" = farbige Statusfläche.</p>'+
