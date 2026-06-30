@@ -488,6 +488,21 @@
   .adm-radio{display:flex;align-items:flex-start;gap:10px;font-size:13px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;cursor:pointer}
   .adm-radio input{margin-top:2px;width:16px;height:16px;flex:none}
   .adm-mincount{font-size:13px;font-weight:600}
+  .adm-navsearch{padding:2px 2px 8px}
+  .adm-navsearch input{width:100%;font-family:inherit;font-size:12.5px;padding:6px 9px;border:1px solid var(--line);border-radius:7px;background:var(--input-bg);color:var(--ink)}
+  .tool-btn.sm{font-size:12px;padding:5px 10px}
+  .tool-btn.danger:hover{background:var(--crit);color:#fff;border-color:var(--crit)}
+  .io-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);margin-bottom:6px}
+  .io-name{font-size:13px;font-weight:700}.io-time{font-weight:400;color:var(--muted);font-size:11.5px;margin-left:6px}
+  .val-ok{color:#16a34a;font-weight:700}.val-err{color:var(--crit);margin:4px 0}.val-warn{color:#b45309;margin:8px 0 4px}
+  .val-list{margin:0 0 6px;padding-left:20px;font-size:12.5px}.val-list.err li{color:var(--crit)}.val-list.warn li{color:#b45309}
+  .reset-grid{display:flex;flex-wrap:wrap;gap:8px}
+  .aut-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px;font-size:13px;font-weight:600}
+  .aut-row select{font-family:inherit;font-size:12.5px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--input-bg);color:var(--ink);min-width:200px}
+  .aut-h{margin:14px 0 8px;font-size:13px;color:var(--brand-l)}
+  .coup-row{display:grid;grid-template-columns:1fr auto 200px;gap:10px;align-items:center;margin-bottom:6px;font-size:13px}
+  .coup-arr{color:var(--muted)}
+  .coup-row select{font-family:inherit;font-size:12.5px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--input-bg);color:var(--ink)}
   .cf-row,.rl-row{border:1px solid var(--line);border-radius:9px;padding:8px 10px;margin-bottom:8px;background:var(--panel-2)}
   .cf-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .cf-line input[data-f="label"],.cf-line input[data-b="label"]{flex:1;min-width:140px}
@@ -900,6 +915,11 @@ function ensureConfig(){
   if(!c.cardDensity)c.cardDensity="compact";
   if(!c.boardLayout)c.boardLayout="columns";
   if(!Array.isArray(c.alwaysFields))c.alwaysFields=["station","indikation","untersuchung","zugang","untersucher"];
+  if(!c.coupling)c.coupling={wird_aufgelegt:"belegt",ruecktransport:"vorbereitung"};
+  if(!c.startStatus)c.startStatus="geplant";
+  if(c.autoDoneStatus==null)c.autoDoneStatus="";
+  if(!c.tabs)c.tabs={};
+  if(!c.branding)c.branding={klinik:"",accent:""};
   if(c.attnBar==null)c.attnBar=true;
   if(c.dimDone==null)c.dimDone=true;
   if(!Array.isArray(c.ampelStates)||!c.ampelStates.length)c.ampelStates=DEFAULT_AMPEL.map(a=>({...a}));
@@ -956,6 +976,14 @@ function hhmm(isoStr){const d=new Date(isoStr);return String(d.getHours()).padSt
 function roomKey(date,room){return date+"|"+room;}
 function getRoom(date,room){const k=roomKey(date,room);if(!state.rooms[k])state.rooms[k]={ampel:"frei",note:"",personnel:[]};const r=state.rooms[k];if(!Array.isArray(r.personnel))r.personnel=[];const defRole=(state.config&&state.config.roles&&state.config.roles[0])?state.config.roles[0].key:"steril";r.personnel=r.personnel.map(p=>typeof p==="string"?{name:p,role:defRole}:(p&&typeof p==="object"?{name:p.name,role:p.role||defRole}:null)).filter(Boolean);if(!r.ampel)r.ampel="frei";if(r.note===undefined)r.note="";return r;}
 function setRoomAmpel(date,room,key){const r=getRoom(date,room);const old=r.ampel;r.ampel=key;if(key!=="notfall")r.note="";if(key==="notfall"&&old!=="notfall")openNotfall(date,room,r.note);if(old==="notfall"&&key!=="notfall")closeNotfall(date,room);persist();}
+function applyStatusSideEffects(c){
+  const map=(state.config&&state.config.coupling)||{};
+  if(SAAL_ROOMS.includes(String(c.room))&&map[c.status]){setRoomAmpel(c.date,c.room,map[c.status]);}
+  const ad=state.config&&state.config.autoDoneStatus;
+  if(ad&&c.status===ad){c.done=true;}
+}
+function applyTabs(){const tabs=(state.config&&state.config.tabs)||{};document.querySelectorAll("#tabs button").forEach(b=>{const v=b.dataset.view;if(v==="board"||v==="plan")return;b.style.display=(tabs[v]===false)?"none":"";});}
+function applyBranding(){const br=(state.config&&state.config.branding)||{};const r=document.documentElement.style;if(br.accent){r.setProperty("--brand",br.accent);}else{r.removeProperty("--brand");}try{document.title=(br.klinik?br.klinik+" \u2013 ":"")+"HKL-Tagesplan";}catch(e){}}
 function openNotfall(date,room,reason){state.notfallLog=state.notfallLog||[];state.notfallLog.push({id:uid(),date:date,room:room,start:nowIso(),end:null,reason:reason||""});}
 function closeNotfall(date,room){const e=(state.notfallLog||[]).find(x=>x.date===date&&x.room===room&&!x.end);if(e)e.end=nowIso();}
 function updateNotfallReason(date,room,reason){const e=(state.notfallLog||[]).find(x=>x.date===date&&x.room===room&&!x.end);if(e)e.reason=reason;}
@@ -1108,7 +1136,7 @@ function applyRules(c){
     const a=r.then||{},p=a.params||{};
     if(a.action==="setCritical"){c.forceCritical=true;}
     else if(a.action==="addBadge"){if(p.badge){c.warnBadges=Array.isArray(c.warnBadges)?c.warnBadges:[];if(!c.warnBadges.includes(p.badge))c.warnBadges.push(p.badge);}}
-    else if(a.action==="setStatus"){if(p.status&&c.status!==p.status){c.status=p.status;logStatusTime(c,p.status);}}
+    else if(a.action==="setStatus"){if(p.status&&c.status!==p.status){c.status=p.status;logStatusTime(c,p.status);applyStatusSideEffects(c);}}
   });
 }
 function persist(){Store.save(state);}
@@ -1196,7 +1224,7 @@ function saveCase(){
   const reqby=document.getElementById("f-reqby").value.trim();
   const data={anrede:document.getElementById("f-anrede").value,nachname:nachname,vorname:document.getElementById("f-vorname").value.trim(),station:document.getElementById("f-station").value.trim(),fallnummer:document.getElementById("f-fallnr").value.trim(),geburtsdatum:document.getElementById("f-gebdat").value,untersucher:formUntersucher.slice(),indikation:document.getElementById("f-indikation").value.trim(),untersuchung:document.getElementById("f-untersuchung").value.trim(),zugang:document.getElementById("f-zugang").value.trim(),anmerkung:document.getElementById("f-anmerkung").value.trim(),dauer:(document.getElementById("f-dauer").value!==""?+document.getElementById("f-dauer").value:null),warnBadges:formBadges.slice(),custom:collectCustomFields(),room:document.getElementById("f-room").value,date:document.getElementById("f-date").value};
   if(ui.editingId){const c=state.cases.find(x=>x.id===ui.editingId);const od=c.date,or=c.room;c.forceCritical=false;Object.assign(c,data);applyRules(c);c.requested=reqChecked?{by:reqby||(c.requested&&c.requested.by)||"—",at:(c.requested&&c.requested.at)||nowIso()}:null;touchCase(c);if(od!==c.date||or!==c.room){c.position=casesForRoom(c.date,c.room).length-1;renumber(od,or);}toast("Änderungen gespeichert.");}
-  else{data.id=uid();data.status="geplant";data.done=false;data.cancelled=null;data.rejected=null;data.requested=reqChecked?{by:reqby||"—",at:nowIso()}:null;data.statusTimes={geplant:nowIso()};data.updatedAt=nowIso();applyRules(data);data.position=casesForRoom(data.date,data.room).length;state.cases.push(data);toast(reqChecked?"Anfrage angelegt – wartet auf Bestätigung.":"Patient hinzugefügt – "+roomName(data.room)+".");}
+  else{data.id=uid();const ss0=(state.config&&state.config.startStatus)||"geplant";data.status=STATUS_MAP[ss0]?ss0:"geplant";data.done=false;data.cancelled=null;data.rejected=null;data.requested=reqChecked?{by:reqby||"—",at:nowIso()}:null;data.statusTimes={};data.statusTimes[data.status]=nowIso();data.updatedAt=nowIso();applyRules(data);data.position=casesForRoom(data.date,data.room).length;state.cases.push(data);toast(reqChecked?"Anfrage angelegt – wartet auf Bestätigung.":"Patient hinzugefügt – "+roomName(data.room)+".");}
   persist();ui.currentDate=data.date;const keepDate=data.date;resetForm();document.getElementById("f-date").value=keepDate;renderPlanSide();
 }
 function renderPlanSide(){const refDate=document.getElementById("f-date").value||ui.currentDate;document.getElementById("planDayLabel").innerHTML=bigDay(refDate);document.getElementById("planSideTitle").textContent="Belegung am "+displayDate(refDate);renderOccupancy(document.getElementById("planOcc"),refDate);}
@@ -1242,7 +1270,7 @@ function renderBoard(){
 function fillTemplate(tpl,c){return (tpl||"").replace(/\{(\w+)\}/g,(m,k)=>{const v=ruleFieldValue(c,k);return encodeURIComponent(v!=null?v:"");});}
 function runCustomButton(b,c){
   if(!b)return;const p=b.params||{};
-  if(b.action==="setStatus"){if(p.status){c.status=p.status;logStatusTime(c,p.status);touchCase(c);if(SAAL_ROOMS.includes(String(c.room))){if(c.status==="wird_aufgelegt")setRoomAmpel(c.date,c.room,"belegt");else if(c.status==="ruecktransport")setRoomAmpel(c.date,c.room,"vorbereitung");}persist();renderBoard();toast(b.label?b.label+" ✓":"Status gesetzt.");}}
+  if(b.action==="setStatus"){if(p.status){c.status=p.status;logStatusTime(c,p.status);touchCase(c);applyStatusSideEffects(c);persist();renderBoard();toast(b.label?b.label+" ✓":"Status gesetzt.");}}
   else if(b.action==="toggleDone"){c.done=!c.done;touchCase(c);persist();renderBoard();}
   else if(b.action==="toggleCritical"){c.forceCritical=!c.forceCritical;touchCase(c);persist();renderBoard();}
   else if(b.action==="addBadge"){if(p.badge){c.warnBadges=Array.isArray(c.warnBadges)?c.warnBadges:[];const i=c.warnBadges.indexOf(p.badge);if(i>=0)c.warnBadges.splice(i,1);else c.warnBadges.push(p.badge);touchCase(c);persist();renderBoard();}}
@@ -1344,7 +1372,7 @@ function makeCard(c,station){
     const opts = station ? STATUSES.filter(s=>STATION_ALLOWED.includes(s.key)) : STATUSES;
     opts.forEach(s=>{const o=document.createElement("option");o.value=s.key;o.textContent=s.label;sel.appendChild(o);});
     sel.value=c.status;
-    sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);if(SAAL_ROOMS.includes(String(c.room))){if(c.status==="wird_aufgelegt")setRoomAmpel(c.date,c.room,"belegt");else if(c.status==="ruecktransport")setRoomAmpel(c.date,c.room,"vorbereitung");}persist();renderBoard();});
+    sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);applyStatusSideEffects(c);persist();renderBoard();});
     sel.addEventListener("mousedown",e=>e.stopPropagation());
   }
   if(!station){
@@ -1367,7 +1395,7 @@ function statusSelectEl(c,station){
   const opts=station?STATUSES.filter(s=>STATION_ALLOWED.includes(s.key)):STATUSES;
   opts.forEach(s=>{const o=document.createElement("option");o.value=s.key;o.textContent=s.label;sel.appendChild(o);});
   sel.value=c.status;
-  sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);if(SAAL_ROOMS.includes(String(c.room))){if(c.status==="wird_aufgelegt")setRoomAmpel(c.date,c.room,"belegt");else if(c.status==="ruecktransport")setRoomAmpel(c.date,c.room,"vorbereitung");}persist();renderBoard();});
+  sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);applyStatusSideEffects(c);persist();renderBoard();});
   sel.addEventListener("mousedown",e=>e.stopPropagation());
   return sel;
 }
@@ -1571,7 +1599,29 @@ function dclone(o){return JSON.parse(JSON.stringify(o));}
 function openAdmin(){const pw=(state.config&&state.config.adminPw)||"admin";if(!adminUnlocked){const p=prompt("Admin-Passwort (Standard: admin):");if(p===null)return;if(p!==pw){toast("Falsches Passwort.");return;}adminUnlocked=true;}startAdmin();setView("admin");}
 function startAdmin(){ensureConfig();adminDraft=dclone(state.config);adminDraft._roomLabel=state.settings.roomLabel;}
 function adminDirty(){if(!adminDraft)return false;const a=dclone(adminDraft);delete a._roomLabel;return JSON.stringify(a)!==JSON.stringify(state.config)||adminDraft._roomLabel!==state.settings.roomLabel;}
-function saveAdmin(){const lbl=adminDraft._roomLabel;const d=dclone(adminDraft);delete d._roomLabel;state.config=d;state.settings.roomLabel=lbl;ensureConfig();syncRuntime();persist();applyConfigColors();populateRoomSelect();fillChipSelects();fillVorlagen();fillAbsageReasons();applyFeatureToggles();applyDisplay();applyTheme(state.config.defaultTheme||state.settings.theme);startAdmin();renderAdmin();toast("Konfiguration gespeichert.");}
+function cfgHistory(){try{return JSON.parse(localStorage.getItem("hkl_cfg_history")||"[]");}catch(e){return [];}}
+function pushSnapshot(label){try{const h=cfgHistory();h.unshift({ts:nowIso(),label:label||"Automatisch",config:dclone(state.config)});while(h.length>15)h.pop();localStorage.setItem("hkl_cfg_history",JSON.stringify(h));}catch(e){}}
+function cfgProfiles(){try{return JSON.parse(localStorage.getItem("hkl_profiles")||"{}");}catch(e){return {};}}
+function saveProfile(name){if(!name)return;const p=cfgProfiles();const d=dclone(adminDraft);delete d._roomLabel;p[name]=d;try{localStorage.setItem("hkl_profiles",JSON.stringify(p));}catch(e){}}
+function deleteProfile(name){const p=cfgProfiles();delete p[name];try{localStorage.setItem("hkl_profiles",JSON.stringify(p));}catch(e){}}
+function validateConfig(cfg){
+  const errors=[],warnings=[];const Q=s=>"\u201E"+s+"\u201C";
+  (cfg.saele||[]).forEach((s,i)=>{if(!s.name||!String(s.name).trim())errors.push("Saal "+(i+1)+" ohne Namen.");if(!s.id)errors.push("Saal "+Q(s.name||(i+1))+" ohne Kennung.");});
+  const skeys={};(cfg.statuses||[]).forEach(s=>{if(!s.key)errors.push("Status "+Q(s.label||"?")+" ohne Schl\u00fcssel.");else{if(skeys[s.key])errors.push("Doppelter Status-Schl\u00fcssel: "+s.key);skeys[s.key]=1;}if(!s.phase)warnings.push("Status "+Q(s.label||s.key)+" ohne Phase.");});
+  (cfg.roles||[]).forEach(r=>{if(!r.key)errors.push("Rolle "+Q(r.label||"?")+" ohne Schl\u00fcssel.");});
+  (cfg.customFields||[]).forEach(f=>{if(!f.key)errors.push("Zusatzfeld "+Q(f.label||"?")+" ohne Schl\u00fcssel.");if(f.type==="select"&&(!f.options||!f.options.length))warnings.push("Auswahlfeld "+Q(f.label||f.key)+" ohne Optionen.");});
+  if(cfg.startStatus&&!(cfg.statuses||[]).some(s=>s.key===cfg.startStatus))warnings.push("Start-Status verweist auf einen unbekannten Status.");
+  const known=["station","indikation","untersuchung","zugang","untersucher","fallnummer","geburtsdatum","dauer","anmerkung"].concat((cfg.customFields||[]).map(f=>f.key));
+  (cfg.alwaysFields||[]).forEach(k=>{if(!known.includes(k))warnings.push("Immer-sichtbares Feld unbekannt: "+k);});
+  return {errors:errors,warnings:warnings};
+}
+function saveAdmin(){
+  const v=validateConfig(adminDraft);
+  if(v.errors.length){toast("Nicht gespeichert – bitte korrigieren: "+v.errors[0]);adminSection="sichern";renderAdmin();return;}
+  pushSnapshot("Vor Speicherung");
+  const lbl=adminDraft._roomLabel;const d=dclone(adminDraft);delete d._roomLabel;state.config=d;state.settings.roomLabel=lbl;ensureConfig();syncRuntime();persist();applyConfigColors();applyBranding();applyTabs();populateRoomSelect();fillChipSelects();fillVorlagen();fillAbsageReasons();applyFeatureToggles();applyDisplay();applyTheme(state.config.defaultTheme||state.settings.theme);startAdmin();renderAdmin();
+  toast(v.warnings.length?("Gespeichert – "+v.warnings.length+" Hinweis(e), siehe Sichern."):"Konfiguration gespeichert.");
+}
 function applyFeatureToggles(){const on=!state.config||!state.config.featureToggles||state.config.featureToggles.requests!==false;const box=document.querySelector(".reqbox");if(box)box.style.display=on?"":"none";}
 function discardAdmin(){startAdmin();renderAdmin();toast("Änderungen verworfen.");}
 function arrMove(arr,from,to){if(from===to||from<0||to<0||from>=arr.length||to>=arr.length)return;const[m]=arr.splice(from,1);arr.splice(to,0,m);}
@@ -1617,12 +1667,16 @@ function renderAdmin(){
   const g=document.getElementById("adminGrid");
   const meta=SECTION_META[adminSection]||{icon:"",desc:""};
   const curLabel=(ADMIN_SECTIONS.find(s=>s[0]===adminSection)||["",""])[1];
-  const nav='<nav class="adm-nav">'+ADMIN_SECTIONS.map(s=>{const m=SECTION_META[s[0]]||{};return '<button class="'+(adminSection===s[0]?"active":"")+'" data-sec="'+s[0]+'"><span class="ico">'+(m.icon||"•")+'</span><span class="lbl">'+escapeHtml(s[1])+'</span></button>';}).join("")+'</nav>';
+  const nav='<nav class="adm-nav"><div class="adm-navsearch"><input type="text" id="adm-search" placeholder="Suchen …" value="'+escapeHtml(ui.adminSearch||"")+'"></div>'+ADMIN_SECTIONS.map(s=>{const m=SECTION_META[s[0]]||{};return '<button class="'+(adminSection===s[0]?"active":"")+'" data-sec="'+s[0]+'" data-label="'+escapeHtml((s[1]+" "+(m.desc||"")).toLowerCase())+'"><span class="ico">'+(m.icon||"•")+'</span><span class="lbl">'+escapeHtml(s[1])+'</span></button>';}).join("")+'</nav>';
   const dirty=adminDirty();
   const header='<header class="adm-head"><h2><span class="ico">'+(meta.icon||"")+'</span>'+escapeHtml(curLabel)+'</h2><p>'+escapeHtml(meta.desc||"")+'</p></header>';
   const footer='<div class="adm-footer'+(dirty?" dirty":"")+'"><span class="adm-dirty'+(dirty?" on":"")+'">'+(dirty?"● Nicht gespeicherte Änderungen":"✓ Alle Änderungen gespeichert")+'</span><button class="adm-discard" id="adm-discard"'+(dirty?"":" disabled")+'>Verwerfen</button><button class="adm-save" id="adm-save"'+(dirty?"":" disabled")+'>Speichern</button></div>';
   g.innerHTML='<div class="adm-shell">'+nav+'<section class="adm-main">'+header+'<div class="adm-body" id="admBody"></div></section></div>'+footer;
   g.querySelectorAll(".adm-nav button").forEach(b=>b.addEventListener("click",()=>{adminSection=b.dataset.sec;renderAdmin();}));
+  const asearch=g.querySelector("#adm-search");
+  if(asearch){const applyFilter=()=>{const q=(asearch.value||"").toLowerCase().trim();ui.adminSearch=asearch.value;g.querySelectorAll(".adm-nav button").forEach(b=>{b.style.display=(!q||(b.dataset.label||"").indexOf(q)>=0)?"":"none";});};
+    asearch.addEventListener("input",applyFilter);applyFilter();
+    asearch.addEventListener("keydown",e=>{if(e.key==="Enter"){const vis=[...g.querySelectorAll('.adm-nav button')].filter(b=>b.style.display!=="none");if(vis[0]){adminSection=vis[0].dataset.sec;renderAdmin();}}});}
   const save=g.querySelector("#adm-save"),disc=g.querySelector("#adm-discard");
   if(save&&!save.disabled)save.addEventListener("click",saveAdmin);
   if(disc&&!disc.disabled)disc.addEventListener("click",discardAdmin);
@@ -1703,6 +1757,25 @@ function renderAdminStatus(body){
   });
   card.querySelector("#adm-status-add").addEventListener("click",()=>{const key="status_"+Date.now().toString(36);arr.push({key:key,label:"Neuer Status",color:"#64748b",phase:"prep",station:false,waitStart:false,waitStop:false});renderAdmin();});
   body.appendChild(card);
+  // Automatik
+  if(!adminDraft.coupling)adminDraft.coupling={};
+  const stOpts=sel=>'<option value="">—</option>'+arr.map(s=>'<option value="'+s.key+'"'+(s.key===sel?" selected":"")+'>'+escapeHtml(s.label)+'</option>').join("");
+  const ampOpts=sel=>'<option value="">— keine —</option>'+(adminDraft.ampelStates||DEFAULT_AMPEL).map(a=>'<option value="'+a.key+'"'+(a.key===sel?" selected":"")+'>'+escapeHtml(a.label)+'</option>').join("");
+  const ac=document.createElement("div");ac.className="admin-card wide";
+  ac.innerHTML='<h3>Automatik</h3><p class="hint">Start-Status neuer Patienten, automatisches Setzen von „Fertig" sowie die Kopplung „Status &rarr; Saal-Ampel" (beim Setzen eines Status wird die Ampel des Saals automatisch umgeschaltet).</p>'+
+    '<div class="aut-row"><label>Start-Status neuer Patienten</label><select id="aut-start">'+stOpts(adminDraft.startStatus)+'</select></div>'+
+    '<div class="aut-row"><label>Status, der automatisch „Fertig" setzt</label><select id="aut-done">'+stOpts(adminDraft.autoDoneStatus)+'</select></div>'+
+    '<h4 class="aut-h">Kopplung Status &rarr; Saal-Ampel</h4><div class="coup-list"></div>';
+  ac.querySelector("#aut-start").addEventListener("change",e=>{adminDraft.startStatus=e.target.value||"geplant";markAdminDirty();});
+  ac.querySelector("#aut-done").addEventListener("change",e=>{adminDraft.autoDoneStatus=e.target.value;markAdminDirty();});
+  const cl=ac.querySelector(".coup-list");
+  arr.forEach(s=>{
+    const row=document.createElement("div");row.className="coup-row";
+    row.innerHTML='<span class="coup-st">'+escapeHtml(s.label)+'</span><span class="coup-arr">&rarr;</span><select data-st="'+s.key+'">'+ampOpts(adminDraft.coupling[s.key]||"")+'</select>';
+    row.querySelector("select").addEventListener("change",e=>{if(e.target.value)adminDraft.coupling[s.key]=e.target.value;else delete adminDraft.coupling[s.key];markAdminDirty();});
+    cl.appendChild(row);
+  });
+  body.appendChild(ac);
 }
 function renderAdminFarben(body){
   body.innerHTML='<div class="admin-grid2"></div>';const grid=body.querySelector(".admin-grid2");
@@ -1748,6 +1821,18 @@ function renderAdminAllgemein(body){
   card.querySelector("#g-req").addEventListener("change",e=>{D.featureToggles=D.featureToggles||{};D.featureToggles.requests=e.target.checked;markAdminDirty();});
   card.querySelector("#g-pw").addEventListener("change",e=>{D.adminPw=e.target.value||"admin";markAdminDirty();});
   body.appendChild(card);
+  // Branding
+  if(!D.branding)D.branding={klinik:"",accent:""};
+  const bc=document.createElement("div");bc.className="admin-card wide";
+  bc.innerHTML='<h3>Branding</h3><p class="hint">Eigener Klinik-/Abteilungsname (erscheint u. a. im Wandmonitor und Browser-Titel) und eine Akzentfarbe für die Oberfläche.</p>'+
+    '<div class="adm-gen">'+
+    '<label>Klinik-/Abteilungsname <input type="text" id="b-klinik" placeholder="z. B. HKL Klinikum Kassel" value="'+escapeHtml(D.branding.klinik||"")+'"></label>'+
+    '<label class="chkline">Akzentfarbe <input type="color" id="b-accent" value="'+escapeHtml(D.branding.accent||"#19b0c7")+'"> <button class="tool-btn sm" id="b-accent-reset" type="button">Standard</button></label>'+
+    '</div>';
+  bc.querySelector("#b-klinik").addEventListener("input",e=>{D.branding.klinik=e.target.value;markAdminDirty();});
+  bc.querySelector("#b-accent").addEventListener("input",e=>{D.branding.accent=e.target.value;markAdminDirty();});
+  bc.querySelector("#b-accent-reset").addEventListener("click",()=>{D.branding.accent="";markAdminDirty();renderAdmin();});
+  body.appendChild(bc);
 }
 function renderAdminSaele(body){
   const arr=adminDraft.saele||(adminDraft.saele=[]);
@@ -1811,8 +1896,20 @@ function renderAdminAnzeige(body){
     });
     grid.appendChild(card);
   });
+  // Tabs / Reiter
+  if(!adminDraft.tabs)adminDraft.tabs={};
+  const tcard=document.createElement("div");tcard.className="admin-card";
+  tcard.innerHTML='<h3>Reiter (Tabs)</h3><p class="hint">Welche Reiter oben erscheinen. „Aktueller Plan" lässt sich nicht ausblenden.</p><div class="adm-toggles"></div>';
+  const tw=tcard.querySelector(".adm-toggles");
+  [["hub","Hauptmenü"],["plan","Patient planen"],["calendar","Kalender"],["cancelled","Absagen"],["rejected","Abgelehnt"],["auswertung","Auswertung"]].forEach(it=>{
+    const on=adminDraft.tabs[it[0]]!==false;
+    const row=document.createElement("label");row.className="adm-toggle";
+    row.innerHTML='<input type="checkbox"'+(on?" checked":"")+'><span>'+escapeHtml(it[1])+'</span>';
+    row.querySelector("input").addEventListener("change",e=>{adminDraft.tabs[it[0]]=e.target.checked;markAdminDirty();});
+    tw.appendChild(row);
+  });
+  grid.appendChild(tcard);
 }
-function admStatusOpts(sel){return (adminDraft.statuses||[]).map(s=>'<option value="'+s.key+'"'+(s.key===sel?' selected':'')+'>'+escapeHtml(s.label)+'</option>').join("");}
 function admBadgeOpts(sel){return '<option value="">—</option>'+(adminDraft.badges||[]).map(b=>'<option'+(b===sel?' selected':'')+'>'+escapeHtml(b)+'</option>').join("");}
 function admFieldOpts(sel){const built=[["indikation","Indikation"],["untersuchung","Untersuchung"],["zugang","Zugang"],["station","Station"],["anmerkung","Anmerkung"],["nachname","Nachname"],["fallnummer","Fallnummer"]];const cf=(adminDraft.customFields||[]).map(f=>[f.key,f.label+" (Zusatzfeld)"]);return built.concat(cf).map(o=>'<option value="'+o[0]+'"'+(o[0]===sel?' selected':'')+'>'+escapeHtml(o[1])+'</option>').join("");}
 
@@ -1987,14 +2084,71 @@ function renderAdminDarstellung(body){
   c5.querySelector("#adm-overtol").addEventListener("change",e=>{dr.overbookTolerance=Math.max(0,+e.target.value||0);markAdminDirty();});
   grid.appendChild(c5);
 }
-function renderAdminSichern(body){
-  const card=document.createElement("div");card.className="admin-card wide";
-  card.innerHTML='<h3>Konfiguration sichern</h3><p class="hint">Exportiert die gesamte Konfiguration als Datei (Backup oder Übertrag in die echte Server-Installation). Import ersetzt die aktuelle Bearbeitung; erst „Speichern" macht sie wirksam.</p><div class="adm-io"><button class="tool-btn" id="cfg-export">Konfiguration exportieren</button><button class="tool-btn" id="cfg-import">Konfiguration importieren</button><input type="file" id="cfg-file" accept="application/json" style="display:none"></div>';
-  card.querySelector("#cfg-export").addEventListener("click",()=>{const d=dclone(adminDraft);delete d._roomLabel;downloadCsvRaw("HKL-Konfiguration.json",JSON.stringify(d,null,2),"application/json");toast("Konfiguration exportiert.");});
-  card.querySelector("#cfg-import").addEventListener("click",()=>card.querySelector("#cfg-file").click());
-  card.querySelector("#cfg-file").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const obj=JSON.parse(r.result);if(!obj||!Array.isArray(obj.vorlagen))throw 0;obj._roomLabel=adminDraft._roomLabel;adminDraft=obj;renderAdmin();toast("Konfiguration importiert – noch nicht gespeichert.");}catch(err){toast("Datei konnte nicht gelesen werden.");}};r.readAsText(f);});
-  body.appendChild(card);
+function resetSection(which){
+  const d=adminDraft;
+  if(which==="vorlagen"){d.vorlagen=HKL_CATALOG.map(t=>({...t}));d.kategorien=HKL_KATEGORIEN.slice();}
+  else if(which==="status"){d.statuses=DEFAULT_STATUSES.map(s=>({...s}));}
+  else if(which==="felder"){d.customFields=[];}
+  else if(which==="knoepfe"){d.customButtons=[];}
+  else if(which==="regeln"){d.rules=[];}
+  else if(which==="listen"){d.untersucher=DEFAULT_CONFIG.untersucher.slice();d.badges=DEFAULT_CONFIG.badges.slice();d.personal=DEFAULT_CONFIG.personal.slice();d.notfallReasons=DEFAULT_CONFIG.notfallReasons.slice();d.criticalStations=DEFAULT_CONFIG.criticalStations.slice();d.absageReasons=DEFAULT_CONFIG.absageReasons.slice();d.kategorien=HKL_KATEGORIEN.slice();}
+  else if(which==="darstellung"){d.cardStyle="calm";d.cardDensity="compact";d.boardLayout="columns";d.alwaysFields=["station","indikation","untersuchung","zugang","untersucher"];d.phases=JSON.parse(JSON.stringify(DEFAULT_PHASES));d.attnBar=true;d.dimDone=true;}
 }
+function loadConfigIntoDraft(cfg){const o=dclone(cfg);o._roomLabel=adminDraft._roomLabel;adminDraft=o;renderAdmin();}
+function renderAdminSichern(body){
+  // 1) Export/Import
+  const c1=document.createElement("div");c1.className="admin-card wide";
+  c1.innerHTML='<h3>Sichern & \u00dcbertragen</h3><p class="hint">Exportiert die gesamte Konfiguration als Datei (Backup oder \u00dcbertrag in die echte Server-Installation). Import ersetzt die aktuelle Bearbeitung; erst „Speichern" macht sie wirksam.</p><div class="adm-io"><button class="tool-btn" id="cfg-export">Konfiguration exportieren</button><button class="tool-btn" id="cfg-import">Konfiguration importieren</button><input type="file" id="cfg-file" accept="application/json" style="display:none"></div>';
+  c1.querySelector("#cfg-export").addEventListener("click",()=>{const d=dclone(adminDraft);delete d._roomLabel;downloadCsvRaw("HKL-Konfiguration.json",JSON.stringify(d,null,2),"application/json");toast("Konfiguration exportiert.");});
+  c1.querySelector("#cfg-import").addEventListener("click",()=>c1.querySelector("#cfg-file").click());
+  c1.querySelector("#cfg-file").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const obj=JSON.parse(r.result);if(!obj||!Array.isArray(obj.vorlagen))throw 0;const v=validateConfig(obj);loadConfigIntoDraft(obj);toast(v.errors.length?("Importiert – "+v.errors.length+" Fehler, bitte pr\u00fcfen."):"Konfiguration importiert – noch nicht gespeichert.");}catch(err){toast("Datei konnte nicht gelesen werden.");}};r.readAsText(f);});
+  body.appendChild(c1);
+
+  // 2) Validierung (live)
+  const v=validateConfig(adminDraft);
+  const c2=document.createElement("div");c2.className="admin-card wide";
+  let vh='<h3>Validierung der aktuellen Bearbeitung</h3>';
+  if(!v.errors.length&&!v.warnings.length)vh+='<p class="val-ok">\u2713 Keine Probleme gefunden.</p>';
+  else{
+    if(v.errors.length)vh+='<p class="val-err"><b>Fehler (blockieren das Speichern):</b></p><ul class="val-list err">'+v.errors.map(x=>'<li>'+escapeHtml(x)+'</li>').join("")+'</ul>';
+    if(v.warnings.length)vh+='<p class="val-warn"><b>Hinweise (Speichern m\u00f6glich):</b></p><ul class="val-list warn">'+v.warnings.map(x=>'<li>'+escapeHtml(x)+'</li>').join("")+'</ul>';
+  }
+  c2.innerHTML=vh;body.appendChild(c2);
+
+  // 3) Profile
+  const c3=document.createElement("div");c3.className="admin-card wide";
+  c3.innerHTML='<h3>Profile (Presets)</h3><p class="hint">Komplette Konfigurationen speichern und mit einem Klick laden – z. B. „Werktag", „Notdienst", „Wochenende". Laden ersetzt die Bearbeitung; erst „Speichern" macht sie wirksam.</p><div class="adm-add"><input id="prof-name" placeholder="Profilname (z. B. Notdienst)"><button class="adm-add-btn" id="prof-save">Aktuelle Bearbeitung als Profil speichern</button></div><div class="prof-list"></div>';
+  const pl=c3.querySelector(".prof-list");const profs=cfgProfiles();const names=Object.keys(profs);
+  if(!names.length)pl.innerHTML='<p class="hint" style="margin:8px 2px 0">Noch keine Profile gespeichert.</p>';
+  names.forEach(nm=>{const row=document.createElement("div");row.className="io-row";row.innerHTML='<span class="io-name">'+escapeHtml(nm)+'</span><span><button class="tool-btn sm io-load">Laden</button> <button class="tool-btn sm danger io-del">L\u00f6schen</button></span>';
+    row.querySelector(".io-load").addEventListener("click",()=>{loadConfigIntoDraft(profs[nm]);toast("Profil "+nm+" geladen – noch nicht gespeichert.");});
+    row.querySelector(".io-del").addEventListener("click",()=>{if(confirm("Profil "+nm+" l\u00f6schen?")){deleteProfile(nm);renderAdmin();}});
+    pl.appendChild(row);});
+  c3.querySelector("#prof-save").addEventListener("click",()=>{const nm=c3.querySelector("#prof-name").value.trim();if(!nm){toast("Bitte einen Profilnamen eingeben.");return;}saveProfile(nm);renderAdmin();toast("Profil "+nm+" gespeichert.");});
+  body.appendChild(c3);
+
+  // 4) Versionen / Audit
+  const c4=document.createElement("div");c4.className="admin-card wide";
+  c4.innerHTML='<h3>Versionen & Verlauf</h3><p class="hint">Bei jedem Speichern wird automatisch eine Version abgelegt (die letzten 15). So lassen sich \u00c4nderungen nachvollziehen und fr\u00fchere St\u00e4nde wiederherstellen.</p><div class="adm-add"><button class="adm-add-btn" id="snap-now">Jetzt manuell sichern</button></div><div class="hist-list"></div>';
+  const hl=c4.querySelector(".hist-list");const hist=cfgHistory();
+  if(!hist.length)hl.innerHTML='<p class="hint" style="margin:8px 2px 0">Noch keine Versionen vorhanden.</p>';
+  hist.forEach((h,i)=>{const row=document.createElement("div");row.className="io-row";row.innerHTML='<span class="io-name">'+escapeHtml(h.label||"Version")+' <span class="io-time">'+escapeHtml(hhmmFull(h.ts))+'</span></span><span><button class="tool-btn sm io-restore">Wiederherstellen</button></span>';
+    row.querySelector(".io-restore").addEventListener("click",()=>{loadConfigIntoDraft(h.config);toast("Version geladen – noch nicht gespeichert.");});
+    hl.appendChild(row);});
+  c4.querySelector("#snap-now").addEventListener("click",()=>{const prev=state.config;state.config=dclone(adminDraft);delete state.config._roomLabel;pushSnapshot("Manuell gesichert");state.config=prev;renderAdmin();toast("Version gesichert.");});
+  body.appendChild(c4);
+
+  // 5) Zurücksetzen
+  const c5=document.createElement("div");c5.className="admin-card wide";
+  c5.innerHTML='<h3>Auf Standard zur\u00fccksetzen</h3><p class="hint">Setzt einzelne Bereiche der Bearbeitung auf die Werkseinstellung zur\u00fcck (erst „Speichern" macht es wirksam).</p><div class="reset-grid"></div>';
+  const rg=c5.querySelector(".reset-grid");
+  [["listen","Listen"],["vorlagen","Vorlagen"],["status","Status"],["felder","Felder"],["knoepfe","Kn\u00f6pfe"],["regeln","Regeln"],["darstellung","Darstellung"]].forEach(it=>{
+    const b=document.createElement("button");b.className="tool-btn sm";b.textContent=it[1]+" zur\u00fccksetzen";
+    b.addEventListener("click",()=>{if(confirm(it[1]+" auf Standard zur\u00fccksetzen?")){resetSection(it[0]);markAdminDirty();renderAdmin();toast(it[1]+" zur\u00fcckgesetzt – noch nicht gespeichert.");}});
+    rg.appendChild(b);});
+  body.appendChild(c5);
+}
+function hhmmFull(iso){try{const d=new Date(iso);const p=n=>String(n).padStart(2,"0");return p(d.getDate())+"."+p(d.getMonth()+1)+". "+p(d.getHours())+":"+p(d.getMinutes());}catch(e){return "";}}
 function downloadCsvRaw(name,text,mime){const blob=new Blob([text],{type:(mime||"text/plain")+";charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 
 /* ===== WANDMONITOR / KIOSK ===== */
@@ -2004,7 +2158,7 @@ function closeKiosk(){document.getElementById("kiosk").style.display="none";if(k
 function kioskKey(e){if(e.key==="Escape")closeKiosk();}
 function updateKioskClock(){const d=new Date();document.getElementById("kioskClock").textContent=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")+" Uhr";}
 function renderKiosk(){
-  document.getElementById("kioskTitle").textContent=state.settings.roomLabel+"-Tagesübersicht · "+weekday(ui.currentDate)+", "+displayDate(ui.currentDate);
+  document.getElementById("kioskTitle").textContent=(((state.config&&state.config.branding&&state.config.branding.klinik)||(state.settings.roomLabel+"-Tagesübersicht")))+" · "+weekday(ui.currentDate)+", "+displayDate(ui.currentDate);
   const wrap=document.getElementById("kioskBoard"); wrap.innerHTML="";
   ROOMS.forEach(rk=>{
     const list=casesForRoom(ui.currentDate,rk);
@@ -2110,7 +2264,7 @@ function init(){
   else {ensureConfig();loadDemo();}
   ensureConfig();
   applyTheme(state.settings.theme||"dark");
-  applyConfigColors();applyFeatureToggles();applyDisplay();
+  applyConfigColors();applyFeatureToggles();applyDisplay();applyBranding();applyTabs();
   applyRole(state.settings.role||"kathlab");
   populateRoomSelect();
   document.getElementById("f-date").value=ui.currentDate;
