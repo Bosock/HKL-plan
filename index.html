@@ -487,6 +487,8 @@
   .adm-radios{display:flex;flex-direction:column;gap:7px}
   .adm-radio{display:flex;align-items:flex-start;gap:10px;font-size:13px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;cursor:pointer}
   .adm-radio input{margin-top:2px;width:16px;height:16px;flex:none}
+  .cf-rolelbl{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+  .cf-rolelbl select{font-family:inherit;font-size:12px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--input-bg);color:var(--ink)}
   .adm-mincount{font-size:13px;font-weight:600}
   .adm-navsearch{padding:2px 2px 8px}
   .adm-navsearch input{width:100%;font-family:inherit;font-size:12.5px;padding:6px 9px;border:1px solid var(--line);border-radius:7px;background:var(--input-bg);color:var(--ink)}
@@ -940,9 +942,9 @@ function ensureConfig(){
   if(c.display.overbooking===undefined)c.display.overbooking=false;
   if(c.overbookTolerance==null)c.overbookTolerance=0;
   if(!Array.isArray(c.customFields))c.customFields=[];
-  c.customFields.forEach(f=>{if(!f.type)f.type="text";if(!Array.isArray(f.options))f.options=[];if(f.required==null)f.required=false;if(f.showOnCard==null)f.showOnCard=true;});
+  c.customFields.forEach(f=>{if(!f.type)f.type="text";if(!Array.isArray(f.options))f.options=[];if(f.required==null)f.required=false;if(f.showOnCard==null)f.showOnCard=true;if(!f.roleVis)f.roleVis="all";});
   if(!Array.isArray(c.customButtons))c.customButtons=[];
-  c.customButtons.forEach(b=>{if(!b.action)b.action="setStatus";if(!b.params)b.params={};});
+  c.customButtons.forEach(b=>{if(!b.action)b.action="setStatus";if(!b.params)b.params={};if(!b.roleVis)b.roleVis="all";});
   if(!Array.isArray(c.rules))c.rules=[];
   c.rules.forEach(r=>{if(r.enabled==null)r.enabled=true;if(!r.when)r.when={field:"indikation",op:"contains",value:""};if(!r.then)r.then={action:"setCritical",params:{}};});
   syncRuntime();
@@ -1117,6 +1119,7 @@ function normStation(s){return String(s||"").toUpperCase().replace(/\s+/g,"");}
 function isCritical(c){if(c.forceCritical)return true;const cs=(state.config&&state.config.criticalStations)||CRITICAL_STATIONS;return cs.includes(normStation(c.station))||/STEMI/i.test(c.indikation||"");}
 /* ===== REGEL-ENGINE (Wenn-Dann) ===== */
 function ruleFieldValue(c,field){
+  if(field==="status")return c.status||"";
   if(["indikation","untersuchung","zugang","station","anmerkung","nachname","fallnummer"].includes(field))return c[field]||"";
   if(c.custom&&c.custom[field]!=null)return String(c.custom[field]);
   return "";
@@ -1181,7 +1184,7 @@ function renderCustomFields(values){
   const wrap=document.getElementById("customFieldsWrap");if(!wrap)return;
   const fields=(state.config&&state.config.customFields)||[];
   values=values||{};
-  wrap.innerHTML=fields.map(f=>{
+  wrap.innerHTML=fields.filter(f=>f.roleVis!=="station").map(f=>{
     const id=cfId(f.key);const v=values[f.key];
     const req=f.required?' <span class="req">*</span>':"";
     const lbl='<label>'+escapeHtml(f.label)+req+'</label>';
@@ -1211,7 +1214,7 @@ function collectCustomFields(){
 }
 function missingRequiredCustom(){
   const fields=(state.config&&state.config.customFields)||[];
-  return fields.filter(f=>f.required&&f.type!=="bool").filter(f=>{const el=document.getElementById(cfId(f.key));return !el||el.value===""||el.value==null;});
+  return fields.filter(f=>f.required&&f.type!=="bool").filter(f=>{const el=document.getElementById(cfId(f.key));return el&&(el.value===""||el.value==null);});
 }
 function resetForm(){ui.editingId=null;document.getElementById("editBanner").style.display="none";document.getElementById("cancelEdit").style.display="none";document.getElementById("saveCase").textContent="Patient hinzufügen";["f-nachname","f-vorname","f-station","f-fallnr","f-gebdat","f-indikation","f-untersuchung","f-zugang","f-anmerkung","f-dauer"].forEach(id=>document.getElementById(id).value="");document.getElementById("f-anrede").value="";document.getElementById("f-room").value="1";document.getElementById("f-date").value=ui.currentDate;const v=document.getElementById("f-vorlage");if(v)v.value="";document.getElementById("f-request").checked=false;document.getElementById("f-reqby").value="";document.getElementById("f-reqby").style.display="none";formUntersucher=[];formBadges=[];renderChips();renderCustomFields({});}
 function loadIntoForm(c){ui.editingId=c.id;const b=document.getElementById("editBanner");b.style.display="block";b.textContent="Bearbeitung: "+(anredeKurz(c.anrede)?anredeKurz(c.anrede)+" ":"")+fullName(c);document.getElementById("cancelEdit").style.display="inline-block";document.getElementById("saveCase").textContent="Änderungen speichern";document.getElementById("f-anrede").value=c.anrede||"";document.getElementById("f-nachname").value=c.nachname||"";document.getElementById("f-vorname").value=c.vorname||"";document.getElementById("f-station").value=c.station||"";document.getElementById("f-fallnr").value=c.fallnummer||"";document.getElementById("f-gebdat").value=c.geburtsdatum||"";document.getElementById("f-indikation").value=c.indikation||"";document.getElementById("f-untersuchung").value=c.untersuchung||"";document.getElementById("f-zugang").value=c.zugang||"";document.getElementById("f-anmerkung").value=c.anmerkung||"";document.getElementById("f-dauer").value=(c.dauer!=null?c.dauer:"");document.getElementById("f-room").value=String(c.room);document.getElementById("f-date").value=c.date;const rq=!!c.requested;document.getElementById("f-request").checked=rq;document.getElementById("f-reqby").value=rq?(c.requested.by||""):"";document.getElementById("f-reqby").style.display=rq?"block":"none";formUntersucher=Array.isArray(c.untersucher)?c.untersucher.slice():(c.untersucher?[c.untersucher]:[]);formBadges=Array.isArray(c.warnBadges)?c.warnBadges.slice():[];renderChips();const v=document.getElementById("f-vorlage");if(v)v.value="";renderCustomFields(c.custom||{});}
@@ -1270,7 +1273,7 @@ function renderBoard(){
 function fillTemplate(tpl,c){return (tpl||"").replace(/\{(\w+)\}/g,(m,k)=>{const v=ruleFieldValue(c,k);return encodeURIComponent(v!=null?v:"");});}
 function runCustomButton(b,c){
   if(!b)return;const p=b.params||{};
-  if(b.action==="setStatus"){if(p.status){c.status=p.status;logStatusTime(c,p.status);touchCase(c);applyStatusSideEffects(c);persist();renderBoard();toast(b.label?b.label+" ✓":"Status gesetzt.");}}
+  if(b.action==="setStatus"){if(p.status){c.status=p.status;logStatusTime(c,p.status);touchCase(c);applyStatusSideEffects(c);applyRules(c);persist();renderBoard();toast(b.label?b.label+" ✓":"Status gesetzt.");}}
   else if(b.action==="toggleDone"){c.done=!c.done;touchCase(c);persist();renderBoard();}
   else if(b.action==="toggleCritical"){c.forceCritical=!c.forceCritical;touchCase(c);persist();renderBoard();}
   else if(b.action==="addBadge"){if(p.badge){c.warnBadges=Array.isArray(c.warnBadges)?c.warnBadges:[];const i=c.warnBadges.indexOf(p.badge);if(i>=0)c.warnBadges.splice(i,1);else c.warnBadges.push(p.badge);touchCase(c);persist();renderBoard();}}
@@ -1284,14 +1287,16 @@ function fieldCatalog(){
 function fieldLabel(key){const f=fieldCatalog().find(x=>x[0]===key);return f?f[1]:key;}
 function alwaysSet(){return new Set((state.config&&state.config.alwaysFields)||[]);}
 function boardLayout(){return (state.config&&state.config.boardLayout)||"columns";}
-function fieldVisible(key){
+function roleMatch(roleVis,station){roleVis=roleVis||"all";if(roleVis==="all")return true;if(roleVis==="hkl")return !station;if(roleVis==="station")return !!station;return true;}
+function fieldVisible(key,station){
   if(key==="station")return vis("cardStation");
   if(key==="untersucher")return vis("cardUntersucher");
   if(key==="dauer")return vis("cardDauer");
   const cf=((state.config&&state.config.customFields)||[]).find(x=>x.key===key);
-  if(cf)return cf.showOnCard!==false;
+  if(cf)return cf.showOnCard!==false&&roleMatch(cf.roleVis,station);
   return true;
 }
+function btnVisible(b,station){return roleMatch(b&&b.roleVis,station);}
 function fieldCrit(c,key){if(key==="station")return CRITICAL_STATIONS.includes(normStation(c.station));if(key==="indikation")return /STEMI/i.test(c.indikation||"");return false;}
 function caseFieldValue(c,key){
   switch(key){
@@ -1341,7 +1346,7 @@ function makeCard(c,station){
   const always=alwaysSet();
   let meta="";
   fieldCatalog().forEach(function(f){const key=f[0],label=f[1];
-    if(!fieldVisible(key))return;
+    if(!fieldVisible(key,station))return;
     const val=caseFieldValue(c,key);if(val==="")return;
     if(!showAll&&!always.has(key))return;
     meta+='<span'+(fieldCrit(c,key)?' class="stcrit"':'')+'>'+escapeHtml(label)+': <b>'+escapeHtml(val)+'</b></span>';
@@ -1353,7 +1358,7 @@ function makeCard(c,station){
     '<button class="actbtn cancel" title="Patient absagen"><span class="ico">⊘</span><span class="lbl">Absagen</span></button>'+
     '<button class="actbtn del" title="Entfernen"><span class="ico">✕</span><span class="lbl">Löschen</span></button>';
   let cbtns="";
-  if(!station){const cbs=(state.config.customButtons||[]);cbtns=cbs.map((b,i)=>'<button class="actbtn cbtn" data-cb="'+i+'" title="'+escapeHtml(b.label||"Aktion")+'"><span class="ico">'+escapeHtml(b.icon||"●")+'</span><span class="lbl">'+escapeHtml(b.label||"Aktion")+'</span></button>').join("");}
+  {const cbs=(state.config.customButtons||[]);cbtns=cbs.map((b,i)=>btnVisible(b,station)?'<button class="actbtn cbtn" data-cb="'+i+'" title="'+escapeHtml(b.label||"Aktion")+'"><span class="ico">'+escapeHtml(b.icon||"●")+'</span><span class="lbl">'+escapeHtml(b.label||"Aktion")+'</span></button>':"").join("");}
   /* Footer: Status-Steuerung je nach Rolle */
   let footer="";
   if(station){
@@ -1372,7 +1377,7 @@ function makeCard(c,station){
     const opts = station ? STATUSES.filter(s=>STATION_ALLOWED.includes(s.key)) : STATUSES;
     opts.forEach(s=>{const o=document.createElement("option");o.value=s.key;o.textContent=s.label;sel.appendChild(o);});
     sel.value=c.status;
-    sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);applyStatusSideEffects(c);persist();renderBoard();});
+    sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);applyStatusSideEffects(c);applyRules(c);persist();renderBoard();});
     sel.addEventListener("mousedown",e=>e.stopPropagation());
   }
   if(!station){
@@ -1380,10 +1385,10 @@ function makeCard(c,station){
     const eb=card.querySelector(".edit");if(eb)eb.addEventListener("click",e=>{e.stopPropagation();loadIntoForm(c);setView("plan");});
     const cb=card.querySelector(".cancel");if(cb)cb.addEventListener("click",e=>{e.stopPropagation();openCancelModal(c.id);});
     const xb=card.querySelector(".del");if(xb)xb.addEventListener("click",e=>{e.stopPropagation();if(confirm("Diesen Patienten endgültig aus dem Plan entfernen? (Für Absagen bitte den ⊘-Knopf nutzen)")){const d=c.date,r=c.room;state.cases=state.cases.filter(x=>x.id!==c.id);renumber(d,r);persist();renderBoard();toast("Patient entfernt.");}});
-    card.querySelectorAll(".cbtn").forEach(btn=>btn.addEventListener("click",e=>{e.stopPropagation();runCustomButton((state.config.customButtons||[])[+btn.dataset.cb],c);}));
     card.addEventListener("dragstart",e=>{card.classList.add("dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",c.id);});
     card.addEventListener("dragend",()=>{card.classList.remove("dragging");document.querySelectorAll(".lane-strip").forEach(s=>s.classList.remove("dragover"));renderBoard();});
   }
+  card.querySelectorAll(".cbtn").forEach(btn=>btn.addEventListener("click",e=>{e.stopPropagation();runCustomButton((state.config.customButtons||[])[+btn.dataset.cb],c);}));
   const expBtn=card.querySelector(".expander");
   function toggleExp(e){if(e){e.stopPropagation();}ui.expanded=ui.expanded||new Set();if(ui.expanded.has(c.id))ui.expanded.delete(c.id);else ui.expanded.add(c.id);renderBoard();}
   if(expBtn)expBtn.addEventListener("click",toggleExp);
@@ -1395,13 +1400,13 @@ function statusSelectEl(c,station){
   const opts=station?STATUSES.filter(s=>STATION_ALLOWED.includes(s.key)):STATUSES;
   opts.forEach(s=>{const o=document.createElement("option");o.value=s.key;o.textContent=s.label;sel.appendChild(o);});
   sel.value=c.status;
-  sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);applyStatusSideEffects(c);persist();renderBoard();});
+  sel.addEventListener("change",e=>{c.status=e.target.value;logStatusTime(c,c.status);touchCase(c);applyStatusSideEffects(c);applyRules(c);persist();renderBoard();});
   sel.addEventListener("mousedown",e=>e.stopPropagation());
   return sel;
 }
-function tableColumns(){let cols=((state.config&&state.config.alwaysFields)||[]).filter(k=>fieldVisible(k));if(!cols.length)cols=["station","indikation","untersuchung"];return cols;}
+function tableColumns(station){let cols=((state.config&&state.config.alwaysFields)||[]).filter(k=>fieldVisible(k,station));if(!cols.length)cols=["station","indikation","untersuchung"];return cols;}
 function renderBoardTable(lanes,station){
-  const cols=tableColumns();
+  const cols=tableColumns(station);
   ROOMS.forEach(rk=>{
     const list=casesForRoom(ui.currentDate,rk);
     const saal=!station&&SAAL_ROOMS.includes(rk);
@@ -1442,7 +1447,7 @@ function makeRow(c,station,cols){
     const tdAct=document.createElement("td");tdAct.className="c-act";
     let html="";
     if(vis("cardActions"))html+='<button class="ricon edit" title="Bearbeiten">✎</button><button class="ricon cancel" title="Absagen">⊘</button><button class="ricon del" title="Löschen">✕</button>';
-    (state.config.customButtons||[]).forEach((b,i)=>{html+='<button class="ricon cbtn" data-cb="'+i+'" title="'+escapeHtml(b.label||"Aktion")+'">'+escapeHtml(b.icon||"●")+'</button>';});
+    (state.config.customButtons||[]).forEach((b,i)=>{if(!btnVisible(b,station))return;html+='<button class="ricon cbtn" data-cb="'+i+'" title="'+escapeHtml(b.label||"Aktion")+'">'+escapeHtml(b.icon||"●")+'</button>';});
     if(vis("doneCheck"))html+='<label class="rdone" title="Fertig"><input type="checkbox" '+(c.done?"checked":"")+'></label>';
     tdAct.innerHTML=html;tr.appendChild(tdAct);
     const eb=tdAct.querySelector(".edit");if(eb)eb.addEventListener("click",()=>{loadIntoForm(c);setView("plan");});
@@ -1910,8 +1915,9 @@ function renderAdminAnzeige(body){
   });
   grid.appendChild(tcard);
 }
+function admStatusOpts(sel){return (adminDraft.statuses||[]).map(s=>'<option value="'+s.key+'"'+(s.key===sel?' selected':'')+'>'+escapeHtml(s.label)+'</option>').join("");}
 function admBadgeOpts(sel){return '<option value="">—</option>'+(adminDraft.badges||[]).map(b=>'<option'+(b===sel?' selected':'')+'>'+escapeHtml(b)+'</option>').join("");}
-function admFieldOpts(sel){const built=[["indikation","Indikation"],["untersuchung","Untersuchung"],["zugang","Zugang"],["station","Station"],["anmerkung","Anmerkung"],["nachname","Nachname"],["fallnummer","Fallnummer"]];const cf=(adminDraft.customFields||[]).map(f=>[f.key,f.label+" (Zusatzfeld)"]);return built.concat(cf).map(o=>'<option value="'+o[0]+'"'+(o[0]===sel?' selected':'')+'>'+escapeHtml(o[1])+'</option>').join("");}
+function admFieldOpts(sel){const built=[["status","Status"],["indikation","Indikation"],["untersuchung","Untersuchung"],["zugang","Zugang"],["station","Station"],["anmerkung","Anmerkung"],["nachname","Nachname"],["fallnummer","Fallnummer"]];const cf=(adminDraft.customFields||[]).map(f=>[f.key,f.label+" (Zusatzfeld)"]);return built.concat(cf).map(o=>'<option value="'+o[0]+'"'+(o[0]===sel?' selected':'')+'>'+escapeHtml(o[1])+'</option>').join("");}
 
 function renderAdminFelder(body){
   const arr=adminDraft.customFields||(adminDraft.customFields=[]);
@@ -1921,19 +1927,22 @@ function renderAdminFelder(body){
   arr.forEach((f,i)=>{
     const rowEl=document.createElement("div");rowEl.className="cf-row";
     const typeOpts=[["text","Text"],["number","Zahl"],["select","Auswahl"],["date","Datum"],["bool","Ja/Nein"]].map(o=>'<option value="'+o[0]+'"'+(o[0]===f.type?' selected':'')+'>'+o[1]+'</option>').join("");
+    const roleOpts=[["all","Alle"],["hkl","Nur HKL"],["station","Nur Station"]].map(o=>'<option value="'+o[0]+'"'+((f.roleVis||"all")===o[0]?' selected':'')+'>'+o[1]+'</option>').join("");
     rowEl.innerHTML='<div class="cf-line"><span class="grip">⋮⋮</span>'+
       '<input data-f="label" placeholder="Bezeichnung" value="'+escapeHtml(f.label||"")+'">'+
       '<select data-f="type">'+typeOpts+'</select>'+
       '<label class="cf-chk"><input type="checkbox" data-f="showOnCard"'+(f.showOnCard!==false?' checked':'')+'> Auf Karte</label>'+
       '<label class="cf-chk"><input type="checkbox" data-f="required"'+(f.required?' checked':'')+'> Pflicht</label>'+
+      '<label class="cf-rolelbl">Sichtbar: <select data-f="roleVis">'+roleOpts+'</select></label>'+
       '<button class="adm-x" title="Entfernen">×</button></div>'+
       (f.type==="select"?'<div class="cf-sub"><input data-f="options" placeholder="Optionen, durch Komma getrennt" value="'+escapeHtml((f.options||[]).join(", "))+'"></div>':'');
     rowEl.querySelectorAll("[data-f]").forEach(inp=>{
-      const ev=inp.type==="checkbox"?"change":"input";
+      const ev=inp.type==="checkbox"?"change":(inp.tagName==="SELECT"&&inp.dataset.f!=="type"?"change":"input");
       inp.addEventListener(ev,()=>{
         const k=inp.dataset.f;
         if(k==="showOnCard"||k==="required")f[k]=inp.checked;
         else if(k==="options")f.options=inp.value.split(",").map(s=>s.trim()).filter(Boolean);
+        else if(k==="roleVis"){f.roleVis=inp.value;markAdminDirty();return;}
         else if(k==="type"){f.type=inp.value;renderAdmin();return;}
         else if(k==="label"){f.label=inp.value;if(!f.key||/^feld_/.test(f.key))f.key="feld_"+(inp.value.toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"")||Date.now().toString(36));}
         markAdminDirty();
@@ -1942,7 +1951,7 @@ function renderAdminFelder(body){
     rowEl.querySelector(".adm-x").addEventListener("click",()=>{arr.splice(i,1);renderAdmin();});
     wireDrag(rowEl,i,arr,renderAdmin);wrap.appendChild(rowEl);
   });
-  card.querySelector("#cf-add").addEventListener("click",()=>{arr.push({key:"feld_"+Date.now().toString(36),label:"Neues Feld",type:"text",options:[],required:false,showOnCard:true});renderAdmin();});
+  card.querySelector("#cf-add").addEventListener("click",()=>{arr.push({key:"feld_"+Date.now().toString(36),label:"Neues Feld",type:"text",options:[],required:false,showOnCard:true,roleVis:"all"});renderAdmin();});
   body.appendChild(card);
 }
 
@@ -1959,24 +1968,26 @@ function renderAdminKnoepfe(body){
     if(b.action==="setStatus")sub='<div class="cf-sub">Status: <select data-p="status">'+admStatusOpts(b.params.status)+'</select></div>';
     else if(b.action==="addBadge")sub='<div class="cf-sub">Hinweis: <select data-p="badge">'+admBadgeOpts(b.params.badge)+'</select></div>';
     else if(b.action==="openLink")sub='<div class="cf-sub"><input data-p="urlTemplate" placeholder="https://… {fallnummer}" value="'+escapeHtml(b.params.urlTemplate||"")+'"></div>';
+    const broleOpts=[["all","Alle"],["hkl","Nur HKL"],["station","Nur Station"]].map(o=>'<option value="'+o[0]+'"'+((b.roleVis||"all")===o[0]?' selected':'')+'>'+o[1]+'</option>').join("");
     rowEl.innerHTML='<div class="cf-line"><span class="grip">⋮⋮</span>'+
       '<input data-b="icon" placeholder="Symbol" value="'+escapeHtml(b.icon||"")+'" style="width:64px">'+
       '<input data-b="label" placeholder="Beschriftung" value="'+escapeHtml(b.label||"")+'">'+
       '<select data-b="action">'+actOpts+'</select>'+
+      '<label class="cf-rolelbl">Sichtbar: <select data-b="roleVis">'+broleOpts+'</select></label>'+
       '<button class="adm-x" title="Entfernen">×</button></div>'+sub;
-    rowEl.querySelectorAll("[data-b]").forEach(inp=>inp.addEventListener("input",()=>{const k=inp.dataset.b;if(k==="action"){b.action=inp.value;b.params={};renderAdmin();return;}b[k]=inp.value;markAdminDirty();}));
+    rowEl.querySelectorAll("[data-b]").forEach(inp=>inp.addEventListener(inp.tagName==="SELECT"?"change":"input",()=>{const k=inp.dataset.b;if(k==="action"){b.action=inp.value;b.params={};renderAdmin();return;}b[k]=inp.value;markAdminDirty();}));
     rowEl.querySelectorAll("[data-p]").forEach(inp=>inp.addEventListener(inp.tagName==="SELECT"?"change":"input",()=>{b.params[inp.dataset.p]=inp.value;markAdminDirty();}));
     rowEl.querySelector(".adm-x").addEventListener("click",()=>{arr.splice(i,1);renderAdmin();});
     wireDrag(rowEl,i,arr,renderAdmin);wrap.appendChild(rowEl);
   });
-  card.querySelector("#cb-add").addEventListener("click",()=>{arr.push({id:"btn_"+Date.now().toString(36),icon:"➤",label:"Aktion",action:"setStatus",params:{}});renderAdmin();});
+  card.querySelector("#cb-add").addEventListener("click",()=>{arr.push({id:"btn_"+Date.now().toString(36),icon:"➤",label:"Aktion",action:"setStatus",params:{},roleVis:"all"});renderAdmin();});
   body.appendChild(card);
 }
 
 function renderAdminRegeln(body){
   const arr=adminDraft.rules||(adminDraft.rules=[]);
   const card=document.createElement("div");card.className="admin-card wide";
-  card.innerHTML='<h3>Wenn-Dann-Regeln</h3><p class="hint">Beim Speichern eines Patienten wird geprüft: Wenn die Bedingung zutrifft, wird die Aktion ausgeführt (z. B. Wenn Indikation enthält „STEMI" → kritisch markieren). Regeln greifen beim Anlegen und Bearbeiten.</p><div class="rl-list"></div><button class="adm-add-btn" id="rl-add">+ Regel</button>';
+  card.innerHTML='<h3>Wenn-Dann-Regeln</h3><p class="hint">Geprüft wird beim Anlegen/Bearbeiten eines Patienten und bei jedem Statuswechsel: Wenn die Bedingung zutrifft, wird die Aktion ausgeführt (z. B. Wenn Indikation enthält „STEMI" → kritisch markieren).</p><div class="rl-list"></div><button class="adm-add-btn" id="rl-add">+ Regel</button>';
   const wrap=card.querySelector(".rl-list");
   arr.forEach((r,i)=>{
     r.when=r.when||{field:"indikation",op:"contains",value:""};r.then=r.then||{action:"setCritical",params:{}};r.then.params=r.then.params||{};
