@@ -1,0 +1,13 @@
+{
+  "name": "hkl-plan-server",
+  "private": true,
+  "type": "module",
+  "description": "Backend-Server: liefert die HKL-Plan-Web-App aus und persistiert den App-Zustand serverseitig (server-side state, keine Abhängigkeiten).",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

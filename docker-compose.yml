@@ -1,0 +1,25 @@
+# Lokales Deployment (Entwicklung / Test).
+# Erreichbar unter http://localhost:4180
+#
+#   docker compose up -d --build
+#
+# Für den Produktivbetrieb hinter dem nginx-proxy siehe docker-compose.prod.yml.
+services:
+  hkl-plan:
+    build: .
+    image: hkl-plan-backend
+    container_name: hkl-plan
+    restart: unless-stopped
+    ports:
+      # Host:Container — Port am Host bei Bedarf anpassen.
+      - "4180:4180"
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "4180"
+      DATA_DIR: "/data"
+    volumes:
+      # Persistiert den App-Zustand (data/state.json + backups) über Neustarts.
+      - hkl-plan-data:/data
+
+volumes:
+  hkl-plan-data:

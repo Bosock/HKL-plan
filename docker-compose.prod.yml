@@ -1,0 +1,47 @@
+# Produktiv-Deployment hinter jwilder/nginx-proxy + letsencrypt-companion
+# (Server debian@162.19.250.88, App-Verzeichnis /home/debian/server/hkl).
+#
+# Unterschiede zur lokalen docker-compose.yml:
+#   - KEIN Host-Port-Mapping: nginx-proxy erreicht den Container über das
+#     externe "proxy"-Netz und terminiert TLS (Let's Encrypt automatisch).
+#   - VIRTUAL_HOST/VIRTUAL_PORT steuern das Routing, LETSENCRYPT_* die Zertifikate.
+#
+# Zertifikat: Der letsencrypt-companion stellt für hkl.kardio.wiki automatisch
+#   ein Let's-Encrypt-Zertifikat per HTTP-01 aus (gleiches Muster wie die übrigen
+#   *.kardio.wiki-Subdomains auf diesem Server). Ein echtes Wildcard-Zertifikat
+#   (*.kardio.wiki) benötigt eine DNS-01-Challenge mit DNS-Provider-API-Zugang;
+#   der ist auf diesem Server nicht hinterlegt.
+#
+# Deploy:  docker compose -f docker-compose.prod.yml up -d --build
+#
+# Auth (Lesen offen, Schreiben via HTTP Basic Auth bzw. aus dem Klinik-Netz)
+#   wird NICHT hier, sondern im nginx-proxy konfiguriert:
+#   /etc/nginx/vhost.d/hkl.kardio.wiki_location + hkl.kardio.wiki.htpasswd.
+#   Keine Secrets in dieser Datei. Siehe deploy/nginx/ und README.
+services:
+  hkl-plan:
+    build: .
+    image: hkl-plan-backend
+    container_name: hkl-plan
+    restart: unless-stopped
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "4180"
+      DATA_DIR: "/data"
+      VIRTUAL_HOST: "hkl.kardio.wiki"
+      VIRTUAL_PORT: "4180"
+      LETSENCRYPT_HOST: "hkl.kardio.wiki"
+      LETSENCRYPT_EMAIL: "mail@severinfink.de"
+    volumes:
+      # Persistiert den App-Zustand (data/state.json + backups) über Neustarts.
+      - hkl-plan-data:/data
+    networks:
+      - proxy
+
+networks:
+  # Vom nginx-proxy bereitgestelltes, externes Netz (muss bereits existieren).
+  proxy:
+    external: true
+
+volumes:
+  hkl-plan-data:

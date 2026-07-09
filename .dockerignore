@@ -1,0 +1,29 @@
+# Versionsverwaltung & CI
+.git
+.github
+.gitignore
+
+# Abhängigkeiten/Build-Caches
+**/node_modules
+
+# Laufzeitdaten (kommen aus dem Volume, nicht ins Image)
+data
+**/backups
+
+# Nicht ausgelieferte Hilfsdateien
+.serena
+deploy
+docs
+legacy
+index .html
+*.docx
+~$*
+**/.DS_Store
+**/*.log
+
+# Container-/Compose-Dateien selbst
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.prod.yml
+README.md
