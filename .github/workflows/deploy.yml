@@ -1,0 +1,69 @@
+name: Deploy HKL-Plan
+
+# Baut und deployt die App bei jedem Push auf main automatisch auf den Server
+# (162.19.250.88) hinter den bestehenden nginx-proxy + letsencrypt-companion.
+# Zugangsdaten kommen aus den Repository-Secrets SSH_HOST / SSH_USER / SSH_PASSWORD.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-hkl
+  cancel-in-progress: false
+
+jobs:
+  # 1) Schnelle Syntaxprüfung des Backends (kein Deploy).
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Backend-Syntax prüfen
+        run: node --check server.js
+
+  # 2) Deploy nur auf main (nicht bei workflow_dispatch aus Feature-Branches nötig,
+  #    läuft aber auch dort auf Wunsch). Zieht den aktuellen Stand per git auf den
+  #    Server und startet den Container via docker compose neu.
+  deploy:
+    needs: check
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Prüfen, ob SSH-Secrets gesetzt sind
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          if [ -z "$SSH_HOST" ]; then
+            echo "::error::Repository-Secrets SSH_HOST/SSH_USER/SSH_PASSWORD fehlen. Deploy übersprungen."
+            exit 1
+          fi
+
+      - name: Auf Server deployen (git pull + docker compose)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          command_timeout: 15m
+          script: |
+            set -e
+            REPO=https://github.com/Bosock/HKL-plan.git
+            APP=~/server/hkl
+            mkdir -p ~/server
+            if [ ! -d "$APP/.git" ]; then
+              rm -rf "$APP"
+              git clone --depth 1 "$REPO" "$APP"
+            fi
+            cd "$APP"
+            git fetch --depth 1 origin main
+            git reset --hard origin/main
+            docker compose -f docker-compose.prod.yml up -d --build
+            docker image prune -f
+            # kurze Healthcheck-Wartezeit
+            sleep 5
+            docker inspect --format '{{.State.Health.Status}}' hkl-plan || true

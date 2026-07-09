@@ -1,0 +1,15 @@
+# nginx-proxy Custom-Location für hkl.kardio.wiki
+# Ablage auf dem Server: /etc/nginx/vhost.d/hkl.kardio.wiki_location
+# (Volume des nginx-proxy-Containers; wird beim Neuladen automatisch eingebunden.)
+#
+# Lesen (GET/HEAD/OPTIONS) ist immer offen, damit Anzeige-/Kiosk-Geräte den Plan
+# sehen. Schreiben (POST/PUT/DELETE an /api/state) braucht HTTP Basic Auth —
+# AUSSER aus dem Klinik-Netz 149.249.0.0/16. satisfy any = IP ODER Login.
+# (satisfy steht auf location-Ebene; in limit_except ist es nicht erlaubt.)
+satisfy any;
+limit_except GET HEAD OPTIONS {
+    allow 149.249.0.0/16;
+    deny all;
+    auth_basic "HKL-Plan (Aenderungen)";
+    auth_basic_user_file /etc/nginx/vhost.d/hkl.kardio.wiki.htpasswd;
+}

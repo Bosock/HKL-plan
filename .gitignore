@@ -1,0 +1,12 @@
+# Laufzeitdaten des Backends (serverseitiger Zustand + Backups)
+/data/
+**/backups/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Editor/Tooling
+.serena/
+.DS_Store
+*.log
