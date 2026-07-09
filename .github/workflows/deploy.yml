@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # 1) Schnelle Syntaxprüfung des Backends (kein Deploy).
+  # 1) Syntaxprüfung des Backends + Test-Suite (kein Deploy).
   check:
     runs-on: ubuntu-latest
     steps:
@@ -24,6 +24,8 @@ jobs:
           node-version: "22"
       - name: Backend-Syntax prüfen
         run: node --check server.js
+      - name: Tests ausführen
+        run: npm test
 
   # 2) Deploy nur auf main (nicht bei workflow_dispatch aus Feature-Branches nötig,
   #    läuft aber auch dort auf Wunsch). Zieht den aktuellen Stand per git auf den

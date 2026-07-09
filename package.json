@@ -5,7 +5,8 @@
   "description": "Backend-Server: liefert die HKL-Plan-Web-App aus und persistiert den App-Zustand serverseitig (server-side state, keine Abhängigkeiten).",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "node --test test/*.test.js"
   },
   "engines": {
     "node": ">=18"

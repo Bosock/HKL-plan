@@ -64,6 +64,35 @@ docker compose up -d --build     # → http://localhost:4180
 
 ---
 
+## Tests
+
+Test-Suite ohne externe Abhängigkeiten (nur `node:test` / `node:assert`,
+Node ≥ 18):
+
+```bash
+npm test
+```
+
+Abgedeckt sind:
+
+- **`test/server.test.js`** – Integrationstests gegen den echten Server
+  (als Kindprozess, temporäre `DOCS_DIR`/`DATA_DIR`). Prüft alle
+  Server-Funktionen über HTTP: `/api/health`, den kompletten
+  `/api/state`-Lebenszyklus (GET/PUT/POST/DELETE), ETag/`If-None-Match` (304),
+  optimistische Sperre via `If-Match` (409-Konflikt), Zustandsvalidierung
+  (400), Backups, gleichzeitige Schreibvorgänge (Lock), sowie die statische
+  Auslieferung inkl. MIME-Typen, Verzeichnis-Index, HEAD, 404/405 und
+  Path-Traversal-Schutz.
+- **`test/frontend.test.js`** – Unit-Tests der reinen Hilfsfunktionen aus
+  `index.html`. Das Inline-`<script>` wird über `test/load-frontend.js` in
+  einer `node:vm`-Sandbox mit minimalen Browser-Stubs ausgewertet (kein
+  jsdom); getestet werden die deterministischen, seiteneffektfreien Funktionen
+  (Datum/Uhrzeit, Formatierung, Fall-Logik, Farb-/HTML-Helfer,
+  Konfigurationsprüfung). DOM-rendernde bzw. auf den mutierten Laufzeit-`state`
+  angewiesene Funktionen sind hier bewusst ausgeklammert.
+
+---
+
 ## Produktiv-Deployment (162.19.250.88)
 
 Die App läuft hinter dem bereits vorhandenen **jwilder/nginx-proxy** +
