@@ -66,6 +66,24 @@ jobs:
             git reset --hard origin/main
             docker compose -f docker-compose.prod.yml up -d --build
             docker image prune -f
-            # kurze Healthcheck-Wartezeit
-            sleep 5
-            docker inspect --format '{{.State.Health.Status}}' hkl-plan || true
+            # Deploy verifizieren: warten, bis der Container /api/health beantwortet.
+            # Antwortet er nicht (Server startet nicht / Crash-Loop), muss die
+            # Pipeline rot werden statt still einen kaputten Stand als Erfolg zu melden.
+            echo "Warte auf /api/health von hkl-plan ..."
+            ok=0
+            for i in $(seq 1 30); do
+              if docker exec hkl-plan wget -qO- "http://127.0.0.1:4180/api/health" >/dev/null 2>&1; then
+                echo "hkl-plan antwortet auf /api/health (Versuch $i)."
+                ok=1
+                break
+              fi
+              echo "  [$i/30] noch nicht bereit ..."
+              sleep 2
+            done
+            if [ "$ok" -ne 1 ]; then
+              echo "::error::hkl-plan antwortet nach 60s nicht auf /api/health — Deploy fehlgeschlagen."
+              docker logs --tail 50 hkl-plan || true
+              exit 1
+            fi
+            # Zusätzlich den Docker-Health-Status informativ protokollieren.
+            docker inspect --format 'Docker-Health: {{.State.Health.Status}}' hkl-plan || true

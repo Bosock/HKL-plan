@@ -72,5 +72,3 @@ sind Optimierungen, keine akuten Defekte. Priorisiert nach Aufwand/Nutzen.
 - Poll-Optimierung mit `304 Not Modified`.
 - Dependency-frei, non-root Container, Healthcheck, automatisches TLS.
 - Gute Testabdeckung (Backend-API, Traversal, Frontend-Helfer, Last).
-</content>
-</invoke>
