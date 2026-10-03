@@ -93,7 +93,7 @@ Abgedeckt sind:
 
 ---
 
-## Produktiv-Deployment (162.19.250.88)
+## Produktiv-Deployment (151.80.56.152)
 
 Die App läuft hinter dem bereits vorhandenen **jwilder/nginx-proxy** +
 **letsencrypt-nginx-proxy-companion** im externen Docker-Netz `proxy`.
@@ -146,9 +146,9 @@ compose up -d --build`). Erforderliche **Repository-Secrets**:
 
 | Secret         | Bedeutung                          |
 |----------------|------------------------------------|
-| `SSH_HOST`     | Server-IP/Host (162.19.250.88)     |
+| `SSH_HOST`     | Server-IP/Host (151.80.56.152)     |
 | `SSH_USER`     | SSH-Benutzer                       |
-| `SSH_PASSWORD` | SSH-Passwort                       |
+| `SSH_KEY`      | privater SSH-Key (Passwort-Login ist auf dem Server aus) |
 
 > Secrets werden unter **Settings → Secrets and variables → Actions** gesetzt
 > (`gh secret set SSH_HOST -R Bosock/HKL-plan` …). Dazu sind Admin-Rechte am

@@ -1,8 +1,8 @@
 name: Deploy HKL-Plan
 
 # Baut und deployt die App bei jedem Push auf main automatisch auf den Server
-# (162.19.250.88) hinter den bestehenden nginx-proxy + letsencrypt-companion.
-# Zugangsdaten kommen aus den Repository-Secrets SSH_HOST / SSH_USER / SSH_PASSWORD.
+# (151.80.56.152) hinter den bestehenden nginx-proxy + letsencrypt-companion.
+# Zugangsdaten kommen aus den Repository-Secrets SSH_HOST / SSH_USER / SSH_KEY.
 
 on:
   push:
@@ -40,7 +40,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
           if [ -z "$SSH_HOST" ]; then
-            echo "::error::Repository-Secrets SSH_HOST/SSH_USER/SSH_PASSWORD fehlen. Deploy übersprungen."
+            echo "::error::Repository-Secrets SSH_HOST/SSH_USER/SSH_KEY fehlen. Deploy übersprungen."
             exit 1
           fi
 
@@ -49,7 +49,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
           port: 22
           command_timeout: 15m
           script: |
