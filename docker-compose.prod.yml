@@ -1,5 +1,5 @@
 # Produktiv-Deployment hinter jwilder/nginx-proxy + letsencrypt-companion
-# (Server debian@162.19.250.88, App-Verzeichnis /home/debian/server/hkl).
+# (Server debian@151.80.56.152, App-Verzeichnis /home/debian/server/hkl).
 #
 # Unterschiede zur lokalen docker-compose.yml:
 #   - KEIN Host-Port-Mapping: nginx-proxy erreicht den Container über das

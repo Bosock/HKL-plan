@@ -93,7 +93,7 @@ Abgedeckt sind:
 
 ---
 
-## Produktiv-Deployment (162.19.250.88)
+## Produktiv-Deployment (151.80.56.152)
 
 Die App läuft hinter dem bereits vorhandenen **jwilder/nginx-proxy** +
 **letsencrypt-nginx-proxy-companion** im externen Docker-Netz `proxy`.

@@ -1,7 +1,7 @@
 name: Deploy HKL-Plan
 
 # Baut und deployt die App bei jedem Push auf main automatisch auf den Server
-# (162.19.250.88) hinter den bestehenden nginx-proxy + letsencrypt-companion.
+# (151.80.56.152) hinter den bestehenden nginx-proxy + letsencrypt-companion.
 # Zugangsdaten kommen aus den Repository-Secrets SSH_HOST / SSH_USER / SSH_KEY.
 
 on:
